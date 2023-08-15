@@ -41,203 +41,214 @@ const Content: React.FC<ContentProps> = () => {
       </div>
 
       {/* chat body */}
-      <div className="h-[664px] w-full overflow-hidden">
+      <div className="h-[664px] w-full">
         {/* main chat body */}
-        <div ref={chatMainDiv} className="ls h-[90%] w-full bg-red-50 px-8 gap-y-8 flex flex-col">
-          {/* friend messages */}
-          <div className="w-full flex">
-            <div className="relative max-w-[400px] bg-[#f5f6fa] py-4 px-6 rounded-[20px]">
-              <p className=" text-deep_dark_ leading-5 text-[15px]">
-                Hello how are you
-              </p>
-              <div className="absolute bottom-[-25px] right-[-15px] p-[8px] bg-white_ rounded-[50%]">
-                <img
-                  className="w-[30px] h-[30px] rounded-[50%]"
-                  src="https://wallpapers.com/images/hd/cool-profile-picture-87h46gcobjl5e4xu.jpg"
-                  alt=""
-                />
+        <div
+          ref={chatMainDiv}
+          className="ls h-[90%] w-full bg-red-50 gap-y-8 flex flex-col overflow-hidden"
+        >
+          <div className="overflow-hidden px-8">
+            {/* friend messages */}
+            <div className="w-full flex">
+              <div className="relative max-w-[400px] bg-[#f5f6fa] py-4 px-6 rounded-[20px]">
+                <p className=" text-deep_dark_ leading-5 text-[15px]">
+                  Hello how are you
+                </p>
+                <div className="absolute bottom-[-25px] right-[-15px] p-[8px] bg-white_ rounded-[50%]">
+                  <img
+                    className="w-[30px] h-[30px] rounded-[50%]"
+                    src="https://wallpapers.com/images/hd/cool-profile-picture-87h46gcobjl5e4xu.jpg"
+                    alt=""
+                  />
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* my message */}
-          <div className="w-full flex justify-end">
-            <div className="relative max-w-[400px] bg-primary_ py-4 px-6 rounded-[20px]">
-              <p className="text-white_ leading-5 text-[15px]">
-                Pictures will keep your audience from being bored. In order for
-                you to succeed, you need to keep them interested and involved.
-              </p>
-              <div className="absolute bottom-[-20px] right-[-15px] p-[8px] bg-white_ rounded-[50%]">
-                <img
-                  className="w-[30px] h-[30px] rounded-[50%]"
-                  src="https://wallpaperaccess.com/full/2213426.jpg"
-                  alt=""
-                />
+            {/* my message */}
+            <div className="w-full flex justify-end">
+              <div className="relative max-w-[400px] bg-primary_ py-4 px-6 rounded-[20px]">
+                <p className="text-white_ leading-5 text-[15px]">
+                  Pictures will keep your audience from being bored. In order
+                  for you to succeed, you need to keep them interested and
+                  involved.
+                </p>
+                <div className="absolute bottom-[-20px] right-[-15px] p-[8px] bg-white_ rounded-[50%]">
+                  <img
+                    className="w-[30px] h-[30px] rounded-[50%]"
+                    src="https://wallpaperaccess.com/full/2213426.jpg"
+                    alt=""
+                  />
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* friend messages */}
-          <div className="w-full flex">
-            <div className="relative max-w-[400px] bg-[#f5f6fa] py-4 px-6 rounded-[20px]">
-              <p className=" text-deep_dark_ leading-5 text-[15px]">
-                Hello how are you
-              </p>
-              <div className="absolute bottom-[-25px] right-[-15px] p-[8px] bg-white_ rounded-[50%]">
-                <img
-                  className="w-[30px] h-[30px] rounded-[50%]"
-                  src="https://wallpapers.com/images/hd/cool-profile-picture-87h46gcobjl5e4xu.jpg"
-                  alt=""
-                />
+            {/* friend messages */}
+            <div className="w-full flex">
+              <div className="relative max-w-[400px] bg-[#f5f6fa] py-4 px-6 rounded-[20px]">
+                <p className=" text-deep_dark_ leading-5 text-[15px]">
+                  Hello how are you
+                </p>
+                <div className="absolute bottom-[-25px] right-[-15px] p-[8px] bg-white_ rounded-[50%]">
+                  <img
+                    className="w-[30px] h-[30px] rounded-[50%]"
+                    src="https://wallpapers.com/images/hd/cool-profile-picture-87h46gcobjl5e4xu.jpg"
+                    alt=""
+                  />
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* my message */}
-          <div className="w-full flex justify-end">
-            <div className="relative max-w-[400px] bg-primary_ py-4 px-6 rounded-[20px]">
-              <p className="text-white_ leading-5 text-[15px]">
-                Pictures will keep your audience from being bored. In order for
-                you to succeed, you need to keep them interested and involved.
-              </p>
-              <div className="absolute bottom-[-20px] right-[-15px] p-[8px] bg-white_ rounded-[50%]">
-                <img
-                  className="w-[30px] h-[30px] rounded-[50%]"
-                  src="https://wallpaperaccess.com/full/2213426.jpg"
-                  alt=""
-                />
+            {/* my message */}
+            <div className="w-full flex justify-end">
+              <div className="relative max-w-[400px] bg-primary_ py-4 px-6 rounded-[20px]">
+                <p className="text-white_ leading-5 text-[15px]">
+                  Pictures will keep your audience from being bored. In order
+                  for you to succeed, you need to keep them interested and
+                  involved.
+                </p>
+                <div className="absolute bottom-[-20px] right-[-15px] p-[8px] bg-white_ rounded-[50%]">
+                  <img
+                    className="w-[30px] h-[30px] rounded-[50%]"
+                    src="https://wallpaperaccess.com/full/2213426.jpg"
+                    alt=""
+                  />
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* friend messages */}
-          <div className="w-full flex">
-            <div className="relative max-w-[400px] bg-[#f5f6fa] py-4 px-6 rounded-[20px]">
-              <p className=" text-deep_dark_ leading-5 text-[15px]">
-                Hello how are you
-              </p>
-              <div className="absolute bottom-[-25px] right-[-15px] p-[8px] bg-white_ rounded-[50%]">
-                <img
-                  className="w-[30px] h-[30px] rounded-[50%]"
-                  src="https://wallpapers.com/images/hd/cool-profile-picture-87h46gcobjl5e4xu.jpg"
-                  alt=""
-                />
+            {/* friend messages */}
+            <div className="w-full flex">
+              <div className="relative max-w-[400px] bg-[#f5f6fa] py-4 px-6 rounded-[20px]">
+                <p className=" text-deep_dark_ leading-5 text-[15px]">
+                  Hello how are you
+                </p>
+                <div className="absolute bottom-[-25px] right-[-15px] p-[8px] bg-white_ rounded-[50%]">
+                  <img
+                    className="w-[30px] h-[30px] rounded-[50%]"
+                    src="https://wallpapers.com/images/hd/cool-profile-picture-87h46gcobjl5e4xu.jpg"
+                    alt=""
+                  />
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* my message */}
-          <div className="w-full flex justify-end">
-            <div className="relative max-w-[400px] bg-primary_ py-4 px-6 rounded-[20px]">
-              <p className="text-white_ leading-5 text-[15px]">
-                Pictures will keep your audience from being bored. In order for
-                you to succeed, you need to keep them interested and involved.
-              </p>
-              <div className="absolute bottom-[-20px] right-[-15px] p-[8px] bg-white_ rounded-[50%]">
-                <img
-                  className="w-[30px] h-[30px] rounded-[50%]"
-                  src="https://wallpaperaccess.com/full/2213426.jpg"
-                  alt=""
-                />
+            {/* my message */}
+            <div className="w-full flex justify-end">
+              <div className="relative max-w-[400px] bg-primary_ py-4 px-6 rounded-[20px]">
+                <p className="text-white_ leading-5 text-[15px]">
+                  Pictures will keep your audience from being bored. In order
+                  for you to succeed, you need to keep them interested and
+                  involved.
+                </p>
+                <div className="absolute bottom-[-20px] right-[-15px] p-[8px] bg-white_ rounded-[50%]">
+                  <img
+                    className="w-[30px] h-[30px] rounded-[50%]"
+                    src="https://wallpaperaccess.com/full/2213426.jpg"
+                    alt=""
+                  />
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* friend messages */}
-          <div className="w-full flex">
-            <div className="relative max-w-[400px] bg-[#f5f6fa] py-4 px-6 rounded-[20px]">
-              <p className=" text-deep_dark_ leading-5 text-[15px]">
-                Hello how are you
-              </p>
-              <div className="absolute bottom-[-25px] right-[-15px] p-[8px] bg-white_ rounded-[50%]">
-                <img
-                  className="w-[30px] h-[30px] rounded-[50%]"
-                  src="https://wallpapers.com/images/hd/cool-profile-picture-87h46gcobjl5e4xu.jpg"
-                  alt=""
-                />
+            {/* friend messages */}
+            <div className="w-full flex">
+              <div className="relative max-w-[400px] bg-[#f5f6fa] py-4 px-6 rounded-[20px]">
+                <p className=" text-deep_dark_ leading-5 text-[15px]">
+                  Hello how are you
+                </p>
+                <div className="absolute bottom-[-25px] right-[-15px] p-[8px] bg-white_ rounded-[50%]">
+                  <img
+                    className="w-[30px] h-[30px] rounded-[50%]"
+                    src="https://wallpapers.com/images/hd/cool-profile-picture-87h46gcobjl5e4xu.jpg"
+                    alt=""
+                  />
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* my message */}
-          <div className="w-full flex justify-end">
-            <div className="relative max-w-[400px] bg-primary_ py-4 px-6 rounded-[20px]">
-              <p className="text-white_ leading-5 text-[15px]">
-                Pictures will keep your audience from being bored. In order for
-                you to succeed, you need to keep them interested and involved.
-              </p>
-              <div className="absolute bottom-[-20px] right-[-15px] p-[8px] bg-white_ rounded-[50%]">
-                <img
-                  className="w-[30px] h-[30px] rounded-[50%]"
-                  src="https://wallpaperaccess.com/full/2213426.jpg"
-                  alt=""
-                />
+            {/* my message */}
+            <div className="w-full flex justify-end">
+              <div className="relative max-w-[400px] bg-primary_ py-4 px-6 rounded-[20px]">
+                <p className="text-white_ leading-5 text-[15px]">
+                  Pictures will keep your audience from being bored. In order
+                  for you to succeed, you need to keep them interested and
+                  involved.
+                </p>
+                <div className="absolute bottom-[-20px] right-[-15px] p-[8px] bg-white_ rounded-[50%]">
+                  <img
+                    className="w-[30px] h-[30px] rounded-[50%]"
+                    src="https://wallpaperaccess.com/full/2213426.jpg"
+                    alt=""
+                  />
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* friend messages */}
-          <div className="w-full flex">
-            <div className="relative max-w-[400px] bg-[#f5f6fa] py-4 px-6 rounded-[20px]">
-              <p className=" text-deep_dark_ leading-5 text-[15px]">
-                Hello how are you
-              </p>
-              <div className="absolute bottom-[-25px] right-[-15px] p-[8px] bg-white_ rounded-[50%]">
-                <img
-                  className="w-[30px] h-[30px] rounded-[50%]"
-                  src="https://wallpapers.com/images/hd/cool-profile-picture-87h46gcobjl5e4xu.jpg"
-                  alt=""
-                />
+            {/* friend messages */}
+            <div className="w-full flex">
+              <div className="relative max-w-[400px] bg-[#f5f6fa] py-4 px-6 rounded-[20px]">
+                <p className=" text-deep_dark_ leading-5 text-[15px]">
+                  Hello how are you
+                </p>
+                <div className="absolute bottom-[-25px] right-[-15px] p-[8px] bg-white_ rounded-[50%]">
+                  <img
+                    className="w-[30px] h-[30px] rounded-[50%]"
+                    src="https://wallpapers.com/images/hd/cool-profile-picture-87h46gcobjl5e4xu.jpg"
+                    alt=""
+                  />
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* my message */}
-          <div className="w-full flex justify-end">
-            <div className="relative max-w-[400px] bg-primary_ py-4 px-6 rounded-[20px]">
-              <p className="text-white_ leading-5 text-[15px]">
-                Pictures will keep your audience from being bored. In order for
-                you to succeed, you need to keep them interested and involved.
-              </p>
-              <div className="absolute bottom-[-20px] right-[-15px] p-[8px] bg-white_ rounded-[50%]">
-                <img
-                  className="w-[30px] h-[30px] rounded-[50%]"
-                  src="https://wallpaperaccess.com/full/2213426.jpg"
-                  alt=""
-                />
+            {/* my message */}
+            <div className="w-full flex justify-end">
+              <div className="relative max-w-[400px] bg-primary_ py-4 px-6 rounded-[20px]">
+                <p className="text-white_ leading-5 text-[15px]">
+                  Pictures will keep your audience from being bored. In order
+                  for you to succeed, you need to keep them interested and
+                  involved.
+                </p>
+                <div className="absolute bottom-[-20px] right-[-15px] p-[8px] bg-white_ rounded-[50%]">
+                  <img
+                    className="w-[30px] h-[30px] rounded-[50%]"
+                    src="https://wallpaperaccess.com/full/2213426.jpg"
+                    alt=""
+                  />
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* friend messages */}
-          <div className="w-full flex">
-            <div className="relative max-w-[400px] bg-[#f5f6fa] py-4 px-6 rounded-[20px]">
-              <p className=" text-deep_dark_ leading-5 text-[15px]">
-                Hello how are you
-              </p>
-              <div className="absolute bottom-[-25px] right-[-15px] p-[8px] bg-white_ rounded-[50%]">
-                <img
-                  className="w-[30px] h-[30px] rounded-[50%]"
-                  src="https://wallpapers.com/images/hd/cool-profile-picture-87h46gcobjl5e4xu.jpg"
-                  alt=""
-                />
+            {/* friend messages */}
+            <div className="w-full flex">
+              <div className="relative max-w-[400px] bg-[#f5f6fa] py-4 px-6 rounded-[20px]">
+                <p className=" text-deep_dark_ leading-5 text-[15px]">
+                  Hello how are you
+                </p>
+                <div className="absolute bottom-[-25px] right-[-15px] p-[8px] bg-white_ rounded-[50%]">
+                  <img
+                    className="w-[30px] h-[30px] rounded-[50%]"
+                    src="https://wallpapers.com/images/hd/cool-profile-picture-87h46gcobjl5e4xu.jpg"
+                    alt=""
+                  />
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* my message */}
-          <div className="w-full flex justify-end">
-            <div className="relative max-w-[400px] bg-primary_ py-4 px-6 rounded-[20px]">
-              <p className="text-white_ leading-5 text-[15px]">
-                Pictures will keep your audience from being bored. In order for
-                you to succeed, you need to keep them interested and involved.
-              </p>
-              <div className="absolute bottom-[-20px] right-[-15px] p-[8px] bg-white_ rounded-[50%]">
-                <img
-                  className="w-[30px] h-[30px] rounded-[50%]"
-                  src="https://wallpaperaccess.com/full/2213426.jpg"
-                  alt=""
-                />
+            {/* my message */}
+            <div className="w-full flex justify-end">
+              <div className="relative max-w-[400px] bg-primary_ py-4 px-6 rounded-[20px]">
+                <p className="text-white_ leading-5 text-[15px]">
+                  Pictures will keep your audience from being bored. In order
+                  for you to succeed, you need to keep them interested and
+                  involved.
+                </p>
+                <div className="absolute bottom-[-20px] right-[-15px] p-[8px] bg-white_ rounded-[50%]">
+                  <img
+                    className="w-[30px] h-[30px] rounded-[50%]"
+                    src="https://wallpaperaccess.com/full/2213426.jpg"
+                    alt=""
+                  />
+                </div>
               </div>
             </div>
           </div>
