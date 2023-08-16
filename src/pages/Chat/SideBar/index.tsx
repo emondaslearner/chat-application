@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
+
+// import third party components
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell, faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 import Selects from "../../../shared/Select";
