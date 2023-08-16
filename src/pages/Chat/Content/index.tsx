@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from "react";
 
 // import third party components
-import { MoreVertical, Phone } from "react-feather";
+import { ArrowRight, MoreVertical, Phone, PlusCircle, Smile } from "react-feather";
+import { Input } from "reactstrap";
 
 interface ContentProps {}
 
@@ -9,6 +10,7 @@ const Content: React.FC<ContentProps> = () => {
   // refs
   const chatMainDiv = useRef<HTMLParagraphElement>(null);
 
+  // default scroll the component to the bottom
   useEffect(() => {
     // Scroll the div to its bottom when the component mounts
     if (chatMainDiv.current) {
@@ -45,9 +47,9 @@ const Content: React.FC<ContentProps> = () => {
         {/* main chat body */}
         <div
           ref={chatMainDiv}
-          className="ls h-[90%] w-full bg-red-50 gap-y-8 flex flex-col overflow-hidden"
+          className="ls h-[90%] w-full gap-y-8 flex flex-col overflow-y-auto border-b-[1px] border-dark_gray_"
         >
-          <div className="overflow-hidden px-8">
+          <div className="h-full px-8 py-10">
             {/* friend messages */}
             <div className="w-full flex">
               <div className="relative max-w-[400px] bg-[#f5f6fa] py-4 px-6 rounded-[20px]">
@@ -253,7 +255,18 @@ const Content: React.FC<ContentProps> = () => {
             </div>
           </div>
         </div>
+
         {/* send head */}
+        <div className="flex items-center h-[10%] px-3 relative justify-between">
+          <PlusCircle size={20} className="text-dark_gray_ cursor-pointer absolute z-50" />
+          <Input type="text" className="outline-none h-full absolute left-0 top-0 w-full pl-12" placeholder="Type your message here..." />
+          <div className="absolute z-50 right-4 flex gap-x-5 items-center">
+            <Smile size={20} className="text-dark_gray_" />
+            <div className="cursor-pointer bg-primary_ p-3 rounded-[50%]">
+              <ArrowRight size={30} className="text-white_" />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -35,3 +35,20 @@ code {
 .css-1hb7zxy-IndicatorsContainer:first-child {
   display: none !important;
 }
+
+/* change scrollbar style */
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #0984e3;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #058cf3;
+}
