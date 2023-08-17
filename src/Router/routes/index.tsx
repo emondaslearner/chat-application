@@ -9,7 +9,7 @@ import AuthPages from './AuthPages';
 // Layouts
 import BlankLayout from '../../layout/BlankLayout';
 import VerticalLayout from '../../layout/VerticalLayout';
-import PrivateRoute from '../../security/PrivateRoute';
+// import PrivateRoute from '../../security/PrivateRoute';
 
 // Hooks
 
@@ -19,19 +19,16 @@ type RouteMeta = {
   // Define other meta properties here
 };
 
-type RouteElement = {
-  element: ReactNode;
-  meta?: RouteMeta;
-};
-
 type Route = {
   path: string;
   element: ReactNode;
-  children?: Route[];
+  children?: any;
   meta?: RouteMeta;
 };
 
-const getLayout = {
+type LayoutType = 'blank' | 'vertical'; // Define the possible layout types
+
+const getLayout: Record<LayoutType, React.ReactNode> = {
   blank: <BlankLayout />,
   vertical: <VerticalLayout />,
 };
@@ -48,31 +45,33 @@ const getRouteMeta = (route: Route): { routeMeta?: RouteMeta } | {} => {
   return {};
 };
 
-const MergeLayoutRoutes = (layout: string, defaultLayout: string): Route[] => {
+const MergeLayoutRoutes = (layout: LayoutType, defaultLayout: LayoutType): Route[] => {
   const LayoutRoutes: Route[] = [];
 
   if (Routes) {
-    Routes.filter((route) => {
+    Routes.filter((route: Route) => {
       let isBlank = false;
       if (
         (route.meta && route.meta.layout && route.meta.layout === layout) ||
         ((route.meta === undefined || route.meta.layout === undefined) &&
           defaultLayout === layout)
       ) {
-        let RouteTag: typeof PublicRoute | typeof PrivateRoute = PublicRoute;
+        let RouteTag: any = PublicRoute;
 
         if (route.meta) {
           isBlank = route.meta.layout === 'blank';
-          RouteTag = route.meta.publicRoute ? PublicRoute : PrivateRoute;
+          RouteTag = PublicRoute;
         }
 
         if (route.element) {
-          const Wrapper = Fragment;
+          const Wrapper: React.FC<{ children: React.ReactNode; route: Route }> = ({ children, route }) => (
+            <Fragment {...(isBlank === false ? getRouteMeta(route) : {})}>
+              <RouteTag route={route}>{children}</RouteTag>
+            </Fragment>
+          );
 
           route.element = (
-            <Wrapper {...(isBlank === false ? getRouteMeta(route) : {})}>
-              <RouteTag route={route}>{route.element}</RouteTag>
-            </Wrapper>
+            <Wrapper route={route}>{route.element}</Wrapper>
           );
         }
 
@@ -85,8 +84,8 @@ const MergeLayoutRoutes = (layout: string, defaultLayout: string): Route[] => {
 };
 
 const getRoutes = (): Route[] => {
-  const defaultLayout = 'vertical';
-  const layouts = ['vertical', 'blank'];
+  const defaultLayout: LayoutType = 'vertical';
+  const layouts: LayoutType[] = ['vertical', 'blank'];
 
   const AllRoutes: Route[] = [];
 

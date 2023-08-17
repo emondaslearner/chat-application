@@ -1,12 +1,12 @@
-import MainMenu from "./layout/Components/MainMenu";
-import Chat from "./pages/Chat";
-
+import { BrowserRouter } from "react-router-dom";
+import Router from "./Router";
 
 function App() {
   return (
     <div className="App">
-      <MainMenu />
-      <Chat />
+      <BrowserRouter>
+        <Router />
+      </BrowserRouter>
     </div>
   );
 }
