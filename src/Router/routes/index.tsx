@@ -91,6 +91,7 @@ const getRoutes = (): Route[] => {
 
   layouts.forEach((layoutItem) => {
     const LayoutRoutes = MergeLayoutRoutes(layoutItem, defaultLayout);
+    console.log('AllRoutes', layoutItem, defaultLayout)
 
     AllRoutes.push({
       path: '/',
@@ -98,6 +99,7 @@ const getRoutes = (): Route[] => {
       children: LayoutRoutes,
     });
   });
+
   return AllRoutes;
 };
 
