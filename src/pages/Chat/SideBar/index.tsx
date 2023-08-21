@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 
-// import third party components
+//** import third party components
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell, faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
-import Selects from "../../../shared/Select";
 import { Input } from "reactstrap";
 import { Search } from "react-feather";
+
+//** import components
+import Selects from "@shared/Select";
 
 interface SideBarProps {}
 
@@ -32,7 +34,7 @@ const SideBar: React.FC<SideBarProps> = () => {
   }, []);
 
   return (
-    <div className="border-r-[1px] border-dark_gray_">
+    <div className="border-r-[1px] border-l-[1px] border-dark_gray_ h-full bg-[#fafbfd]">
       {/* chat header */}
       <div className="border-b-[1px] border-dark_gray_ pb-3">
         <div className="flex justify-between w-full px-4 pt-6 pb-3">
@@ -67,7 +69,7 @@ const SideBar: React.FC<SideBarProps> = () => {
       </div>
       
       {/* chat list */}
-      <div className="w-full h-[85vh] bg-[#fafbfd]">
+      <div className="w-full">
         <ul className="pt-5 !gap-y-3 flex flex-col">
           {testList.map((data : TestData) => {
             return (

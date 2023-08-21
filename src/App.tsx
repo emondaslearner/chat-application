@@ -3,7 +3,7 @@ import Router from "./Router";
 
 function App() {
   return (
-    <div className="App">
+    <div className="max-w-[1800px] mx-auto relative">
       <BrowserRouter>
         <Router />
       </BrowserRouter>

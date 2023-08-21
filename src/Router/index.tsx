@@ -1,7 +1,9 @@
 import React, { useEffect } from "react";
-import { useLocation, useRoutes } from 'react-router-dom';
 
 // import third party library
+import { useLocation, useRoutes } from 'react-router-dom';
+
+// import components
 import { getRoutes } from "./routes";
 
 interface RouterProps {}
@@ -13,8 +15,8 @@ const Router: React.FC<RouterProps> = () => {
     window.scrollTo(0, 0)
   }, [location.pathname])
 
+  // getting route and merging
   const allRoutes = getRoutes();
-
   const routes = useRoutes([...allRoutes]);
 
   return routes;

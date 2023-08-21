@@ -6,7 +6,6 @@ const AuthPages: RouteConfig[] = [
         path: '/',
 		element: <Chat />,
 		meta: {
-			layout: 'blank',
 			isMenu: true
 		}
     }

@@ -1,6 +1,6 @@
 import React from "react";
 
-// import component
+//** import component
 import Content from "./Content";
 import SideBar from "./SideBar";
 

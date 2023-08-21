@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 
-// import third party components
+//** import third party lib
 import { ArrowRight, MoreVertical, Phone, PlusCircle, Smile } from "react-feather";
 import { Input } from "reactstrap";
 
@@ -19,9 +19,9 @@ const Content: React.FC<ContentProps> = () => {
   }, []);
 
   return (
-    <div className="w-full">
+    <div className="w-full h-[100vh] border-r-[1px] border-dark_gray_">
       {/* chat header */}
-      <div className="px-8 py-3 border-dark_gray_ border-b-[1px] flex justify-between">
+      <div className="px-8 py-3 border-dark_gray_ border-b-[1px] flex justify-between h-[10.1%]">
         <div className="flex items-center">
           <img
             className="min-w-[50px] w-[50px] h-[50px] rounded-[50%]"
@@ -43,7 +43,7 @@ const Content: React.FC<ContentProps> = () => {
       </div>
 
       {/* chat body */}
-      <div className="h-[664px] w-full">
+      <div className="h-[89.9%] w-full">
         {/* main chat body */}
         <div
           ref={chatMainDiv}

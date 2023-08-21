@@ -35,6 +35,7 @@ const getLayout: Record<LayoutType, React.ReactNode> = {
 
 const Routes: Route[] = [...PublicPages, ...AuthPages];
 
+
 const getRouteMeta = (route: Route): { routeMeta?: RouteMeta } | {} => {
   if (isObjEmpty(route.element as Record<string, any>)) {
     if (route.meta) {
@@ -83,6 +84,7 @@ const MergeLayoutRoutes = (layout: LayoutType, defaultLayout: LayoutType): Route
   return LayoutRoutes;
 };
 
+// getting layout and storing all route in an array 
 const getRoutes = (): Route[] => {
   const defaultLayout: LayoutType = 'vertical';
   const layouts: LayoutType[] = ['vertical', 'blank'];
@@ -91,7 +93,6 @@ const getRoutes = (): Route[] => {
 
   layouts.forEach((layoutItem) => {
     const LayoutRoutes = MergeLayoutRoutes(layoutItem, defaultLayout);
-    console.log('AllRoutes', layoutItem, defaultLayout)
 
     AllRoutes.push({
       path: '/',

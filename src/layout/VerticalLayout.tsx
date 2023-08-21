@@ -34,11 +34,13 @@ const VerticalLayout: React.FC<VerticalLayoutProps> = () => {
 
   useEffect(() => {
     handleSetMeta();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location]);
 
   return (
     <div>
-      {(meta?.layout !== "blank" || meta?.layout === undefined) && meta && (
+      {/* checking layout have or not */}
+      {(meta?.layout === undefined) && meta && (
         <div>
           {meta?.isMenu === true ? <MainMenu /> : null}
           <Outlet />

@@ -1,6 +1,6 @@
 import React from "react";
 
-// import components
+// import third party lib
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComment } from "@fortawesome/free-solid-svg-icons";
 import { faMessage, faPhone, faCircleUser, faUserGroup } from "@fortawesome/free-solid-svg-icons";
