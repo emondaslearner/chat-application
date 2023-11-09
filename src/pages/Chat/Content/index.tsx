@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 
-// import third party components
+//** import third party lib
 import { ArrowRight, MoreVertical, Phone, PlusCircle, Smile } from "react-feather";
 import Input from "../../../components/shared/Input";
 

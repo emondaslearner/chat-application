@@ -36,6 +36,7 @@ const VerticalLayout: React.FC<VerticalLayoutProps> = () => {
 
   useEffect(() => {
     handleSetMeta();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location]);
 
   

@@ -19,7 +19,7 @@ function App() {
 
 
   return (
-    <div className="App">
+    <div className="max-w-[1800px] mx-auto relative">
       <BrowserRouter>
         <NextUIProvider>
           <Router />
