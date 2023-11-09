@@ -3,8 +3,8 @@ import React, { Fragment, ReactNode } from 'react';
 // Route Components
 import PublicRoute from '../../security/PublicRoute';
 import { isObjEmpty } from '../../utils';
-import PublicPages from './PublicPages'; 
-import AuthPages from './AuthPages';
+import PublicPages from '../../configs/router.config/PublicPages'; 
+import AuthPages from '../../configs/router.config/AuthPages';
 
 // Layouts
 import BlankLayout from '../../layout/BlankLayout';

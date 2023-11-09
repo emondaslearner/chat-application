@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 
 // import third party components
 import { ArrowRight, MoreVertical, Phone, PlusCircle, Smile } from "react-feather";
-import { Input } from "reactstrap";
+import Input from "../../../components/shared/Input";
 
 interface ContentProps {}
 
@@ -19,9 +19,9 @@ const Content: React.FC<ContentProps> = () => {
   }, []);
 
   return (
-    <div className="w-full">
+    <div className="w-full h-[100vh] overflow-hidden">
       {/* chat header */}
-      <div className="px-8 py-3 border-dark_gray_ border-b-[1px] flex justify-between">
+      <div className="px-8 py-3 border-light_border_ dark:border-dark_border_ dark:bg-dark_bg_ border-b-[1px] flex justify-between h-[9%]">
         <div className="flex items-center">
           <img
             className="min-w-[50px] w-[50px] h-[50px] rounded-[50%]"
@@ -29,7 +29,7 @@ const Content: React.FC<ContentProps> = () => {
             alt=""
           />
           <div className="ml-3">
-            <p className="text-dark_ font-semibold">Emon Das</p>
+            <p className="text-dark_ font-semibold dark:text-white_">Emon Das</p>
             <p className="mt-[0px] text-[14px] font-semibold text-dark_gray_">
               Online
             </p>
@@ -43,20 +43,20 @@ const Content: React.FC<ContentProps> = () => {
       </div>
 
       {/* chat body */}
-      <div className="h-[664px] w-full">
+      <div className="w-full h-[91%]">
         {/* main chat body */}
         <div
           ref={chatMainDiv}
-          className="ls h-[90%] w-full gap-y-8 flex flex-col overflow-y-auto border-b-[1px] border-dark_gray_"
+          className="ls h-[90%] w-full gap-y-8 flex flex-col overflow-y-auto border-b-[1px] border-light_border_ dark:border-dark_border_ dark:bg-dark_light_bg_"
         >
           <div className="h-full px-8 py-10">
             {/* friend messages */}
             <div className="w-full flex">
-              <div className="relative max-w-[400px] bg-[#f5f6fa] py-4 px-6 rounded-[20px]">
-                <p className=" text-deep_dark_ leading-5 text-[15px]">
+              <div className="relative max-w-[400px] bg-[#f5f6fa] dark:bg-dark_bg_ py-4 px-6 rounded-[20px]">
+                <p className=" text-deep_dark_ dark:text-dark_text_ leading-5 text-[15px]">
                   Hello how are you
                 </p>
-                <div className="absolute bottom-[-25px] right-[-15px] p-[8px] bg-white_ rounded-[50%]">
+                <div className="absolute bottom-[-25px] right-[-15px] p-[8px] bg-white_ dark:bg-dark_bg_ rounded-[50%]">
                   <img
                     className="w-[30px] h-[30px] rounded-[50%]"
                     src="https://wallpapers.com/images/hd/cool-profile-picture-87h46gcobjl5e4xu.jpg"
@@ -74,7 +74,7 @@ const Content: React.FC<ContentProps> = () => {
                   for you to succeed, you need to keep them interested and
                   involved.
                 </p>
-                <div className="absolute bottom-[-20px] right-[-15px] p-[8px] bg-white_ rounded-[50%]">
+                <div className="absolute bottom-[-20px] right-[-15px] p-[8px] bg-white_ dark:bg-dark_bg_ rounded-[50%]">
                   <img
                     className="w-[30px] h-[30px] rounded-[50%]"
                     src="https://wallpaperaccess.com/full/2213426.jpg"
@@ -86,11 +86,11 @@ const Content: React.FC<ContentProps> = () => {
 
             {/* friend messages */}
             <div className="w-full flex">
-              <div className="relative max-w-[400px] bg-[#f5f6fa] py-4 px-6 rounded-[20px]">
-                <p className=" text-deep_dark_ leading-5 text-[15px]">
+              <div className="relative max-w-[400px] bg-[#f5f6fa] dark:bg-dark_bg_ py-4 px-6 rounded-[20px]">
+                <p className=" text-deep_dark_ dark:text-dark_text_ leading-5 text-[15px]">
                   Hello how are you
                 </p>
-                <div className="absolute bottom-[-25px] right-[-15px] p-[8px] bg-white_ rounded-[50%]">
+                <div className="absolute bottom-[-25px] right-[-15px] p-[8px] bg-white_ dark:bg-dark_bg_ rounded-[50%]">
                   <img
                     className="w-[30px] h-[30px] rounded-[50%]"
                     src="https://wallpapers.com/images/hd/cool-profile-picture-87h46gcobjl5e4xu.jpg"
@@ -108,7 +108,7 @@ const Content: React.FC<ContentProps> = () => {
                   for you to succeed, you need to keep them interested and
                   involved.
                 </p>
-                <div className="absolute bottom-[-20px] right-[-15px] p-[8px] bg-white_ rounded-[50%]">
+                <div className="absolute bottom-[-20px] right-[-15px] p-[8px] bg-white_ dark:bg-dark_bg_ rounded-[50%]">
                   <img
                     className="w-[30px] h-[30px] rounded-[50%]"
                     src="https://wallpaperaccess.com/full/2213426.jpg"
@@ -120,11 +120,11 @@ const Content: React.FC<ContentProps> = () => {
 
             {/* friend messages */}
             <div className="w-full flex">
-              <div className="relative max-w-[400px] bg-[#f5f6fa] py-4 px-6 rounded-[20px]">
-                <p className=" text-deep_dark_ leading-5 text-[15px]">
+              <div className="relative max-w-[400px] bg-[#f5f6fa] dark:bg-dark_bg_ py-4 px-6 rounded-[20px]">
+                <p className=" text-deep_dark_ dark:text-dark_text_ leading-5 text-[15px]">
                   Hello how are you
                 </p>
-                <div className="absolute bottom-[-25px] right-[-15px] p-[8px] bg-white_ rounded-[50%]">
+                <div className="absolute bottom-[-25px] right-[-15px] p-[8px] bg-white_ dark:bg-dark_bg_ rounded-[50%]">
                   <img
                     className="w-[30px] h-[30px] rounded-[50%]"
                     src="https://wallpapers.com/images/hd/cool-profile-picture-87h46gcobjl5e4xu.jpg"
@@ -142,7 +142,7 @@ const Content: React.FC<ContentProps> = () => {
                   for you to succeed, you need to keep them interested and
                   involved.
                 </p>
-                <div className="absolute bottom-[-20px] right-[-15px] p-[8px] bg-white_ rounded-[50%]">
+                <div className="absolute bottom-[-20px] right-[-15px] p-[8px] bg-white_ dark:bg-dark_bg_ rounded-[50%]">
                   <img
                     className="w-[30px] h-[30px] rounded-[50%]"
                     src="https://wallpaperaccess.com/full/2213426.jpg"
@@ -154,11 +154,11 @@ const Content: React.FC<ContentProps> = () => {
 
             {/* friend messages */}
             <div className="w-full flex">
-              <div className="relative max-w-[400px] bg-[#f5f6fa] py-4 px-6 rounded-[20px]">
-                <p className=" text-deep_dark_ leading-5 text-[15px]">
+              <div className="relative max-w-[400px] bg-[#f5f6fa] dark:bg-dark_bg_ py-4 px-6 rounded-[20px]">
+                <p className=" text-deep_dark_ dark:text-dark_text_ leading-5 text-[15px]">
                   Hello how are you
                 </p>
-                <div className="absolute bottom-[-25px] right-[-15px] p-[8px] bg-white_ rounded-[50%]">
+                <div className="absolute bottom-[-25px] right-[-15px] p-[8px] bg-white_ dark:bg-dark_bg_ rounded-[50%]">
                   <img
                     className="w-[30px] h-[30px] rounded-[50%]"
                     src="https://wallpapers.com/images/hd/cool-profile-picture-87h46gcobjl5e4xu.jpg"
@@ -176,7 +176,7 @@ const Content: React.FC<ContentProps> = () => {
                   for you to succeed, you need to keep them interested and
                   involved.
                 </p>
-                <div className="absolute bottom-[-20px] right-[-15px] p-[8px] bg-white_ rounded-[50%]">
+                <div className="absolute bottom-[-20px] right-[-15px] p-[8px] bg-white_ dark:bg-dark_bg_ rounded-[50%]">
                   <img
                     className="w-[30px] h-[30px] rounded-[50%]"
                     src="https://wallpaperaccess.com/full/2213426.jpg"
@@ -188,11 +188,11 @@ const Content: React.FC<ContentProps> = () => {
 
             {/* friend messages */}
             <div className="w-full flex">
-              <div className="relative max-w-[400px] bg-[#f5f6fa] py-4 px-6 rounded-[20px]">
-                <p className=" text-deep_dark_ leading-5 text-[15px]">
+              <div className="relative max-w-[400px] bg-[#f5f6fa] dark:bg-dark_bg_ py-4 px-6 rounded-[20px]">
+                <p className=" text-deep_dark_ dark:text-dark_text_ leading-5 text-[15px]">
                   Hello how are you
                 </p>
-                <div className="absolute bottom-[-25px] right-[-15px] p-[8px] bg-white_ rounded-[50%]">
+                <div className="absolute bottom-[-25px] right-[-15px] p-[8px] bg-white_ dark:bg-dark_bg_ rounded-[50%]">
                   <img
                     className="w-[30px] h-[30px] rounded-[50%]"
                     src="https://wallpapers.com/images/hd/cool-profile-picture-87h46gcobjl5e4xu.jpg"
@@ -210,7 +210,7 @@ const Content: React.FC<ContentProps> = () => {
                   for you to succeed, you need to keep them interested and
                   involved.
                 </p>
-                <div className="absolute bottom-[-20px] right-[-15px] p-[8px] bg-white_ rounded-[50%]">
+                <div className="absolute bottom-[-20px] right-[-15px] p-[8px] bg-white_ dark:bg-dark_bg_ rounded-[50%]">
                   <img
                     className="w-[30px] h-[30px] rounded-[50%]"
                     src="https://wallpaperaccess.com/full/2213426.jpg"
@@ -222,11 +222,11 @@ const Content: React.FC<ContentProps> = () => {
 
             {/* friend messages */}
             <div className="w-full flex">
-              <div className="relative max-w-[400px] bg-[#f5f6fa] py-4 px-6 rounded-[20px]">
-                <p className=" text-deep_dark_ leading-5 text-[15px]">
+              <div className="relative max-w-[400px] bg-[#f5f6fa] dark:bg-dark_bg_ py-4 px-6 rounded-[20px]">
+                <p className=" text-deep_dark_ dark:text-dark_text_ leading-5 text-[15px]">
                   Hello how are you
                 </p>
-                <div className="absolute bottom-[-25px] right-[-15px] p-[8px] bg-white_ rounded-[50%]">
+                <div className="absolute bottom-[-25px] right-[-15px] p-[8px] bg-white_ dark:bg-dark_bg_ rounded-[50%]">
                   <img
                     className="w-[30px] h-[30px] rounded-[50%]"
                     src="https://wallpapers.com/images/hd/cool-profile-picture-87h46gcobjl5e4xu.jpg"
@@ -244,7 +244,7 @@ const Content: React.FC<ContentProps> = () => {
                   for you to succeed, you need to keep them interested and
                   involved.
                 </p>
-                <div className="absolute bottom-[-20px] right-[-15px] p-[8px] bg-white_ rounded-[50%]">
+                <div className="absolute bottom-[-20px] right-[-15px] p-[8px] bg-white_ dark:bg-dark_bg_ rounded-[50%]">
                   <img
                     className="w-[30px] h-[30px] rounded-[50%]"
                     src="https://wallpaperaccess.com/full/2213426.jpg"
@@ -256,7 +256,7 @@ const Content: React.FC<ContentProps> = () => {
           </div>
         </div>
 
-        {/* send head */}
+        {/* send message */}
         <div className="flex items-center h-[10%] px-3 relative justify-between">
           <PlusCircle size={20} className="text-dark_gray_ cursor-pointer absolute z-50" />
           <Input type="text" className="outline-none h-full absolute left-0 top-0 w-full pl-12" placeholder="Type your message here..." />

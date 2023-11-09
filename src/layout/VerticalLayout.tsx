@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { Routes as metaData } from "../Router/routes";
 
 import MainMenu from "./Components/MainMenu";
+import themeConfig from "../configs/them.config";
 
 interface RouteMeta {
   layout?: string;
@@ -22,6 +23,7 @@ interface VerticalLayoutProps {}
 
 const VerticalLayout: React.FC<VerticalLayoutProps> = () => {
   const location = useLocation();
+  const navigate = useNavigate()
 
   const [meta, setMeta] = useState<RouteMeta | undefined | null>(null);
 
@@ -36,10 +38,16 @@ const VerticalLayout: React.FC<VerticalLayoutProps> = () => {
     handleSetMeta();
   }, [location]);
 
+  
+  // redirect root
+  useEffect(() => {
+    navigate(themeConfig.root)
+  }, [])
+
   return (
-    <div>
+    <div className="w-full">
       {(meta?.layout !== "blank" || meta?.layout === undefined) && meta && (
-        <div>
+        <div className="w-full">
           {meta?.isMenu === true ? <MainMenu /> : null}
           <Outlet />
         </div>
