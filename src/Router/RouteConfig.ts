@@ -2,6 +2,7 @@ import { ReactElement } from "react";
 import { RouteProps } from "react-router-dom";
 
 interface Meta {
+    layout: string;
     publicRoute?: boolean;
     isMenu?: boolean
 }

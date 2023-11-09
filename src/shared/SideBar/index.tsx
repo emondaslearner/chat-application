@@ -1,6 +1,6 @@
 import React from "react";
-import SideBarContent from "@shared/SideBar/SideBarContent";
-import SideBarHeader from "@shared/SideBar/SideBarHeader";
+import SideBarContent from "../../shared/SideBar/SideBarContent";
+import SideBarHeader from "../../shared/SideBar/SideBarHeader";
 
 interface SideBarChatData {
     id: number;

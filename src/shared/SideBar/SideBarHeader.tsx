@@ -7,7 +7,7 @@ import { Input } from "reactstrap";
 import { Search } from "react-feather";
 
 //** import components
-import Selects from "@shared/Select";
+import Selects from "../../components/shared/Select";
 
 interface SideBarHeaderProps {
   name: string;
