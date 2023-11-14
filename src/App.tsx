@@ -1,28 +1,31 @@
+import { Suspense, lazy } from "react";
 import { BrowserRouter } from "react-router-dom";
-import Router from "./Router";
 import { NextUIProvider } from "@nextui-org/react";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
-
+import Spinner from "./components/shared/Spinner";
 
 function App() {
-
   // change mode
-  const themeConfig = useSelector((state: any) => state.themeConfig)
+  const themeConfig = useSelector((state: any) => state.themeConfig);
   useEffect(() => {
-    if(themeConfig.mode === 'dark') {
-      document.body.classList.add('dark');
+    if (themeConfig.mode === "dark") {
+      document.body.classList.add("dark");
     } else {
-      document.body.classList.remove('dark');
+      document.body.classList.remove("dark");
     }
-  }, [themeConfig.mode])
+  }, [themeConfig.mode]);
 
+  // components
+  const Components = lazy(() => import("./Router"));
 
   return (
     <div className="max-w-[1800px] mx-auto relative">
       <BrowserRouter>
         <NextUIProvider>
-          <Router />
+          <Suspense fallback={<Spinner />}>
+            <Components />
+          </Suspense>
         </NextUIProvider>
       </BrowserRouter>
     </div>

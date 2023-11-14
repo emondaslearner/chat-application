@@ -2,11 +2,12 @@ import React, { ReactNode } from 'react';
 
 // import third party components
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBell, faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
+import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 import Selects from "../../../components/shared/Select";
 import { Search } from "react-feather"
 import Input from '../../shared/Input';
 import Dropdown from '../Dropdown';
+import Notification from './Notification';
 
 interface SideBarHeaderProps {
 
@@ -57,10 +58,8 @@ const SideBarHeader: React.FC<SideBarHeaderProps> = () => {
             Chats
           </p>
           <div className="flex">
-            <FontAwesomeIcon
-              icon={faBell}
-              className="mr-5 text-[19px] text-dark_gray_ cursor-pointer"
-            />
+            {/* Notification */}
+            <Notification />
             
             {/* Dropdown */}
             <Dropdown
