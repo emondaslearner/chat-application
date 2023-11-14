@@ -1,10 +1,75 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, ReactNode } from "react";
 
 //** import third party lib
-import { ArrowRight, MoreVertical, Phone, PlusCircle, Smile } from "react-feather";
+import {
+  ArrowRight,
+  MoreVertical,
+  Phone,
+  PlusCircle,
+  Smile,
+} from "react-feather";
 import Input from "../../../components/shared/Input";
+import Dropdown from "@src/components/ui/Dropdown";
 
 interface ContentProps {}
+
+interface HeaderProps {}
+
+interface Items {
+  key: string;
+  label: string;
+  icon?: ReactNode
+}
+// sidebar header dropdown options
+const items: Items[] = [
+  {
+    key: "new",
+    label: "New file",
+  },
+  {
+    key: "copy",
+    label: "Copy link",
+  },
+  {
+    key: "edit",
+    label: "Edit file",
+  },
+  {
+    key: "delete",
+    label: "Delete file",
+  },
+];
+
+const Header: React.FC<HeaderProps> = () => {
+  return (
+    <div className="px-8 py-3 border-light_border_ dark:border-dark_border_ dark:bg-dark_bg_ border-b-[1px] flex justify-between h-[9%]">
+      <div className="flex items-center">
+        <img
+          className="min-w-[50px] w-[50px] h-[50px] rounded-[50%]"
+          src="https://marketplace.canva.com/EAFSZhFumYM/1/0/800w/canva-dark-red-neon-futuristic-instagram-profile-picture-C7X0FDvE02Q.jpg"
+          alt=""
+        />
+        <div className="ml-3">
+          <p className="text-dark_ font-semibold dark:text-white_">Emon Das</p>
+          <p className="mt-[0px] text-[14px] font-semibold text-dark_gray_">
+            Online
+          </p>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-x-4">
+        <Phone size={20} className="text-dark_gray_ cursor-pointer" />
+        
+        {/* Dropdown */}
+        <Dropdown
+          items={items}
+        >
+          <MoreVertical size={20} className="text-dark_gray_ cursor-pointer" />
+        </Dropdown>
+      </div>
+    </div>
+  );
+};
 
 const Content: React.FC<ContentProps> = () => {
   // refs
@@ -21,26 +86,7 @@ const Content: React.FC<ContentProps> = () => {
   return (
     <div className="w-full h-[100vh] overflow-hidden">
       {/* chat header */}
-      <div className="px-8 py-3 border-light_border_ dark:border-dark_border_ dark:bg-dark_bg_ border-b-[1px] flex justify-between h-[9%]">
-        <div className="flex items-center">
-          <img
-            className="min-w-[50px] w-[50px] h-[50px] rounded-[50%]"
-            src="https://marketplace.canva.com/EAFSZhFumYM/1/0/800w/canva-dark-red-neon-futuristic-instagram-profile-picture-C7X0FDvE02Q.jpg"
-            alt=""
-          />
-          <div className="ml-3">
-            <p className="text-dark_ font-semibold dark:text-white_">Emon Das</p>
-            <p className="mt-[0px] text-[14px] font-semibold text-dark_gray_">
-              Online
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-x-4">
-          <Phone size={20} className="text-dark_gray_ cursor-pointer" />
-          <MoreVertical size={20} className="text-dark_gray_ cursor-pointer" />
-        </div>
-      </div>
+      <Header />
 
       {/* chat body */}
       <div className="w-full h-[91%]">
@@ -258,8 +304,15 @@ const Content: React.FC<ContentProps> = () => {
 
         {/* send message */}
         <div className="flex items-center h-[10%] px-3 relative justify-between">
-          <PlusCircle size={20} className="text-dark_gray_ cursor-pointer absolute z-50" />
-          <Input type="text" className="outline-none h-full absolute left-0 top-0 w-full pl-12" placeholder="Type your message here..." />
+          <PlusCircle
+            size={20}
+            className="text-dark_gray_ cursor-pointer absolute z-50"
+          />
+          <Input
+            type="text"
+            className="outline-none h-full absolute left-0 top-0 w-full pl-12"
+            placeholder="Type your message here..."
+          />
           <div className="absolute z-50 right-4 flex gap-x-5 items-center">
             <Smile size={20} className="text-dark_gray_" />
             <div className="cursor-pointer bg-primary_ p-3 rounded-[50%]">

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Input } from 'reactstrap';
+import { Input as Inputs } from 'reactstrap';
 import { InputType } from 'reactstrap/types/lib/Input';
 
 interface InputsProps {
@@ -9,15 +9,15 @@ interface InputsProps {
     placeholder?: string
 }
 
-const Inputs: React.FC<InputsProps> = ({
+const Input: React.FC<InputsProps> = ({
     className,
     type,
     placeholder,
     ...props
 }) => {
     return (
-        <Input className={`${className} border-[1px] dark:bg-dark_light_bg_ dark:text-dark_text_ dark:border-dark_border_ dark:placeholder:text-dark_text_ border-light_border_`} {...props} type={type} placeholder={placeholder} />
+        <Inputs className={`${className} border-[1px] dark:bg-dark_light_bg_ dark:text-dark_text_ dark:border-dark_border_ dark:placeholder:text-dark_text_ border-light_border_`} {...props} type={type} placeholder={placeholder} />
     );
 };
 
-export default Inputs;
+export default Input;

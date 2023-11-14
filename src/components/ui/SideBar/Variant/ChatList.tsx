@@ -23,7 +23,7 @@ const ChatList: React.FC<ChatProps> = () => {
   const [activeChat, setActiveChat] = useState<number | null>(null); //store active check (means which chat is active now)
 
   return (
-    <>
+    <div className="mb-[130px] !gap-y-3 flex flex-col">
       {testList.map((data: TestData) => {
         return (
           <li
@@ -69,7 +69,7 @@ const ChatList: React.FC<ChatProps> = () => {
           </li>
         );
       })}
-    </>
+    </div>
   );
 };
 

@@ -37,7 +37,7 @@ const Content: React.FC<ContentProps> = () => {
         </div>
       </div>
 
-      <div className="w-full mt-7 gap-y-4 flex flex-col overflow-x-hidden overflow-y-auto h-full scrollHidden">
+      <div className="w-full mt-7 gap-y-4 flex flex-col overflow-x-hidden overflow-y-auto h-full scrollHidden pb-[350px]">
         {testList.map((data: DataProps) => {
           return (
             <li

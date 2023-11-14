@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 
 // import third party components
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -6,6 +6,7 @@ import { faBell, faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 import Selects from "../../../components/shared/Select";
 import { Search } from "react-feather"
 import Input from '../../shared/Input';
+import Dropdown from '../Dropdown';
 
 interface SideBarHeaderProps {
 
@@ -22,6 +23,32 @@ const options: OptionProps[] = [
   { value: 'vanilla', label: 'Vanilla' }
 ]
 
+
+interface Items {
+  key: string;
+  label: string;
+  icon?: ReactNode
+}
+// sidebar header dropdown options
+const items: Items[] = [
+  {
+    key: "new",
+    label: "New file",
+  },
+  {
+    key: "copy",
+    label: "Copy link",
+  },
+  {
+    key: "edit",
+    label: "Edit file",
+  },
+  {
+    key: "delete",
+    label: "Delete file",
+  },
+];
+
 const SideBarHeader: React.FC<SideBarHeaderProps> = () => {
     return (
         <div className="border-b-[1px] border-light_border_ dark:border-dark_border_ pb-3">
@@ -34,11 +61,19 @@ const SideBarHeader: React.FC<SideBarHeaderProps> = () => {
               icon={faBell}
               className="mr-5 text-[19px] text-dark_gray_ cursor-pointer"
             />
-            <FontAwesomeIcon
-              icon={faEllipsisVertical}
-              className="text-[19px] text-dark_gray_ cursor-pointer"
-            />
+            
+            {/* Dropdown */}
+            <Dropdown
+              items={items}
+            >
+              <FontAwesomeIcon
+                icon={faEllipsisVertical}
+                className="text-[19px] text-dark_gray_ !cursor-pointer"
+              />
+            </Dropdown>
           </div>
+
+
         </div>
         <div className="flex px-4 items-center justify-between sidebarHeader">
           <Selects options={options} />
