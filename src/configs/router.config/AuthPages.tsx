@@ -1,3 +1,4 @@
+import MyProfile from '@src/pages/MyProfile';
 import RouteConfig from '../../Router/RouteConfig';
 import Calls from '../../pages/Calls';
 import Chat from '../../pages/Chat'
@@ -23,6 +24,14 @@ const AuthPages: RouteConfig[] = [
     {
         path: '/friends',
 		element: <Friends />,
+		meta: {
+			layout: 'vertical',
+			isMenu: true
+		}
+    },
+    {
+        path: '/profile',
+		element: <MyProfile />,
 		meta: {
 			layout: 'vertical',
 			isMenu: true

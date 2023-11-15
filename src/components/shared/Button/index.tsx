@@ -12,7 +12,7 @@ interface ButtonProps {
 
 const Button: React.FC<ButtonProps> = ({ fill, children, className, onClick }) => {
   return (
-    <div>
+    <>
       {fill ? (
         <button
           className={`${className} bg-primary_ text-white_ border-0 px-10 py-2 rounded-[5px]`}
@@ -28,7 +28,7 @@ const Button: React.FC<ButtonProps> = ({ fill, children, className, onClick }) =
           {children}
         </button>
       )}
-    </div>
+    </>
   );
 };
 

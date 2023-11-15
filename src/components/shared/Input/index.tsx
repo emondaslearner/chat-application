@@ -16,7 +16,7 @@ const Input: React.FC<InputsProps> = ({
     ...props
 }) => {
     return (
-        <Inputs className={`${className} border-[1px] dark:bg-dark_light_bg_ dark:text-dark_text_ dark:border-dark_border_ dark:placeholder:text-dark_text_ border-light_border_`} {...props} type={type} placeholder={placeholder} />
+        <Inputs className={`${className} border-[1px] dark:bg-dark_light_bg_ dark:text-dark_text_ dark:border-dark_border_ dark:placeholder:text-dark_text_ border-light_border_ outline-none`} {...props} type={type} placeholder={placeholder} />
     );
 };
 

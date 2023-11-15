@@ -13,7 +13,9 @@ interface ModalProps {
     title: string | ReactNode;
     children: ReactNode;
     position: 'right' | 'left' | 'middle';
-    size?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "full"
+    size?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "full";
+    closeButton: boolean;
+    customCloseButton?: ReactNode
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -22,7 +24,9 @@ const Modal: React.FC<ModalProps> = ({
     title,
     children,
     position,
-    size = 'md'
+    size = 'md',
+    closeButton,
+    customCloseButton
 }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
@@ -30,14 +34,14 @@ const Modal: React.FC<ModalProps> = ({
   return (
     <div className="">
       <span onClick={onOpen}>{openButton}</span>
-      <Modals size={size} className={``} isOpen={isOpen} onOpenChange={onOpenChange}>
-        <ModalContent className={`${position === 'right' && 'absolute right-0 top-0 h-full !m-0'}`}>
+      <Modals size={size} closeButton={!closeButton ? <></> : customCloseButton && customCloseButton} className={``} isOpen={isOpen} onOpenChange={onOpenChange}>
+        <ModalContent className={`${position === 'right' && 'absolute right-0 top-0 h-full !m-0'} dark:bg-dark_bg_`}>
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
                 {title}
               </ModalHeader>
-              <ModalBody>
+              <ModalBody className="p-0 !gap-0">
                 {children}
               </ModalBody>
             </>

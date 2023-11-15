@@ -24,7 +24,7 @@ const MainMenu: React.FC<MainMenuProps> = () => {
         <FontAwesomeIcon onClick={() => navigate('/chat')} icon={faMessage} className={`text-[25px] cursor-pointer ${location.pathname === '/chat' ? 'text-white_' : 'text-dark_gray_'}`} />
         <FontAwesomeIcon onClick={() => navigate('/calls')} icon={faPhone} className={`text-[25px] cursor-pointer ${location.pathname === '/calls' ? 'text-white_' : 'text-dark_gray_'}`} />
         <FontAwesomeIcon onClick={() => navigate('/friends')} icon={faUserGroup} className={`text-[25px] cursor-pointer ${location.pathname === '/friends' ? 'text-white_' : 'text-dark_gray_'}`} />
-        <FontAwesomeIcon icon={faCircleUser} className={`text-[25px] cursor-pointer ${location.pathname === '/users' ? 'text-white_' : 'text-dark_gray_'}`} />
+        <FontAwesomeIcon onClick={() => navigate('/profile')} icon={faCircleUser} className={`text-[25px] cursor-pointer ${location.pathname === '/profile' ? 'text-white_' : 'text-dark_gray_'}`} />
       </div>
     </div>
   );
