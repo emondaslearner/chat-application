@@ -91,7 +91,63 @@ const Profile: React.FC<ProfileProps> = () => {
                   src="https://wallpapers.com/images/hd/cool-profile-picture-1ecoo30f26bkr14o.jpg"
                   alt=""
                 />
-                <p className="text-[16px] font-semibold dark:text-dark_text_">Biplob Das</p>
+                <p className="text-[16px] font-semibold dark:text-dark_text_">
+                  Biplob Das
+                </p>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Photos */}
+      <div className="w-[90%] mx-auto mt-4">
+        <div className="flex items-center justify-between">
+          <p className="text-[20px] text-dark_ dark:text-white_ font-semibold">
+            Photos
+          </p>
+
+          <Link to="/friends" className="text-primary_">
+            See all
+          </Link>
+        </div>
+
+        <div className="w-full grid grid-cols-4 mt-4 gap-3 max-h-[220px] h-full overflow-hidden">
+          {testList.map((data: TestData) => {
+            return (
+              <div key={data?.id} className="">
+                <img
+                  className="rounded-[10px] h-[100px]"
+                  src="https://wallpapers.com/images/hd/cool-profile-picture-1ecoo30f26bkr14o.jpg"
+                  alt=""
+                />
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Videos */}
+      <div className="w-[90%] mx-auto mt-4">
+        <div className="flex items-center justify-between">
+          <p className="text-[20px] text-dark_ dark:text-white_ font-semibold">
+            Videos
+          </p>
+
+          <Link to="/friends" className="text-primary_">
+            See all
+          </Link>
+        </div>
+
+        <div className="w-full grid grid-cols-4 mt-4 gap-3 max-h-[220px] h-full overflow-hidden">
+          {testList.map((data: TestData) => {
+            return (
+              <div key={data?.id} className="">
+                <img
+                  className="rounded-[10px] h-[100px]"
+                  src="https://wallpapers.com/images/hd/cool-profile-picture-1ecoo30f26bkr14o.jpg"
+                  alt=""
+                />
               </div>
             );
           })}

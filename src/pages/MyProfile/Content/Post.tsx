@@ -17,7 +17,7 @@ interface PostProps {
 
 const Post: React.FC<PostProps> = ({ viewStatus }) => {
   return (
-    <div className={`${viewStatus === 'list' ? 'py-3' : 'pt-3'} w-full bg-light_gray_ dark:bg-dark_bg_ border-[2px] border-light_border_ dark:border-dark_border_ rounded-[5px]`}>
+    <div className={`${viewStatus === 'list' ? 'py-3' : 'pt-3 cursor-pointer'} w-full bg-light_gray_ dark:bg-dark_bg_ border-[2px] border-light_border_ dark:border-dark_border_ rounded-[5px]`}>
       {/* post header  */}
       <div className="px-3 flex items-center justify-between w-full">
         <div className="flex items-center">
