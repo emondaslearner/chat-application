@@ -15,7 +15,8 @@ interface ModalProps {
     position: 'right' | 'left' | 'middle';
     size?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "full";
     closeButton?: boolean;
-    customCloseButton?: ReactNode
+    customCloseButton?: ReactNode;
+    dismissable?: boolean
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -26,7 +27,8 @@ const Modal: React.FC<ModalProps> = ({
     position,
     size = 'md',
     closeButton,
-    customCloseButton
+    customCloseButton,
+    dismissable
 }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
@@ -34,7 +36,7 @@ const Modal: React.FC<ModalProps> = ({
   return (
     <div className="w-full">
       <span onClick={onOpen}>{openButton}</span>
-      <Modals size={size} closeButton={!closeButton ? <></> : customCloseButton && customCloseButton} className={``} isOpen={isOpen} onOpenChange={onOpenChange}>
+      <Modals size={size} closeButton={!closeButton ? <></> : customCloseButton && customCloseButton} className={``} isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={dismissable === false ? false : true}>
         <ModalContent className={`${position === 'right' && 'absolute right-0 top-0 h-full !m-0'} ${position === 'left' && 'absolute left-0 top-0 h-full !m-0'} dark:bg-dark_bg_`}>
           {(onClose) => (
             <>

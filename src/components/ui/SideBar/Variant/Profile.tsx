@@ -4,7 +4,8 @@ import React, { ReactNode, useRef } from "react";
 import { FaCamera } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import Dropdown from "../../Dropdown";
-import EditProfile from "@src/pages/MyProfile/Content/EditProfile";
+import EditProfile from "@src/pages/MyProfile/Content/Popups/EditProfile";
+import AddPost from "@src/pages/MyProfile/Content/Popups/AddPost";
 
 interface ProfileProps {}
 
@@ -95,9 +96,9 @@ const Profile: React.FC<ProfileProps> = () => {
       </div>
 
       <div className="flex items-center justify-between w-[90%] mx-auto mt-3">
-        <Button fill={true} className="!w-[48%]">
-          Add photos & videos
-        </Button>
+        <div className="w-[48%]">
+          <AddPost />
+        </div>
 
         <div className="w-[48%]">
           <EditProfile />

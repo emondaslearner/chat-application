@@ -4,6 +4,8 @@ import { NextUIProvider } from "@nextui-org/react";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import Spinner from "./components/shared/Spinner";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 function App() {
   // change mode
@@ -24,7 +26,9 @@ function App() {
       <BrowserRouter>
         <NextUIProvider>
           <Suspense fallback={<Spinner />}>
-            <Components />
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <Components />
+            </LocalizationProvider>
           </Suspense>
         </NextUIProvider>
       </BrowserRouter>

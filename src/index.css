@@ -115,3 +115,19 @@ code {
 .scrollHidden::-webkit-scrollbar {
   width: 0px;
 }
+
+.DatePicker input {
+  @apply !w-full !border-[1px] !border-light_border_ hover:!border-light_border_ !m-0 dark:!bg-dark_light_bg_ dark:!text-dark_text_ mt-1 dark:!border-dark_border_ dark:placeholder:text-dark_text_ !outline-none !px-3 !py-2
+}
+
+.DatePicker fieldset {
+  @apply !border-light_border_ hover:!border-light_border_ dark:!border-dark_border_
+}
+
+.DatePicker button {
+  @apply dark:!bg-dark_light_bg_
+}
+
+.sc-aXZVg {
+  @apply !w-full !max-w-[100%] !border-[1px] !border-light_border_ dark:!border-dark_border_ !border-solid
+}
