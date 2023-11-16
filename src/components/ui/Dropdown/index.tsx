@@ -10,6 +10,9 @@ interface Items {
   key: string;
   label: string;
   icon?: ReactNode;
+  onClick?: () => void;
+  onMouseOver?: () => void;
+  onMouseOut?: () => void;
 }
 interface DropdownProps {
   children: ReactNode;
@@ -26,8 +29,11 @@ const Dropdown: React.FC<DropdownProps> = ({ children, items }) => {
             <DropdownItem
               key={item.key}
               color={item.key === "delete" ? "danger" : "default"}
-              className={`${item.key === "delete" ? "text-danger" : "!text-dark_gray_ dark:!text-dark_text_ hover:!text-white_  dark:hover:!text-white_ transition-all duration-300 hover:!bg-primary_"}`}
+              className={`${item.key === "delete" ? "text-danger" : "!text-dark_ dark:!text-dark_text_ hover:!text-white_  dark:hover:!text-white_ transition-all duration-300 hover:!bg-primary_"}`}
               startContent={item?.icon}
+              onClick={item?.onClick}
+              onMouseOver={item?.onMouseOver}
+              onMouseOut={item?.onMouseOut}
             >
               {item.label}
             </DropdownItem>

@@ -1,19 +1,52 @@
 import AvatarSingle from "@src/components/shared/Avatar";
 import Button from "@src/components/shared/Button";
-import React from "react";
+import React, { ReactNode, useRef } from "react";
 import { FaCamera } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import Dropdown from "../../Dropdown";
+import EditProfile from "@src/pages/MyProfile/Content/EditProfile";
 
 interface ProfileProps {}
 
 interface TestData {
   id: number;
 }
+interface Items {
+  key: string;
+  label: string;
+  icon?: ReactNode;
+  onClick?: () => void;
+}
+
 const testList: TestData[] = Array.from({ length: 20 }, (_, index) => ({
   id: index + 1,
 }));
 
 const Profile: React.FC<ProfileProps> = () => {
+  const CoverPhoto = useRef<HTMLInputElement | null>(null);
+  const ProfilePicture = useRef<HTMLInputElement | null>(null);
+
+  // cover photo dropdown options
+  const items: Items[] = [
+    {
+      key: "selectPhoto",
+      label: "Select Photo",
+      onClick: () => {
+        CoverPhoto.current?.click();
+      },
+    },
+  ];
+
+  const ProfilePictureItems: Items[] = [
+    {
+      key: "selectPhoto",
+      label: "Select Photo",
+      onClick: () => {
+        ProfilePicture.current?.click();
+      },
+    },
+  ];
+
   return (
     <div className="w-full h-[100%] scrollHidden overflow-y-auto">
       <div className="w-[90%] mx-auto rounded-[15px] border-[1px] border-light_border_ dark:border-dark_border_ mt-8 h-[200px] relative overflow-hidden">
@@ -22,9 +55,14 @@ const Profile: React.FC<ProfileProps> = () => {
           src="https://images.unsplash.com/photo-1528465424850-54d22f092f9d?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Y292ZXIlMjBwaG90b3xlbnwwfHwwfHx8MA%3D%3D"
           alt=""
         />
-        <div className="absolute right-2 bottom-2 p-[10px] rounded-full dark:bg-dark_gray_ cursor-pointer bg-light_gray_">
-          <FaCamera size={25} className="text-black_" />
-        </div>
+
+        {/* Dropdown */}
+        <Dropdown items={items}>
+          <div className="absolute right-2 bottom-2 p-[10px] rounded-full dark:bg-dark_gray_ cursor-pointer bg-light_gray_">
+            <FaCamera size={25} className="text-black_" />
+          </div>
+        </Dropdown>
+        <input className="hidden" type="file" ref={CoverPhoto} />
       </div>
 
       {/* profile picture  */}
@@ -35,9 +73,13 @@ const Profile: React.FC<ProfileProps> = () => {
           alt="Profile picture"
         />
 
-        <div className="absolute right-[0px] bottom-[0] p-[10px] rounded-full dark:bg-dark_gray_ cursor-pointer bg-light_gray_">
-          <FaCamera size={20} className="text-black_" />
-        </div>
+        {/* Dropdown */}
+        <Dropdown items={ProfilePictureItems}>
+          <div className="absolute right-[0px] bottom-[0] p-[10px] rounded-full dark:bg-dark_gray_ cursor-pointer bg-light_gray_">
+            <FaCamera size={20} className="text-black_" />
+          </div>
+        </Dropdown>
+        <input className="hidden" type="file" ref={ProfilePicture} />
       </div>
 
       {/* Other info */}
@@ -56,9 +98,10 @@ const Profile: React.FC<ProfileProps> = () => {
         <Button fill={true} className="!w-[48%]">
           Add photos & videos
         </Button>
-        <Button fill={false} className="!w-[48%]">
-          Edit profile
-        </Button>
+
+        <div className="w-[48%]">
+          <EditProfile />
+        </div>
       </div>
 
       {/* Friends */}

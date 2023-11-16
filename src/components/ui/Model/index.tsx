@@ -14,7 +14,7 @@ interface ModalProps {
     children: ReactNode;
     position: 'right' | 'left' | 'middle';
     size?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "full";
-    closeButton: boolean;
+    closeButton?: boolean;
     customCloseButton?: ReactNode
 }
 
@@ -32,13 +32,13 @@ const Modal: React.FC<ModalProps> = ({
 
 
   return (
-    <div className="">
+    <div className="w-full">
       <span onClick={onOpen}>{openButton}</span>
       <Modals size={size} closeButton={!closeButton ? <></> : customCloseButton && customCloseButton} className={``} isOpen={isOpen} onOpenChange={onOpenChange}>
-        <ModalContent className={`${position === 'right' && 'absolute right-0 top-0 h-full !m-0'} dark:bg-dark_bg_`}>
+        <ModalContent className={`${position === 'right' && 'absolute right-0 top-0 h-full !m-0'} ${position === 'left' && 'absolute left-0 top-0 h-full !m-0'} dark:bg-dark_bg_`}>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1">
+              <ModalHeader className="flex flex-col gap-1 text-center">
                 {title}
               </ModalHeader>
               <ModalBody className="p-0 !gap-0">
