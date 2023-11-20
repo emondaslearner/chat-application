@@ -21,7 +21,11 @@ const ChatNotOpened: React.FC<ChatNotOpenedProps> = () => {
                 <p className='text-[18px] text-dark_gray_' >Please select a chat to start messaging.</p>
                 <Button className='mx-auto table mt-3' fill={false}>Start a Conversation</Button>
                 <Button onClick={() => {
-                    mode === 'light' ? dispatch(changeMode('dark')) : dispatch(changeMode('light'))
+                    mode === 'light' ? (
+                        dispatch(changeMode('dark'))
+                    ) : (
+                        dispatch(changeMode('light'))
+                    )
                 }} className='mx-auto table mt-3' fill={false}>Change</Button>
             </div>
         </div>

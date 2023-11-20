@@ -1,22 +1,25 @@
-import React, { useState } from "react";
+import React, { ReactNode, useState } from "react";
 import { FileUploader } from "react-drag-drop-files";
 
-interface DargFileProps {}
+interface DargFileProps {
+  name: string;
+  children: ReactNode;
+  multiple: boolean;
+  fileTypes?: any;
+  onChange: (file: any) => void;
+}
 
-const fileTypes = ["JPEG", "PNG", "GIF"];
-
-const DragFile: React.FC<DargFileProps> = () => {
-  const [file, setFile] = useState(null);
-  const handleChange = (files: any) => {
-    setFile(files);
-  };
+const DragFile: React.FC<DargFileProps> = ({ name, children, multiple, fileTypes, onChange }) => {
   return (
     <FileUploader
-      multiple={true}
-      handleChange={handleChange}
-      name="file"
+      multiple={multiple}
+      handleChange={onChange}
+      name={name}
       types={fileTypes}
-      classes={'!w-full'}
+      classes={"!w-full"}
+      children={
+        children
+      }
     />
   );
 };
