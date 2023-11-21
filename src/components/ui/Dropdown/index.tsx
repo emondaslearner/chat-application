@@ -8,7 +8,7 @@ import {
 
 interface Items {
   key: string;
-  label: string;
+  label: string| ReactNode;
   icon?: ReactNode;
   onClick?: () => void;
   onMouseOver?: () => void;
