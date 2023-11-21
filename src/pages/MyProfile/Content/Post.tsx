@@ -3,16 +3,19 @@ import { IoMdMore } from "react-icons/io";
 import AvatarSingle from "@src/components/shared/Avatar";
 import { AiFillLike } from "react-icons/ai";
 import { FcLike } from "react-icons/fc";
-import { FaRegComments, FaShare } from "react-icons/fa";
+import { FaShare } from "react-icons/fa";
+import Input from "@src/components/shared/Input";
+import { IoSend } from "react-icons/io5";
+import Like from "./DropDowns/Like";
+import Comment from "./Popups/Comment";
+
+// images
+
 import sad from "@assets/Emoji/sad.png";
 import care from "@assets/Emoji/care.png";
 import wow from "@assets/Emoji/wow.png";
 import angry from "@assets/Emoji/angry.png";
 import haha from "@assets/Emoji/haha.png";
-import Input from "@src/components/shared/Input";
-import { IoSend } from "react-icons/io5";
-import Like from "./DropDowns/Like";
-import Comment from "./Popups/Comment";
 
 interface PostProps {
   viewStatus: "list" | "grid";
@@ -98,7 +101,7 @@ const Post: React.FC<PostProps> = ({ viewStatus, border = "" }) => {
         <>
           <div className="px-5 flex items-center justify-between py-3 border-b-[2px] border-t-[2px] border-light_border_ dark:border-dark_border_ mt-2">
             {/* Add rections on post */}
-            <Like />
+            <Like reactionStatus="post" />
 
             {/* Comments */}
             <div>

@@ -1,34 +1,78 @@
 import AvatarSingle from "@src/components/shared/Avatar";
 import Modal from "@src/components/ui/Model";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { FaRegComments } from "react-icons/fa";
 import { IoMdClose } from "react-icons/io";
 import Post from "../Post";
 import Input from "@src/components/shared/Input";
 import { IoSend } from "react-icons/io5";
+import Like from "../DropDowns/Like";
+import { AiFillLike } from "react-icons/ai";
+import { FcLike } from "react-icons/fc";
+
+// images
+import sad from "@assets/Emoji/sad.png";
+import care from "@assets/Emoji/care.png";
+import wow from "@assets/Emoji/wow.png";
+import angry from "@assets/Emoji/angry.png";
+import haha from "@assets/Emoji/haha.png";
 
 interface CommentProps {}
-interface AllCommentsProps {}
+interface SingleCommentProps {}
 
-const AllComments: React.FC<AllCommentsProps> = () => {
+const SingleComment: React.FC<SingleCommentProps> = () => {
+  const [activeReaction, setActiveReaction] = useState<string>("");
+
   return (
-    <div className="mb-3 px-[30px]">
-      <div className="flex">
-        <AvatarSingle src="" alt="Profile Picture" />
+    <div className="flex">
+      <AvatarSingle src="" alt="Profile Picture" />
 
-        <div className="ml-2 max-w-[300px]">
-          <div className="bg-light_gray_ px-5 py-1 max-w-[300px] rounded-[15px] dark:bg-dark_light_bg_ leading-5">
-            <p className="font-bold text-[16px] text-dark_ dark:white_">
-              Emon Das
-            </p>
-            <p className="text-[16px] text-dark_ dark:text-dark_text_">
-              Hello this is comment
+      <div className="ml-2 max-w-[300px]">
+        <div className="bg-light_gray_ px-5 py-1 max-w-[300px] rounded-[15px] dark:bg-dark_light_bg_ leading-5">
+          <p className="font-bold text-[16px] text-dark_ dark:text-white_">
+            Emon Das
+          </p>
+          <p className="text-[16px] text-dark_ dark:text-dark_text_">
+            Hello this is comment
+          </p>
+        </div>
+
+        <div className="w-full flex items-center justify-between">
+          <div className="w-[130px] flex items-center justify-between">
+            <p className="text-[14px] text-dark_ dark:text-dark_text_">3h</p>
+
+            <div>
+              <Like
+                setActiveReaction={setActiveReaction}
+                reactionStatus="comment"
+              />
+            </div>
+
+            <p className="text-[14px] text-dark_ dark:text-dark_text_ font-bold cursor-pointer">
+              Reply
             </p>
           </div>
 
-          <div className="w-[100px] flex items-center justify-between">
-            <p className="text-[14px] text-dark_ dark:text-dark_text_">3h</p>
-
+          <div>
+            {activeReaction === "Like" && (
+              <AiFillLike size={25} className="text-blue-500" />
+            )}
+            {activeReaction === "Love" && <FcLike size={25} />}
+            {activeReaction === "Care" && (
+              <img src={care} className="w-[30px] h-[30px]" alt="Care" />
+            )}
+            {activeReaction === "Sad" && (
+              <img src={sad} className="w-[20px] h-[20px]" alt="Sad" />
+            )}
+            {activeReaction === "Angry" && (
+              <img src={angry} className="w-[30px] h-[30px]" alt="Angry" />
+            )}
+            {activeReaction === "Wow" && (
+              <img src={wow} className="w-[30px] h-[30px]" alt="Wow" />
+            )}
+            {activeReaction === "Haha" && (
+              <img src={haha} className="w-[20px] h-[20px]" alt="Haha" />
+            )}
           </div>
         </div>
       </div>
@@ -69,7 +113,9 @@ const Comment: React.FC<CommentProps> = () => {
       <div className="max-h-[70vh] h-full overflow-y-auto relative border-t-[1px] border-light_border_ dark:border-dark_border_">
         <Post border="none" viewStatus="list" />
 
-        <AllComments />
+        <div className="mb-3 px-[30px]">
+          <SingleComment />
+        </div>
 
         {/* Comment field  */}
         <div

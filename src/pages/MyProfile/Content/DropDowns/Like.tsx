@@ -23,7 +23,10 @@ import angry from "@assets/Emoji/angry.png";
 import sad from "@assets/Emoji/sad.png";
 import haha from "@assets/Emoji/haha.png";
 
-interface LikeProps {}
+interface LikeProps {
+  reactionStatus: string;
+  setActiveReaction?: (e: string) => void;
+}
 
 interface Items {
   key: string;
@@ -73,83 +76,167 @@ const items: Items[] = [
   },
 ];
 
-const Like: React.FC<LikeProps> = () => {
+const Like: React.FC<LikeProps> = ({ reactionStatus, setActiveReaction }) => {
   const [isOpen, setOpen] = useState<boolean>(false);
 
   const [givenReaction, setReaction] = useState("");
 
+
+  useEffect(() => {
+    if(setActiveReaction !== undefined) {
+        setActiveReaction(givenReaction)
+    }
+  }, [givenReaction])
+
   return (
     <DropDowns size="sm" isOpen={isOpen} onOpenChange={(open) => setOpen(open)}>
       <DropdownTrigger>
-        <div
-          onMouseEnter={() => setOpen(true)}
-          onMouseLeave={() => setOpen(false)}
-          className="flex items-center gap-x-2 cursor-pointer"
-          onClick={() => {
-            setOpen(!isOpen)
-            setReaction(givenReaction === '' ? 'Like' : '')
-          }}
-        >
-          {givenReaction === "" && (
-            <>
-              <AiFillLike
-                className="text-dark_ dark:text-dark_text_"
-                size={30}
-              />
-              <p className="text-dark_ dark:text-dark_text_ font-semibold text-[18px]">
+        {/* post reactions  */}
+        {reactionStatus === "post" ? (
+          <div
+            onMouseEnter={() => setOpen(true)}
+            onMouseLeave={() => setOpen(false)}
+            className="flex items-center gap-x-2 cursor-pointer"
+            onClick={() => {
+              setOpen(!isOpen);
+              setReaction(givenReaction === "" ? "Like" : "");
+            }}
+          >
+            {givenReaction === "" && (
+              <>
+                <AiFillLike
+                  className="text-dark_ dark:text-dark_text_"
+                  size={30}
+                />
+                <p className="text-dark_ dark:text-dark_text_ font-semibold text-[18px]">
+                  Like
+                </p>
+              </>
+            )}
+
+            {givenReaction === "Like" && (
+              <>
+                <AiFillLike className="text-blue-500" size={30} />
+                <p className="text-blue-500 font-semibold text-[18px]">Like</p>
+              </>
+            )}
+
+            {givenReaction === "Love" && (
+              <>
+                <FcLike className="" size={30} />
+                <p className="text-[#F44336] font-semibold text-[18px]">Love</p>
+              </>
+            )}
+
+            {givenReaction === "Care" && (
+              <>
+                <img src={care} alt="care" className="w-[30px] h-[30px]" />
+                <p className="text-[#FFCE00] font-semibold text-[18px]">Care</p>
+              </>
+            )}
+
+            {givenReaction === "Sad" && (
+              <>
+                <img src={sad} alt="Sad" className="w-[20px] h-[20px]" />
+                <p className="text-[#FFCE00] font-semibold text-[18px]">Sad</p>
+              </>
+            )}
+
+            {givenReaction === "Wow" && (
+              <>
+                <img src={wow} alt="Wow" className="w-[30px] h-[30px]" />
+                <p className="text-[#FFCE00] font-semibold text-[18px]">Wow</p>
+              </>
+            )}
+
+            {givenReaction === "Haha" && (
+              <>
+                <img src={haha} alt="Haha" className="w-[20px] h-[20px]" />
+                <p className="text-[#FFCE00] font-semibold text-[18px]">Haha</p>
+              </>
+            )}
+            {givenReaction === "Angry" && (
+              <>
+                <img src={angry} alt="Angry" className="w-[30px] h-[30px]" />
+                <p className="text-[#FF721A] font-semibold text-[18px]">
+                  Angry
+                </p>
+              </>
+            )}
+          </div>
+        ) : (
+          // comment reaction
+          <div
+            onMouseEnter={() => setOpen(true)}
+            onMouseLeave={() => setOpen(false)}
+            className="flex items-center gap-x-2 cursor-pointer"
+            onClick={() => {
+              setOpen(!isOpen);
+              setReaction(givenReaction === "" ? "Like" : "");
+            }}
+          >
+            {givenReaction === "" && (
+              <p className="text-dark_ dark:text-dark_text_ font-bold cursor-pointer text-[14px]">
                 Like
               </p>
-            </>
-          )}
+            )}
 
-          {givenReaction === "Like" && (
-            <>
-              <AiFillLike className="text-blue-500" size={30} />
-              <p className="text-blue-500 font-semibold text-[18px]">Like</p>
-            </>
-          )}
+            {givenReaction === "Like" && (
+              <>
+                <p className="text-blue-500 font-bold cursor-pointer text-[14px]">
+                  Like
+                </p>
+              </>
+            )}
 
-          {givenReaction === "Love" && (
-            <>
-              <FcLike className="" size={30} />
-              <p className="text-[#F44336] font-semibold text-[18px]">Love</p>
-            </>
-          )}
+            {givenReaction === "Love" && (
+              <>
+                <p className="text-[#F44336] font-bold cursor-pointer text-[14px]">
+                  Love
+                </p>
+              </>
+            )}
 
-          {givenReaction === "Care" && (
-            <>
-              <img src={care} alt="care" className="w-[30px] h-[30px]" />
-              <p className="text-[#FFCE00] font-semibold text-[18px]">Care</p>
-            </>
-          )}
+            {givenReaction === "Care" && (
+              <>
+                <p className="text-[#FFCE00] font-bold cursor-pointer text-[14px]">
+                  Care
+                </p>
+              </>
+            )}
 
-          {givenReaction === "Sad" && (
-            <>
-              <img src={sad} alt="Sad" className="w-[20px] h-[20px]" />
-              <p className="text-[#FFCE00] font-semibold text-[18px]">Sad</p>
-            </>
-          )}
+            {givenReaction === "Sad" && (
+              <>
+                <p className="text-[#FFCE00] font-bold cursor-pointer text-[14px]">
+                  Sad
+                </p>
+              </>
+            )}
 
-          {givenReaction === "Wow" && (
-            <>
-              <img src={wow} alt="Wow" className="w-[30px] h-[30px]" />
-              <p className="text-[#FFCE00] font-semibold text-[18px]">Wow</p>
-            </>
-          )}
+            {givenReaction === "Wow" && (
+              <>
+                <p className="text-[#FFCE00] font-bold cursor-pointer text-[14px]">
+                  Wow
+                </p>
+              </>
+            )}
 
-          {givenReaction === "Haha" && (
-            <>
-              <img src={haha} alt="Haha" className="w-[20px] h-[20px]" />
-              <p className="text-[#FFCE00] font-semibold text-[18px]">Haha</p>
-            </>
-          )}
-          {givenReaction === "Angry" && (
-            <>
-              <img src={angry} alt="Angry" className="w-[30px] h-[30px]" />
-              <p className="text-[#FF721A] font-semibold text-[18px]">Angry</p>
-            </>
-          )}
-        </div>
+            {givenReaction === "Haha" && (
+              <>
+                <p className="text-[#FFCE00] font-bold cursor-pointer text-[14px]">
+                  Haha
+                </p>
+              </>
+            )}
+            {givenReaction === "Angry" && (
+              <>
+                <p className="text-[#FF721A] font-bold cursor-pointer text-[14px]">
+                  Angry
+                </p>
+              </>
+            )}
+          </div>
+        )}
       </DropdownTrigger>
       <DropdownMenu
         aria-label="Dynamic Actions"
@@ -163,7 +250,9 @@ const Like: React.FC<LikeProps> = () => {
             key={item.key}
             color={"default"}
             className={`!hover:bg-transparent !p-0 !w-auto !rounded-full`}
-            onClick={() => setReaction(item.key === givenReaction ? '' : item.key)}
+            onClick={() =>
+              setReaction(item.key === givenReaction ? "" : item.key)
+            }
           >
             <div className="transition-all duration-300 transform hover:scale-125 relative group">
               {item.label}
