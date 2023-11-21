@@ -6,6 +6,7 @@ import {
   DropdownItem,
 } from "@nextui-org/react";
 import { AiFillLike } from "react-icons/ai";
+import { FcLike } from "react-icons/fc";
 
 // images
 import likeEmoji from "@assets/Emoji/like-emoji.gif";
@@ -14,6 +15,13 @@ import careEmoji from "@assets/Emoji/care-emoji.gif";
 import hahaEmoji from "@assets/Emoji/haha-emoji.gif";
 import angryEmoji from "@assets/Emoji/angry-emoji.gif";
 import sadEmoji from "@assets/Emoji/sad-emoji.gif";
+import wowEmoji from "@assets/Emoji/wow-emoji.gif";
+
+import care from "@assets/Emoji/care.png";
+import wow from "@assets/Emoji/wow.png";
+import angry from "@assets/Emoji/angry.png";
+import sad from "@assets/Emoji/sad.png";
+import haha from "@assets/Emoji/haha.png";
 
 interface LikeProps {}
 
@@ -59,16 +67,16 @@ const items: Items[] = [
     key: "Sad",
     label: <img src={sadEmoji} alt="sad" className="w-[45px] h-[45px]" />,
   },
+  {
+    key: "Wow",
+    label: <img src={wowEmoji} alt="Wow" className="w-[45px] h-[45px]" />,
+  },
 ];
 
 const Like: React.FC<LikeProps> = () => {
   const [isOpen, setOpen] = useState<boolean>(false);
 
-  const [activeHover, setActiveHover] = useState<string>("");
-
-  useEffect(() => {
-    console.log("activeHover", activeHover);
-  }, [activeHover]);
+  const [givenReaction, setReaction] = useState("");
 
   return (
     <DropDowns size="sm" isOpen={isOpen} onOpenChange={(open) => setOpen(open)}>
@@ -77,11 +85,70 @@ const Like: React.FC<LikeProps> = () => {
           onMouseEnter={() => setOpen(true)}
           onMouseLeave={() => setOpen(false)}
           className="flex items-center gap-x-2 cursor-pointer"
+          onClick={() => {
+            setOpen(!isOpen)
+            setReaction(givenReaction === '' ? 'Like' : '')
+          }}
         >
-          <AiFillLike className="text-dark_ dark:text-dark_text_" size={30} />
-          <p className="text-dark_ dark:text-dark_text_ font-semibold text-[18px]">
-            Like
-          </p>
+          {givenReaction === "" && (
+            <>
+              <AiFillLike
+                className="text-dark_ dark:text-dark_text_"
+                size={30}
+              />
+              <p className="text-dark_ dark:text-dark_text_ font-semibold text-[18px]">
+                Like
+              </p>
+            </>
+          )}
+
+          {givenReaction === "Like" && (
+            <>
+              <AiFillLike className="text-blue-500" size={30} />
+              <p className="text-blue-500 font-semibold text-[18px]">Like</p>
+            </>
+          )}
+
+          {givenReaction === "Love" && (
+            <>
+              <FcLike className="" size={30} />
+              <p className="text-[#F44336] font-semibold text-[18px]">Love</p>
+            </>
+          )}
+
+          {givenReaction === "Care" && (
+            <>
+              <img src={care} alt="care" className="w-[30px] h-[30px]" />
+              <p className="text-[#FFCE00] font-semibold text-[18px]">Care</p>
+            </>
+          )}
+
+          {givenReaction === "Sad" && (
+            <>
+              <img src={sad} alt="Sad" className="w-[20px] h-[20px]" />
+              <p className="text-[#FFCE00] font-semibold text-[18px]">Sad</p>
+            </>
+          )}
+
+          {givenReaction === "Wow" && (
+            <>
+              <img src={wow} alt="Wow" className="w-[30px] h-[30px]" />
+              <p className="text-[#FFCE00] font-semibold text-[18px]">Wow</p>
+            </>
+          )}
+
+          {givenReaction === "Haha" && (
+            <>
+              <img src={haha} alt="Haha" className="w-[20px] h-[20px]" />
+              <p className="text-[#FFCE00] font-semibold text-[18px]">Haha</p>
+            </>
+          )}
+          {givenReaction === "Angry" && (
+            <>
+              <img src={angry} alt="Angry" className="w-[30px] h-[30px]" />
+              <p className="text-[#FF721A] font-semibold text-[18px]">Angry</p>
+            </>
+          )}
         </div>
       </DropdownTrigger>
       <DropdownMenu
@@ -96,14 +163,13 @@ const Like: React.FC<LikeProps> = () => {
             key={item.key}
             color={"default"}
             className={`!hover:bg-transparent !p-0 !w-auto !rounded-full`}
+            onClick={() => setReaction(item.key === givenReaction ? '' : item.key)}
           >
-            <div
-              onMouseOver={() => setActiveHover(item.key)}
-              onMouseOut={() => setActiveHover("")}
-              className="transition-all duration-300 transform hover:scale-125 relative group"
-            >
+            <div className="transition-all duration-300 transform hover:scale-125 relative group">
               {item.label}
-              <div className={`hidden group-hover:!block bg-dark_ px-3 py-1 dark:bg-dark_light_bg_ absolute bottom-[130%] left-[-10%] rounded-[10px]`}>
+              <div
+                className={`hidden group-hover:!block bg-dark_ px-3 py-1 dark:bg-dark_light_bg_ absolute bottom-[130%] left-[-10%] rounded-[10px]`}
+              >
                 <p className="text-[16px] text-white_">{item.key}</p>
               </div>
             </div>

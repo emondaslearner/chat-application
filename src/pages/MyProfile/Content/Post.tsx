@@ -8,32 +8,39 @@ import sad from "@assets/Emoji/sad.png";
 import care from "@assets/Emoji/care.png";
 import wow from "@assets/Emoji/wow.png";
 import angry from "@assets/Emoji/angry.png";
+import haha from "@assets/Emoji/haha.png";
 import Input from "@src/components/shared/Input";
 import { IoSend } from "react-icons/io5";
 import Like from "./DropDowns/Like";
+import Comment from "./Popups/Comment";
 
 interface PostProps {
   viewStatus: "list" | "grid";
+  border?: "none"
 }
 
-const Post: React.FC<PostProps> = ({ viewStatus }) => {
+const Post: React.FC<PostProps> = ({ viewStatus, border = "" }) => {
   return (
-    <div className={`${viewStatus === 'list' ? 'py-3' : 'pt-3 cursor-pointer'} w-full bg-light_gray_ dark:bg-dark_bg_ border-[2px] border-light_border_ dark:border-dark_border_ rounded-[5px]`}>
+    <div
+      className={`${
+        viewStatus === "list" ? "py-3" : "pt-3 cursor-pointer"
+      } w-full relative ${border !== "none" && "border-[2px] bg-light_gray_ dark:bg-dark_bg_"} border-light_border_ dark:border-dark_border_ rounded-[5px]`}
+    >
       {/* post header  */}
       <div className="px-3 flex items-center justify-between w-full">
         <div className="flex items-center">
-          <AvatarSingle
-            src="https://scontent.fcgp3-2.fna.fbcdn.net/v/t39.30808-6/400528726_122114094254090279_6012386613011793258_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=5f2048&_nc_eui2=AeFzr3L26Dv-NDgmr-MW3I0wst9g9rb1Owqy32D2tvU7Ci8zSgb8ULQYeI_NndUN6m5BrLO7rPunIcvSXxzZTsa1&_nc_ohc=usTUFpZ9CrAAX8U5OUh&_nc_ht=scontent.fcgp3-2.fna&oh=00_AfAbyxiQpj9K3_ii5ERPJzpiT_5hC94Yd9ep6OY14Ci6UA&oe=655A53E0"
-            alt="Profile picture"
-          />
+          <AvatarSingle src={""} alt="Profile picture" />
 
-          <div className="ml-2">
-            <p className="text-[16px] font-semibold text-dark_ dark:text-white_">
-              Emon Das
-            </p>
-            <p className="text-[14px] font-semibold text-dark_ dark:text-dark_text_">
-              5d
-            </p>
+          <div className="ml-3">
+            <div className="flex items-center">
+              <p className="text-[18px] text-dark_ dark:text-white_ font-bold">
+                Emon Das
+              </p>
+              <p className="text-dark_ dark:text-dark_text_ ml-2">
+                is feeling happy
+              </p>
+            </div>
+            <p className="text-dark_ dark:text-dark_text_">2h</p>
           </div>
         </div>
 
@@ -44,13 +51,11 @@ const Post: React.FC<PostProps> = ({ viewStatus }) => {
       </div>
 
       {viewStatus === "list" && (
-        <p className="text-[16px] text-dark_ dark:text-dark_text_ px-3 mt-1">
-          This is status
-        </p>
+        <p className="my-3 text-[16px] text-dark_ dark:text-dark_text_ px-[25px]">Hello world this is emon</p>
       )}
 
       <img
-        className="w-full h-auto my-2"
+        className="w-full h-auto my-2 max-h-[400px]"
         src="https://media.istockphoto.com/id/1552967838/photo/beautiful-summer-landscape-as-an-floral-background-wild-flowers-in-the-meadow-and-sunlight.webp?b=1&s=170667a&w=0&k=20&c=bLgGq2Si_D8wgzOmIzvnIzsA4XkPC0f0_0gLdfYwm6M="
         alt=""
       />
@@ -64,7 +69,7 @@ const Post: React.FC<PostProps> = ({ viewStatus }) => {
               146 <AiFillLike className="text-blue-500" size={25} />
             </p>
             <p className="text-[14px] text-dark_ dark:text-dark_text_ flex items-center gap-x-1">
-              100 <FcLike className="text-blue-500" size={25} />
+              100 <FcLike className="" size={25} />
             </p>
             <p className="text-[14px] text-dark_ dark:text-dark_text_ flex items-center">
               50 <img className="w-[30px] h-[30px]" src={care} alt="" />
@@ -74,6 +79,9 @@ const Post: React.FC<PostProps> = ({ viewStatus }) => {
             </p>
             <p className="text-[14px] text-dark_ dark:text-dark_text_ flex items-center">
               50 <img className="w-[30px] h-[30px]" src={wow} alt="" />
+            </p>
+            <p className="text-[14px] text-dark_ dark:text-dark_text_ flex items-center">
+              50 <img className="w-[20px] ml-1 h-[20px]" src={haha} alt="" />
             </p>
             <p className="text-[14px] text-dark_ dark:text-dark_text_ flex items-center">
               50 <img className="w-[30px] h-[30px]" src={angry} alt="" />
@@ -89,16 +97,12 @@ const Post: React.FC<PostProps> = ({ viewStatus }) => {
       {viewStatus === "list" && (
         <>
           <div className="px-5 flex items-center justify-between py-3 border-b-[2px] border-t-[2px] border-light_border_ dark:border-dark_border_ mt-2">
+            {/* Add rections on post */}
             <Like />
 
-            <div className="flex items-center gap-x-2 cursor-pointer">
-              <FaRegComments
-                className="text-dark_ dark:text-dark_text_"
-                size={30}
-              />
-              <p className="text-dark_ dark:text-dark_text_ font-semibold text-[18px]">
-                Comments
-              </p>
+            {/* Comments */}
+            <div>
+              <Comment />
             </div>
 
             <div className="flex items-center gap-x-2 cursor-pointer">
@@ -109,7 +113,7 @@ const Post: React.FC<PostProps> = ({ viewStatus }) => {
             </div>
           </div>
 
-          <div className="relative w-[90%] mx-auto mt-3">
+          <div className={`relative w-[90%] mx-auto mt-3 ${border === 'none' && 'hidden'}`}>
             <Input
               type="text"
               placeholder="Write a comment"
