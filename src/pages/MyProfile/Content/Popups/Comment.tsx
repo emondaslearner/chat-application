@@ -131,6 +131,17 @@ const Comment: React.FC<CommentProps> = () => {
               .split("/")
               .filter((data: string) => data?.length);
 
+            let parentIndex = 0;
+
+            const parent = comments.find((singleComment: any, index: number) => {
+              parentIndex = index;
+              return singleComment?.id === data?.parent
+            })
+
+            const parentNumber = parentIndex + 1;
+            const currentChildNumber = index + 1;
+            const minusFromParent = currentChildNumber - parentNumber;
+
             return (
               <div
                 key={index}
@@ -138,7 +149,12 @@ const Comment: React.FC<CommentProps> = () => {
                 className={`relative`}
               >
                 {checkDepth.length > 0 && (
-                  <div className="w-[30px] h-[100%] rounded-bl-[10px] border-l-[2px] border-b-[2px] border-light_border_ dark:border-dark_border_ absolute right-[101%] bottom-[70%]"></div>
+                  <div
+                    style={{
+                      height: `${minusFromParent * 75}px`,
+                    }}
+                    className={`w-[30px] rounded-bl-[10px] border-l-[2px] border-b-[2px] border-light_border_ dark:border-dark_border_ absolute right-[101%] bottom-[70%]`}
+                  ></div>
                 )}
                 <SingleComment data={data} />
 
