@@ -17,27 +17,32 @@ import wow from "@assets/Emoji/wow.png";
 import angry from "@assets/Emoji/angry.png";
 import haha from "@assets/Emoji/haha.png";
 
-interface CommentProps {}
-interface SingleCommentProps {}
+//mock data
+import CommentData from "@src/mock data/comments/MOCK_DATA.json";
 
-const SingleComment: React.FC<SingleCommentProps> = () => {
+interface CommentProps {}
+interface SingleCommentProps {
+  data: any;
+}
+
+const SingleComment: React.FC<SingleCommentProps> = ({ data }) => {
   const [activeReaction, setActiveReaction] = useState<string>("");
 
   return (
     <div className="flex">
       <AvatarSingle src="" alt="Profile Picture" />
 
-      <div className="ml-2 max-w-[300px]">
+      <div className="ml-2 max-w-[500px] min-w-[200px]">
         <div className="bg-light_gray_ px-5 py-1 max-w-[300px] rounded-[15px] dark:bg-dark_light_bg_ leading-5">
           <p className="font-bold text-[16px] text-dark_ dark:text-white_">
             Emon Das
           </p>
           <p className="text-[16px] text-dark_ dark:text-dark_text_">
-            Hello this is comment
+            {data?.message}
           </p>
         </div>
 
-        <div className="w-full flex items-center justify-between">
+        <div className="w-full flex items-center justify-between h-[30px]">
           <div className="w-[130px] flex items-center justify-between">
             <p className="text-[14px] text-dark_ dark:text-dark_text_">3h</p>
 
@@ -53,7 +58,7 @@ const SingleComment: React.FC<SingleCommentProps> = () => {
             </p>
           </div>
 
-          <div>
+          <div className="">
             {activeReaction === "Like" && (
               <AiFillLike size={25} className="text-blue-500" />
             )}
@@ -81,6 +86,13 @@ const SingleComment: React.FC<SingleCommentProps> = () => {
 };
 
 const Comment: React.FC<CommentProps> = () => {
+  const [comments, setComments] = useState<any>([]);
+
+  useEffect(() => {
+    const baseComments = CommentData.filter((data: any) => !data?.parent);
+    setComments(baseComments);
+  }, []);
+
   return (
     <Modal
       openButton={
@@ -113,8 +125,45 @@ const Comment: React.FC<CommentProps> = () => {
       <div className="max-h-[70vh] h-full overflow-y-auto relative border-t-[1px] border-light_border_ dark:border-dark_border_">
         <Post border="none" viewStatus="list" />
 
-        <div className="mb-3 px-[30px]">
-          <SingleComment />
+        <div className="mb-3 px-[30px] gap-y-3 flex flex-col">
+          {comments.map((data: any, index: any) => {
+            const checkDepth = data?.path
+              .split("/")
+              .filter((data: string) => data?.length);
+
+            return (
+              <div
+                key={index}
+                style={{ marginLeft: `${checkDepth.length * 50}px` }}
+                className={`relative`}
+              >
+                {checkDepth.length > 0 && (
+                  <div className="w-[30px] h-[100%] rounded-bl-[10px] border-l-[2px] border-b-[2px] border-light_border_ dark:border-dark_border_ absolute right-[101%] bottom-[70%]"></div>
+                )}
+                <SingleComment data={data} />
+
+                {data?.replyCount > 0 &&
+                  comments[index + 1].parent !== data?.id && (
+                    <p
+                      onClick={() => {
+                        const replies = CommentData.filter(
+                          (da: any) => da?.parent === data?.id
+                        );
+
+                        let newArray = [...comments];
+                        newArray.splice(index + 1, 0, ...replies);
+
+                        setComments(newArray);
+                        newArray = [];
+                      }}
+                      className="ml-12 table text-[16px] text-dark_ dark:text-dark_text_ cursor-pointer hover:underline"
+                    >
+                      {data?.replyCount} replied
+                    </p>
+                  )}
+              </div>
+            );
+          })}
         </div>
 
         {/* Comment field  */}

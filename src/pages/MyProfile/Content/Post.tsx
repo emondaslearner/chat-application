@@ -100,7 +100,7 @@ const Post: React.FC<PostProps> = ({ viewStatus, border = "" }) => {
       {viewStatus === "list" && (
         <>
           <div className="px-5 flex items-center justify-between py-3 border-b-[2px] border-t-[2px] border-light_border_ dark:border-dark_border_ mt-2">
-            {/* Add rections on post */}
+            {/* Add reactions on post */}
             <Like reactionStatus="post" />
 
             {/* Comments */}

@@ -79,7 +79,7 @@ const items: Items[] = [
 const Like: React.FC<LikeProps> = ({ reactionStatus, setActiveReaction }) => {
   const [isOpen, setOpen] = useState<boolean>(false);
 
-  const [givenReaction, setReaction] = useState("");
+  const [givenReaction, setReaction] = useState<string>("");
 
 
   useEffect(() => {
