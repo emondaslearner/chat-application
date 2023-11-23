@@ -1,6 +1,6 @@
 import AvatarSingle from "@src/components/shared/Avatar";
 import Modal from "@src/components/ui/Model";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, ReactNode } from "react";
 import { FaRegComments } from "react-icons/fa";
 import { IoMdClose } from "react-icons/io";
 import Post from "../Post";
@@ -25,15 +25,43 @@ interface SingleCommentProps {
   data: any;
 }
 
+function getElementHeight(element: any) {
+  if (element === null || element === undefined) {
+    return 0;
+  }
+
+  if (typeof element === "string") {
+    element = document.querySelector(element);
+    if (element === null || element === undefined) {
+      return 0;
+    }
+  }
+
+  return element.offsetHeight;
+}
+
+function getVerticalDistance(element1: any, element2: any) {
+  if (!element1 || !element2) {
+    return 0;
+  }
+
+  const rect1 = element1.getBoundingClientRect();
+  const rect2 = element2.getBoundingClientRect();
+
+  const distance = Math.abs(rect2.top - rect1.bottom);
+
+  return distance;
+}
+
 const SingleComment: React.FC<SingleCommentProps> = ({ data }) => {
   const [activeReaction, setActiveReaction] = useState<string>("");
 
   return (
     <div className="flex">
-      <AvatarSingle src="" alt="Profile Picture" />
+      <AvatarSingle src="" alt="Profile Picture" className="!z-50" />
 
       <div className="ml-2 max-w-[500px] min-w-[200px]">
-        <div className="bg-light_gray_ px-5 py-1 max-w-[300px] rounded-[15px] dark:bg-dark_light_bg_ leading-5">
+        <div className="bg-light_gray_ px-5 py-1 rounded-[15px] dark:bg-dark_light_bg_ leading-5">
           <p className="font-bold text-[16px] text-dark_ dark:text-white_">
             Emon Das
           </p>
@@ -114,7 +142,7 @@ const Comment: React.FC<CommentProps> = () => {
           Emon post
         </p>
       }
-      dismissable={true}
+      dismissable={false}
       closeButton={true}
       customCloseButton={
         <div className="p-[10px] !bg-dark_gray_ dark:bg-light_gray_">
@@ -131,29 +159,52 @@ const Comment: React.FC<CommentProps> = () => {
               .split("/")
               .filter((data: string) => data?.length);
 
+            const prevDepth = comments[index - 1]?.path
+              .split("/")
+              .filter((data: string) => data?.length);
+
             let parentIndex = 0;
 
-            const parent = comments.find((singleComment: any, index: number) => {
-              parentIndex = index;
-              return singleComment?.id === data?.parent
-            })
+            const parent = comments.find(
+              (singleComment: any, index: number) => {
+                parentIndex = index;
+                return singleComment?.id === data?.parent;
+              }
+            );
 
             const parentNumber = parentIndex + 1;
             const currentChildNumber = index + 1;
-            const minusFromParent = currentChildNumber - parentNumber;
+            const childNumber = currentChildNumber - parentNumber;
+
+            const currentDiv = document.querySelectorAll(".rela")[index - 1];
+            const currentDivHeight = getElementHeight(currentDiv);
+
+            let distance = 0;
+
+            if (comments[index]?.parent && !comments[index + 1]?.parent && prevDepth.length > checkDepth.length) {
+              const firstElement = document.querySelectorAll(".rela")[index];
+              const secondElement =
+                document.querySelectorAll(".rela")[parentIndex];
+              const getDistance = getVerticalDistance(
+                firstElement,
+                secondElement
+              );
+
+              distance = getDistance;
+            }
 
             return (
               <div
                 key={index}
                 style={{ marginLeft: `${checkDepth.length * 50}px` }}
-                className={`relative`}
+                className={`relative rela`}
               >
                 {checkDepth.length > 0 && (
                   <div
                     style={{
-                      height: `${minusFromParent * 75}px`,
+                      height: `${ distance ? distance - 70 : childNumber * (currentDivHeight + 5)}px`,
                     }}
-                    className={`w-[30px] rounded-bl-[10px] border-l-[2px] border-b-[2px] border-light_border_ dark:border-dark_border_ absolute right-[101%] bottom-[70%]`}
+                    className={`w-[30px] rounded-bl-[10px] border-l-[2px] border-b-[2px] border-light_border_ dark:border-dark_border_ absolute right-[101%] bottom-[85%] z-10`}
                   ></div>
                 )}
                 <SingleComment data={data} />
