@@ -40,15 +40,17 @@ function getElementHeight(element: any) {
   return element.offsetHeight;
 }
 
-function getVerticalDistance(element1: any, element2: any) {
-  if (!element1 || !element2) {
-    return 0;
-  }
+function getVerticalDistance(elementOne: any, elementTwo: any) {
+  let distance = -1;
 
-  const rect1 = element1.getBoundingClientRect();
-  const rect2 = element2.getBoundingClientRect();
+  const rect1 = elementOne.getBoundingClientRect();
+  const rect2 = elementTwo.getBoundingClientRect();
 
-  const distance = Math.abs(rect2.top - rect1.bottom);
+  const y1 = rect1.top;
+  const y2 = rect2.top;
+  const yDistance = y1 - y2;
+
+  distance = Math.abs(yDistance);
 
   return distance;
 }
@@ -159,29 +161,15 @@ const Comment: React.FC<CommentProps> = () => {
               .split("/")
               .filter((data: string) => data?.length);
 
-            const prevDepth = comments[index - 1]?.path
-              .split("/")
-              .filter((data: string) => data?.length);
-
             let parentIndex = 0;
-
-            const parent = comments.find(
-              (singleComment: any, index: number) => {
-                parentIndex = index;
-                return singleComment?.id === data?.parent;
-              }
-            );
-
-            const parentNumber = parentIndex + 1;
-            const currentChildNumber = index + 1;
-            const childNumber = currentChildNumber - parentNumber;
-
-            const currentDiv = document.querySelectorAll(".rela")[index - 1];
-            const currentDivHeight = getElementHeight(currentDiv);
+            comments.find((singleComment: any, index: number) => {
+              parentIndex = index;
+              return singleComment?.id === data?.parent;
+            });
 
             let distance = 0;
 
-            if (comments[index]?.parent && !comments[index + 1]?.parent && prevDepth.length > checkDepth.length) {
+            if (data?.parent) {
               const firstElement = document.querySelectorAll(".rela")[index];
               const secondElement =
                 document.querySelectorAll(".rela")[parentIndex];
@@ -202,7 +190,7 @@ const Comment: React.FC<CommentProps> = () => {
                 {checkDepth.length > 0 && (
                   <div
                     style={{
-                      height: `${ distance ? distance - 70 : childNumber * (currentDivHeight + 5)}px`,
+                      height: `${distance}px`,
                     }}
                     className={`w-[30px] rounded-bl-[10px] border-l-[2px] border-b-[2px] border-light_border_ dark:border-dark_border_ absolute right-[101%] bottom-[85%] z-10`}
                   ></div>
