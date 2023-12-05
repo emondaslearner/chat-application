@@ -18,26 +18,15 @@ import angry from "@assets/Emoji/angry.png";
 import haha from "@assets/Emoji/haha.png";
 
 //mock data
-import CommentData from "@src/mock data/comments/MOCK_DATA.json";
+import CommentData from "@src/mockData/comments/MOCK_DATA.json";
+import { createRandomNumber } from "@src/utils";
 
 interface CommentProps {}
 interface SingleCommentProps {
   data: any;
-}
-
-function getElementHeight(element: any) {
-  if (element === null || element === undefined) {
-    return 0;
-  }
-
-  if (typeof element === "string") {
-    element = document.querySelector(element);
-    if (element === null || element === undefined) {
-      return 0;
-    }
-  }
-
-  return element.offsetHeight;
+  index: number;
+  setComments: any;
+  comment: any;
 }
 
 function getVerticalDistance(elementOne: any, elementTwo: any) {
@@ -55,63 +44,131 @@ function getVerticalDistance(elementOne: any, elementTwo: any) {
   return distance;
 }
 
-const SingleComment: React.FC<SingleCommentProps> = ({ data }) => {
+const SingleComment: React.FC<SingleCommentProps> = ({
+  data,
+  index,
+  setComments,
+  comment,
+}) => {
   const [activeReaction, setActiveReaction] = useState<string>("");
 
+  const [reply, setReply] = useState<boolean>(false);
+  const [replyMessage, setReplyMessage] = useState<string>("");
+
+  // reply in a comment
+  const Reply = () => {
+    const randomNum = createRandomNumber();
+
+    // prev comment list
+    const list = [...comment];
+
+    // reply content
+    const createReply = {
+      id: randomNum,
+      path: data?.path.length ? `${data?.path}/${data?.id}` : data?.id,
+      parent: data?.id,
+      updatedAt: "7/2/2023",
+      createdAt: "8/24/2023",
+      message: replyMessage,
+      replyCount: 0,
+    };
+
+    const currentData = {
+      ...data,
+      replyCount: data?.replyCount + 1,
+    };
+
+    list[index] = currentData;
+    list.splice(index + 1, 0, createReply);
+
+    setComments(list);
+
+    setReply(false);
+  };
+
   return (
-    <div className="flex">
-      <AvatarSingle src="" alt="Profile Picture" className="!z-50" />
+    <>
+      <div className="flex">
+        <AvatarSingle src="" alt="Profile Picture" className="!z-50" />
 
-      <div className="ml-2 max-w-[500px] min-w-[200px]">
-        <div className="bg-light_gray_ px-5 py-1 rounded-[15px] dark:bg-dark_light_bg_ leading-5">
-          <p className="font-bold text-[16px] text-dark_ dark:text-white_">
-            Emon Das
-          </p>
-          <p className="text-[16px] text-dark_ dark:text-dark_text_">
-            {data?.message}
-          </p>
-        </div>
-
-        <div className="w-full flex items-center justify-between h-[30px]">
-          <div className="w-[130px] flex items-center justify-between">
-            <p className="text-[14px] text-dark_ dark:text-dark_text_">3h</p>
-
-            <div>
-              <Like
-                setActiveReaction={setActiveReaction}
-                reactionStatus="comment"
-              />
-            </div>
-
-            <p className="text-[14px] text-dark_ dark:text-dark_text_ font-bold cursor-pointer">
-              Reply
+        <div className="ml-2 max-w-[500px] min-w-[200px]">
+          <div className="bg-light_gray_ px-5 py-1 rounded-[15px] dark:bg-dark_light_bg_ leading-5">
+            <p className="font-bold text-[16px] text-dark_ dark:text-white_">
+              Emon Das
+            </p>
+            <p className="text-[16px] text-dark_ dark:text-dark_text_">
+              {data?.message}
             </p>
           </div>
 
-          <div className="">
-            {activeReaction === "Like" && (
-              <AiFillLike size={25} className="text-blue-500" />
-            )}
-            {activeReaction === "Love" && <FcLike size={25} />}
-            {activeReaction === "Care" && (
-              <img src={care} className="w-[30px] h-[30px]" alt="Care" />
-            )}
-            {activeReaction === "Sad" && (
-              <img src={sad} className="w-[20px] h-[20px]" alt="Sad" />
-            )}
-            {activeReaction === "Angry" && (
-              <img src={angry} className="w-[30px] h-[30px]" alt="Angry" />
-            )}
-            {activeReaction === "Wow" && (
-              <img src={wow} className="w-[30px] h-[30px]" alt="Wow" />
-            )}
-            {activeReaction === "Haha" && (
-              <img src={haha} className="w-[20px] h-[20px]" alt="Haha" />
-            )}
+          <div className="w-full flex items-center justify-between h-[30px]">
+            <div className="w-[130px] flex items-center justify-between">
+              <p className="text-[14px] text-dark_ dark:text-dark_text_">3h</p>
+
+              <div>
+                <Like
+                  setActiveReaction={setActiveReaction}
+                  reactionStatus="comment"
+                />
+              </div>
+
+              <p
+                onClick={() => {
+                  setReply(true);
+                }}
+                className="text-[14px] text-dark_ dark:text-dark_text_ font-bold cursor-pointer"
+              >
+                Reply
+              </p>
+            </div>
+
+            <div className="">
+              {activeReaction === "Like" && (
+                <AiFillLike size={25} className="text-blue-500" />
+              )}
+              {activeReaction === "Love" && <FcLike size={25} />}
+              {activeReaction === "Care" && (
+                <img src={care} className="w-[30px] h-[30px]" alt="Care" />
+              )}
+              {activeReaction === "Sad" && (
+                <img src={sad} className="w-[20px] h-[20px]" alt="Sad" />
+              )}
+              {activeReaction === "Angry" && (
+                <img src={angry} className="w-[30px] h-[30px]" alt="Angry" />
+              )}
+              {activeReaction === "Wow" && (
+                <img src={wow} className="w-[30px] h-[30px]" alt="Wow" />
+              )}
+              {activeReaction === "Haha" && (
+                <img src={haha} className="w-[20px] h-[20px]" alt="Haha" />
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+
+      {/* Reply inputs */}
+      {reply && (
+        <div className="w-full justify-end flex py-2">
+          <div className="w-[93%] relative">
+            <Input
+              value={replyMessage}
+              onChange={(e) => setReplyMessage(e.target.value)}
+              type="text"
+              className="!w-full rounded-[10px]"
+            />
+
+            <div className="absolute bottom-3 right-3 flex items-center">
+              <IoSend
+                className="text-primary_ cursor-pointer"
+                size={20}
+                onClick={Reply}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 
@@ -195,7 +252,12 @@ const Comment: React.FC<CommentProps> = () => {
                     className={`w-[30px] rounded-bl-[10px] border-l-[2px] border-b-[2px] border-light_border_ dark:border-dark_border_ absolute right-[101%] bottom-[85%] z-10`}
                   ></div>
                 )}
-                <SingleComment data={data} />
+                <SingleComment
+                  data={data}
+                  index={index}
+                  setComments={setComments}
+                  comment={comments}
+                />
 
                 {data?.replyCount > 0 &&
                   comments[index + 1].parent !== data?.id && (
