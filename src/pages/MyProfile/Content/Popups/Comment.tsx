@@ -27,6 +27,7 @@ interface SingleCommentProps {
   index: number;
   setComments: any;
   comment: any;
+  expandReply: any;
 }
 
 function getVerticalDistance(elementOne: any, elementTwo: any) {
@@ -49,6 +50,7 @@ const SingleComment: React.FC<SingleCommentProps> = ({
   index,
   setComments,
   comment,
+  expandReply
 }) => {
   const [activeReaction, setActiveReaction] = useState<string>("");
 
@@ -82,6 +84,7 @@ const SingleComment: React.FC<SingleCommentProps> = ({
     list.splice(index + 1, 0, createReply);
 
     setComments(list);
+    setReplyMessage('')
 
     setReply(false);
   };
@@ -114,6 +117,7 @@ const SingleComment: React.FC<SingleCommentProps> = ({
 
               <p
                 onClick={() => {
+                  expandReply();
                   setReply(true);
                 }}
                 className="text-[14px] text-dark_ dark:text-dark_text_ font-bold cursor-pointer"
@@ -218,24 +222,17 @@ const Comment: React.FC<CommentProps> = () => {
               .split("/")
               .filter((data: string) => data?.length);
 
-            let parentIndex = 0;
-            comments.find((singleComment: any, index: number) => {
-              parentIndex = index;
-              return singleComment?.id === data?.parent;
-            });
-
-            let distance = 0;
-
-            if (data?.parent) {
-              const firstElement = document.querySelectorAll(".rela")[index];
-              const secondElement =
-                document.querySelectorAll(".rela")[parentIndex];
-              const getDistance = getVerticalDistance(
-                firstElement,
-                secondElement
+            // expand Reply
+            const expandReply = () => {
+              const replies = CommentData.filter(
+                (da: any) => da?.parent === data?.id
               );
 
-              distance = getDistance;
+              let newArray = [...comments];
+              newArray.splice(index + 1, 0, ...replies);
+
+              setComments(newArray);
+              newArray = [];
             }
 
             return (
@@ -244,35 +241,26 @@ const Comment: React.FC<CommentProps> = () => {
                 style={{ marginLeft: `${checkDepth.length * 50}px` }}
                 className={`relative rela`}
               >
-                {checkDepth.length > 0 && (
+                {/* {checkDepth.length > 0 && (
                   <div
                     style={{
                       height: `${distance}px`,
                     }}
                     className={`w-[30px] rounded-bl-[10px] border-l-[2px] border-b-[2px] border-light_border_ dark:border-dark_border_ absolute right-[101%] bottom-[85%] z-10`}
                   ></div>
-                )}
+                )} */}
                 <SingleComment
                   data={data}
                   index={index}
                   setComments={setComments}
                   comment={comments}
+                  expandReply={expandReply}
                 />
 
                 {data?.replyCount > 0 &&
                   comments[index + 1].parent !== data?.id && (
                     <p
-                      onClick={() => {
-                        const replies = CommentData.filter(
-                          (da: any) => da?.parent === data?.id
-                        );
-
-                        let newArray = [...comments];
-                        newArray.splice(index + 1, 0, ...replies);
-
-                        setComments(newArray);
-                        newArray = [];
-                      }}
+                      onClick={expandReply}
                       className="ml-12 table text-[16px] text-dark_ dark:text-dark_text_ cursor-pointer hover:underline"
                     >
                       {data?.replyCount} replied
