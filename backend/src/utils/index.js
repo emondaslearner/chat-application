@@ -1,3 +1,4 @@
-import error from "error.js";
+const error = require("./error");
+const hash = require("./hash");
 
-export { error };
+module.exports = { error, hash };

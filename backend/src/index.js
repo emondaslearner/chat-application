@@ -1,9 +1,9 @@
-import "dotenv/config";
-import "module-alias/register.js";
-import app from "./app.js";
-import http from "http";
-import { connectDb, connectRedis } from "./db/index.js";
-import socketConnection from "./third-party/socket.io/index.js";
+require("module-alias/register");
+require("dotenv").config();
+const app = require("./app");
+const http = require("http");
+const { connectDb, connectRedis } = require("./db");
+const socketConnection = require("./third-party/socket.io");
 
 const port = 6500 || process.env.PORT;
 const server = http.createServer(app);

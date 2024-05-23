@@ -1,10 +1,10 @@
-const badRequest = async (msg = "Bad Request") => {
+const badRequest = (msg = "Bad Request") => {
   const error = new Error(msg);
   error.status = 400;
   return error;
 };
 
-const notFound = async (msg = "Resource not  found") => {
+const notFound = (msg = "Resource not  found") => {
   const error = new Error(msg);
   error.status = 404;
   return error;
@@ -22,4 +22,4 @@ const authenticationError = () => {
   return error;
 };
 
-export { badRequest, notFound, serverError, authenticationError };
+module.exports = { badRequest, notFound, serverError, authenticationError };

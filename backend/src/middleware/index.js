@@ -1,6 +1,6 @@
-import bodyParser from "body-parser";
-import cors from "cors";
-import router from "@routers/index.js";
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const router = require("@routers");
 
 const middleware = (app) => {
   app.use(bodyParser.json());
@@ -9,7 +9,7 @@ const middleware = (app) => {
 
   // send error response
   app.use((err, _req, res, _next) => {
-    console.log(err.message);
+    console.log(err);
 
     if (err.status === 400) {
       if (err.message.split(":").length < 2) {
@@ -53,4 +53,4 @@ const middleware = (app) => {
   });
 };
 
-export default middleware;
+module.exports = middleware;

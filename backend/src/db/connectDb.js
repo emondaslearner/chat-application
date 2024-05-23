@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 let connectionUrl = process.env.DB_CONNECTION_URL;
 connectionUrl = connectionUrl.replace("<username>", process.env.DB_USERNAME);
@@ -9,4 +9,4 @@ const connection = async (status) => {
   console.log("Database Connected");
 };
 
-export default connection;
+module.exports = connection;

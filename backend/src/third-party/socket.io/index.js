@@ -1,7 +1,7 @@
-import { Server } from "socket.io";
+const { Server } = require("socket.io");
 
 const socketConnection = (server) => {
   const io = new Server(server);
 };
 
-export default socketConnection;
+module.exports = socketConnection;

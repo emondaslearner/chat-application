@@ -1,4 +1,4 @@
-import connectDb from "./connectDb.js";
-import connectRedis from "./connectRedis.js";
+const connectDb = require("./connectDb");
+const connectRedis = require("./connectRedis");
 
-export { connectDb, connectRedis };
+module.exports = { connectDb, connectRedis };

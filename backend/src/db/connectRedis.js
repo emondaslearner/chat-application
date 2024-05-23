@@ -1,4 +1,4 @@
-import { createClient } from "redis";
+const { createClient } = require("redis");
 
 const client = createClient({
   password: process.env.REDIS_PASS,
@@ -17,4 +17,4 @@ const connection = async () => {
   }
 };
 
-export default connection;
+module.exports = connection;

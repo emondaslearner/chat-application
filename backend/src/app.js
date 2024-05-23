@@ -1,5 +1,9 @@
-import express from "express";
+const express = require("express");
+const middleware = require("@middleware");
 
 const app = express();
 
-export default app;
+// middleware
+middleware(app);
+
+module.exports = app;
