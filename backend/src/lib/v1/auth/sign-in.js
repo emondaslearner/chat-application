@@ -3,6 +3,7 @@ const User = require("@models/User");
 const { generateToken } = require("@third-party/token");
 
 const signIn = async ({ email, password }) => {
+  // if email or password not provided
   if (!email || !password) {
     throw error.badRequest(
       `${!email && "email:email is required"}|${
@@ -17,12 +18,14 @@ const signIn = async ({ email, password }) => {
     throw error.badRequest("Information invalid");
   }
 
+  // verify password correct or not
   const isPasswordCorrect = await hash.verifyHash(password, user._doc.password);
 
   if (!isPasswordCorrect) {
     throw error.badRequest("Information invalid");
   }
 
+  // generate access token
   const accessToken = await generateToken({
     data: {
       id: user._id,
@@ -30,12 +33,14 @@ const signIn = async ({ email, password }) => {
     expireAt: process.env.ACCESS_EXPIRE_TIME,
   });
 
+  // generate refresh token
   const refreshToken = await generateToken({
     data: {
       long: "long-token",
     },
   });
 
+  // combine both token
   const token = `Bearer ${accessToken} ${refreshToken}`;
 
   return { token, userData: user };

@@ -3,6 +3,7 @@ const User = require("@models/User");
 const { hash } = require("@utils");
 
 const createUser = async ({ name, email, password, dateOfBirth }) => {
+  // check all information provided correctly or not
   if (!name || !email || !password || !dateOfBirth) {
     throw error.badRequest(
       `${!name && "name:name is empty"}|${!email && "email:email is empty"}|${
@@ -11,13 +12,14 @@ const createUser = async ({ name, email, password, dateOfBirth }) => {
     );
   }
 
+  // check data is correct or not
   const date = new Date(dateOfBirth);
-
   if (isNaN(date.getTime())) {
     throw error.badRequest("dateOfBirth:dateOfBirth is not a valid date");
   }
-  const existingUser = await User.findOne({ email });
 
+  // check email already exist or not
+  const existingUser = await User.findOne({ email });
   if (existingUser) {
     throw error.badRequest("email:email already exist");
   }
@@ -25,6 +27,7 @@ const createUser = async ({ name, email, password, dateOfBirth }) => {
   // hash password
   const hashedPassword = await hash.generateHash(password);
 
+  // create user
   const user = new User({
     name,
     email,
