@@ -11,4 +11,16 @@ const generateHash = async (value) => {
   return hashedValue;
 };
 
-module.exports = { generateHash };
+const verifyHash = async (value, hashedValue) => {
+  if (!value || !hashedValue) {
+    throw error.badRequest(
+      "value and hashedValue not provided in verifyHash function"
+    );
+  }
+
+  const isCorrect = await bcrypt.compare(value, hashedValue);
+
+  return isCorrect;
+};
+
+module.exports = { generateHash, verifyHash };
