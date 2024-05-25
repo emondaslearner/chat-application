@@ -14,6 +14,7 @@ const signIn = async ({ email, password }) => {
 
   const user = await User.findOne({ email });
 
+  console.log(user, email);
   if (!user) {
     throw error.badRequest("Information invalid");
   }

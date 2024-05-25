@@ -6,3 +6,27 @@ cloudinary.v2.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
   secure: true,
 });
+
+const uploadPhotoToCloudinary = async ({
+  imagePath,
+  folderName,
+  unique_filename,
+  use_filename,
+  overwrite,
+}) => {
+  try {
+    const options = {
+      folder: folderName,
+      unique_filename,
+      use_filename,
+      overwrite,
+    };
+
+    const uploadResponse = await cloudinary.uploader.upload(imagePath, options);
+    return uploadResponse;
+  } catch (error) {
+    throw error;
+  }
+};
+
+module.exports = { uploadPhotoToCloudinary };

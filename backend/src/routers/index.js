@@ -1,4 +1,5 @@
 const express = require("express");
+const authenticate = require("@middleware/authenticate");
 
 // routers
 const authRouter = require("./auth");
@@ -10,6 +11,6 @@ const router = express.Router();
 authRouter(router);
 
 // user
-userRoutes(router);
+userRoutes(router, authenticate);
 
 module.exports = router;

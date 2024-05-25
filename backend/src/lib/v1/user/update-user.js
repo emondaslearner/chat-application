@@ -1,7 +1,8 @@
 const { error } = require("@utils");
 const User = require("@models/User");
+const { uploadPhotoToCloudinary } = require("@third-party/cloudinary");
 
-const updateUser = async ({ id = "664f84c440dac4ae1538a89b", data }) => {
+const updateUser = async ({ id, data }) => {
   if (!id) {
     throw error.badRequest("id is required");
   }
@@ -15,6 +16,32 @@ const updateUser = async ({ id = "664f84c440dac4ae1538a89b", data }) => {
   const user = await User.findById(id);
   if (!user) {
     throw error.notFound();
+  }
+
+  // upload profile picture to cloudinary
+  if (data.profile_picture) {
+    const fileUploadedData = await uploadPhotoToCloudinary({
+      imagePath: `./src/uploads/${data.profile_picture.filename}`,
+      folderName: "users",
+      unique_filename: true,
+      use_filename: false,
+      overwrite: false,
+    });
+
+    data.profile_picture = fileUploadedData.secure_url;
+  }
+
+  // upload cover picture to cloudinary
+  if (data.cover_picture) {
+    const fileUploadedData = await uploadPhotoToCloudinary({
+      imagePath: `./src/uploads/${data.cover_picture.filename}`,
+      folderName: "users",
+      unique_filename: true,
+      use_filename: false,
+      overwrite: false,
+    });
+
+    data.cover_picture = fileUploadedData.secure_url;
   }
 
   const newData = user._doc ? user._doc : user;

@@ -15,7 +15,6 @@ const middleware = (app) => {
       if (err.message.split(":").length < 2) {
         res.status(400).json({
           code: 400,
-          status: "error",
           message: err.message,
         });
 
@@ -37,7 +36,6 @@ const middleware = (app) => {
 
       res.status(400).json({
         code: 400,
-        status: "error",
         message: "Bad Request",
         data,
       });
@@ -46,7 +44,6 @@ const middleware = (app) => {
 
     res.status(err.status || 500).json({
       code: err.status || 500,
-      status: "error",
       message:
         err.message || "Server unable to response. Please try again later.",
     });
