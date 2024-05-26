@@ -14,7 +14,6 @@ const signIn = async ({ email, password }) => {
 
   const user = await User.findOne({ email });
 
-  console.log(user, email);
   if (!user) {
     throw error.badRequest("Information invalid");
   }
@@ -37,7 +36,7 @@ const signIn = async ({ email, password }) => {
   // generate refresh token
   const refreshToken = await generateToken({
     data: {
-      long: "long-token",
+      id: user._id,
     },
   });
 

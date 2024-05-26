@@ -20,7 +20,7 @@ const signUp = async (data) => {
   //generate refresh token
   const refreshToken = await generateToken({
     data: {
-      long: "long-token",
+      id: savedData._id,
     },
   });
 

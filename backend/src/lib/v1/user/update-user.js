@@ -104,7 +104,9 @@ const updateUser = async ({ id, data }) => {
 
   const updatedData = await User.findOneAndUpdate({ _id: id }, newData, {
     new: true,
-  });
+  })
+    .select("-password")
+    .exec();
 
   return updatedData;
 };
