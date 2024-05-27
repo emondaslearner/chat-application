@@ -1,6 +1,6 @@
-const signUp = require("./sign-up");
-const signIn = require("./sign-in");
-const refreshToken = require("./refresh-token");
+const signUp = require("./signUp");
+const signIn = require("./signIn");
+const refreshToken = require("./refreshToken");
 
 module.exports = {
   signUp,
