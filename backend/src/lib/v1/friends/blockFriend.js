@@ -1,12 +1,12 @@
 const Friend = require("@models/Friend");
 const { error } = require("@utils");
 
-const addFriend = async ({ friendId, userId }) => {
+const blockFriend = async ({ friendId, userId, block }) => {
   if (!friendId) {
     throw error.badRequest("friendId:friendId not provided");
   }
 
-  if(friendId === userId) {
+  if (friendId === userId) {
     throw error.badRequest("userId and friendId should not be same");
   }
 
@@ -17,18 +17,19 @@ const addFriend = async ({ friendId, userId }) => {
     ],
   });
 
-  if (isExist) {
-    throw error.badRequest("Friend already exist");
+  if (!isExist) {
+    throw error.notFound("friend not exist");
   }
 
-  const friendData = new Friend({
-    first_user: userId,
-    second_user: friendId,
-  });
+  if (block) {
+    isExist.blocked = true;
+    isExist.blockedBy = userId;
+  } else {
+    isExist.blocked = false;
+    isExist.blockedBy = "";
+  }
 
-  await friendData.save();
-
-  return friendData;
+  await isExist.save();
 };
 
-module.exports = addFriend;
+module.exports = blockFriend;

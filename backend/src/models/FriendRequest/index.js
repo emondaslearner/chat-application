@@ -19,6 +19,8 @@ const friendSchema = new Schema(
   }
 );
 
+friendSchema.index({ want_to_friend: 1, sent_to: 1 });
+
 const friendModel = model("friend-request", friendSchema);
 
 module.exports = friendModel;
