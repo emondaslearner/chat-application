@@ -2,7 +2,8 @@ const {
   addFriend,
   deleteFriend,
   blockFriend,
-  getSingleFriend
+  getSingleFriend,
+  getAllFriend,
 } = require("@controller/v1/friends");
 
 const friendRoutes = (router, authenticate) => {
@@ -12,6 +13,8 @@ const friendRoutes = (router, authenticate) => {
     .delete(authenticate, deleteFriend)
     .patch(authenticate, blockFriend)
     .get(authenticate, getSingleFriend);
+
+  router.get("/user/friends", authenticate, getAllFriend);
 };
 
 module.exports = friendRoutes;
