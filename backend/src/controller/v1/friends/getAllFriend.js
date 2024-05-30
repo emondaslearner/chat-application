@@ -1,22 +1,30 @@
 const { getAllFriend: getAllFriendLib } = require("@lib/v1/friends");
+const { functions } = require("@utils");
 
 const getAllFriend = async (req, res, next) => {
   try {
     const userId = req.user.id;
     const filterData = {
-      search: req.query?.search,
-      sortBy: req.query?.sortBy,
-      sortType: req.query?.sortType,
-      page: parseInt(req.query?.page),
-      limit: parseInt(req.query?.limit),
+      search: req.query?.search ? req.query?.search : "",
+      sortBy: req.query?.sortBy ? req.query?.sortBy : "updatedAt",
+      sortType: req.query?.sortType ? req.query?.sortType : "dsc",
+      page: req.query?.page ? parseInt(req.query?.page) : 1,
+      limit: req.query?.limit ? parseInt(req.query?.limit) : 10,
     };
 
-    const { allFriend, count } = await getAllFriendLib({ userId, filterData });
+    const { allFriends, count } = await getAllFriendLib({ userId, filterData });
+
+    const pagination = functions.paginationDetails({
+      page: filterData.page,
+      limit: filterData.limit,
+      totalResources: count,
+    });
 
     const response = {
       code: 200,
       message: "Fetched friend successfully",
-      data: allFriend,
+      data: allFriends,
+      pagination,
       self: req.url,
       links: {
         friend: "/user/friend",
