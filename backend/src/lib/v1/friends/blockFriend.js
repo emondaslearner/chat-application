@@ -1,5 +1,6 @@
 const Friend = require("@models/Friend");
 const { error } = require("@utils");
+const { deleteKeysWithPrefix } = require("@third-party/redis");
 
 const blockFriend = async ({ friendId, userId, block }) => {
   if (!friendId) {
@@ -30,6 +31,10 @@ const blockFriend = async ({ friendId, userId, block }) => {
   }
 
   await isExist.save();
+
+  deleteKeysWithPrefix("friend:");
+
+  return isExist;
 };
 
 module.exports = blockFriend;

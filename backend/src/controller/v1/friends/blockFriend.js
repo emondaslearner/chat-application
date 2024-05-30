@@ -5,12 +5,12 @@ const blockFriend = async (req, res, next) => {
     const blockedFriend = await blockFriendLib({
       friendId: req.body?.friendId,
       userId: req.user.id,
-      block: req.body?.block
+      block: req.body?.block,
     });
 
     const responseData = {
       code: 200,
-      message: `User ${req.body.block ? 'blocked' : 'unblocked'} successfully`,
+      message: `User ${req.body.block ? "blocked" : "unblocked"} successfully`,
       data: blockedFriend,
       self: req.url,
       links: {

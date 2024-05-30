@@ -24,7 +24,40 @@ const getDataFromRedis = async (key, query) => {
   return JSON.parse(value);
 };
 
+const deleteKeysWithPrefix = async (prefix) => {
+  return new Promise((resolve, reject) => {
+    const stream = client.scanStream({
+      match: `${prefix}*`,
+    });
+
+    stream.on("data", (keys) => {
+      if (keys.length) {
+        const pipeline = client.batch();
+        keys.forEach((key) => {
+          pipeline.del(key);
+        });
+        pipeline.exec((err, results) => {
+          if (err) {
+            reject(err);
+          } else {
+            console.log(`Deleted keys: ${keys.join(", ")}`);
+          }
+        });
+      }
+    });
+
+    stream.on("end", () => {
+      resolve();
+    });
+
+    stream.on("error", (err) => {
+      reject(err);
+    });
+  });
+};
+
 module.exports = {
   getDataFromRedis,
   addDataInRedis,
+  deleteKeysWithPrefix,
 };

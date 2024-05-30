@@ -1,5 +1,6 @@
 const Friend = require("@models/Friend");
 const { error } = require("@utils");
+const { deleteKeysWithPrefix } = require("@third-party/redis");
 
 const deleteFriend = async ({ friendId, userId }) => {
   if (!friendId) {
@@ -21,6 +22,8 @@ const deleteFriend = async ({ friendId, userId }) => {
   if (deleteData) {
     return true;
   }
+
+  deleteKeysWithPrefix('friend:');
 
   return false;
 };
