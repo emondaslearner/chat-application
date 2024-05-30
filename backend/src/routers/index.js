@@ -6,6 +6,7 @@ const authRoutes = require("./auth");
 const userRoutes = require("./user");
 const friendRoutes = require("./friend");
 const friendRequestRoutes = require("./friendRequest");
+const postRoutes = require("./post");
 
 const router = express.Router();
 
@@ -20,5 +21,8 @@ friendRoutes(router, authenticate);
 
 // friend-request
 friendRequestRoutes(router, authenticate);
+
+// posts
+postRoutes(router, authenticate);
 
 module.exports = router;

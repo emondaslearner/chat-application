@@ -29,4 +29,27 @@ const uploadPhotoToCloudinary = async ({
   }
 };
 
-module.exports = { uploadPhotoToCloudinary };
+const uploadVideoToCloudinary = async ({ videoPath, folderName }) => {
+  try {
+    return new Promise((resolve, reject) => {
+      cloudinary.uploader.upload_large(
+        videoPath,
+        {
+          resource_type: "video",
+          folder: folderName,
+        },
+        function (error, result) {
+          if (error) {
+            console.error("Error uploading video:", error);
+          } else {
+            resolve(result.secure_url);
+          }
+        }
+      );
+    });
+  } catch (err) {
+    throw error;
+  }
+};
+
+module.exports = { uploadPhotoToCloudinary, uploadVideoToCloudinary };

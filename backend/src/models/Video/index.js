@@ -2,13 +2,14 @@ const { Schema, model } = require("mongoose");
 
 const videoSchema = new Schema(
   {
-    photo: {
-      type: String,
+    user: {
+      type: Schema.ObjectId,
+      ref: "user",
       required: true,
     },
-    post: {
-      type: Schema.ObjectId,
-      ref: "post",
+    video: {
+      type: String,
+      required: true,
     },
   },
   {
@@ -16,6 +17,8 @@ const videoSchema = new Schema(
     id: true,
   }
 );
+
+videoSchema.index({ user: 1 });
 
 const videoModel = model("video", videoSchema);
 

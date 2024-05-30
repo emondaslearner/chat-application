@@ -1,42 +1,20 @@
 const { error } = require("@utils");
 const User = require("@models/User");
 const { uploadPhotoToCloudinary } = require("@third-party/cloudinary");
-const { functions } = require("@utils");
-
-const deleteFIle = (data) => {
-  //delete uploaded file
-  data?.profile_picture &&
-    functions.deleteUploadedFile(
-      `./src/uploads/${data.profile_picture.filename}`
-    );
-  data?.cover_picture &&
-    functions.deleteUploadedFile(
-      `./src/uploads/${data.cover_picture.filename}`
-    );
-};
 
 const updateUser = async ({ id, data }) => {
   if (!id) {
-    //delete uploaded file
-    deleteFIle(data);
-
     throw error.badRequest("id is required");
   }
 
   const keys = Object.keys(data);
 
   if (!keys.length) {
-    //delete uploaded file
-    deleteFIle(data);
-
     throw error.badRequest("Please provide at latest one value");
   }
 
   const user = await User.findById(id);
   if (!user) {
-    //delete uploaded file
-    deleteFIle(data);
-
     throw error.notFound();
   }
 
@@ -65,9 +43,6 @@ const updateUser = async ({ id, data }) => {
 
     data.cover_picture = fileUploadedData.secure_url;
   }
-
-  //delete uploaded file
-  deleteFIle(data);
 
   const newData = user._doc ? user._doc : user;
 

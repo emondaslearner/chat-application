@@ -1,3 +1,5 @@
+const fs = require("fs");
+
 const deleteUploadedFile = async (filePath) => {
   try {
     await fs.unlink(filePath);
@@ -74,5 +76,5 @@ const paginationLinks = async ({
 module.exports = {
   deleteUploadedFile,
   paginationDetails,
-  paginationLinks
+  paginationLinks,
 };
