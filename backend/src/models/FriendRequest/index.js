@@ -2,7 +2,7 @@ const { Schema, model } = require("mongoose");
 
 const friendSchema = new Schema(
   {
-    want_to_friend: {
+    sent_by: {
       type: Schema.ObjectId,
       ref: "user",
       required: true,
@@ -19,7 +19,7 @@ const friendSchema = new Schema(
   }
 );
 
-friendSchema.index({ want_to_friend: 1, sent_to: 1 });
+friendSchema.index({ sent_by: 1, sent_to: 1 });
 
 const friendModel = model("friend-request", friendSchema);
 

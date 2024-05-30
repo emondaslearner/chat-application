@@ -5,11 +5,11 @@ const addFriend = async (req, res, next) => {
     await addFriendLib({ friendId: req.body?.friendId, userId: req.user.id });
 
     const response = {
-      code: 200,
-      message: "you are both now friend",
+      code: 201,
+      message: "FriendRequest sent successfully",
     };
 
-    res.status(200).json(response);
+    res.status(201).json(response);
   } catch (err) {
     next(err);
   }

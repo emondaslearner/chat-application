@@ -14,8 +14,9 @@ const getDataFromRedis = async (key, query) => {
   if (!value) {
     console.log("cache miss");
     const data = await query();
-    value = JSON.stringify(data);
+    if (data[0].allFriends.length === 0) return data;
 
+    value = JSON.stringify(data);
     await addDataInRedis({ key, value });
   } else {
     console.log("cache hit");
@@ -25,35 +26,18 @@ const getDataFromRedis = async (key, query) => {
 };
 
 const deleteKeysWithPrefix = async (prefix) => {
-  return new Promise((resolve, reject) => {
-    const stream = client.scanStream({
-      match: `${prefix}*`,
-    });
+  try {
+    const keys = await client.keys(`${prefix}*`);
+    const pipeline = client.multi();
 
-    stream.on("data", (keys) => {
-      if (keys.length) {
-        const pipeline = client.batch();
-        keys.forEach((key) => {
-          pipeline.del(key);
-        });
-        pipeline.exec((err, results) => {
-          if (err) {
-            reject(err);
-          } else {
-            console.log(`Deleted keys: ${keys.join(", ")}`);
-          }
-        });
-      }
-    });
+    keys.forEach((key) => pipeline.del(key));
 
-    stream.on("end", () => {
-      resolve();
-    });
+    await pipeline.exec();
 
-    stream.on("error", (err) => {
-      reject(err);
-    });
-  });
+    console.log("All keys starting with 'friend:' deleted successfully!");
+  } catch (error) {
+    console.error("Error deleting keys:", error);
+  }
 };
 
 module.exports = {

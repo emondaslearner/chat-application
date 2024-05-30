@@ -24,10 +24,10 @@ const blockFriend = async ({ friendId, userId, block }) => {
 
   if (block) {
     isExist.blocked = true;
-    isExist.blockedBy = userId;
+    isExist.blocked_by = userId;
   } else {
     isExist.blocked = false;
-    isExist.blockedBy = "";
+    isExist.blocked_by = null;
   }
 
   await isExist.save();

@@ -1,3 +1,4 @@
+const FriendRequest = require("@models/FriendRequest");
 const Friend = require("@models/Friend");
 const { error } = require("@utils");
 const { deleteKeysWithPrefix } = require("@third-party/redis");
@@ -22,14 +23,12 @@ const addFriend = async ({ friendId, userId }) => {
     throw error.badRequest("Friend already exist");
   }
 
-  const friendData = new Friend({
-    first_user: userId,
-    second_user: friendId,
+  const friendData = new FriendRequest({
+    sent_to: friendId,
+    sent_by: userId,
   });
 
   await friendData.save();
-
-  deleteKeysWithPrefix('friend:');
 
   return friendData;
 };
