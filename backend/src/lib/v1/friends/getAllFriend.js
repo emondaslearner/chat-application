@@ -1,6 +1,7 @@
 const Friend = require("@models/Friend");
 const { error } = require("@utils");
 const mongoose = require("mongoose");
+const { getDataFromRedis, addDataInRedis } = require("@third-party/redis");
 
 const getAllFriend = async ({
   userId,
@@ -99,7 +100,15 @@ const getAllFriend = async ({
     },
   ];
 
-  const result = await Friend.aggregate(pipeline);
+  // check in redis
+  const serializedFilterData = JSON.stringify(filterData);
+  const keyPrefix = "friend:";
+  const key = `${keyPrefix}${serializedFilterData}${userId}`;
+
+  const result = await getDataFromRedis(
+    key,
+    async () => await Friend.aggregate(pipeline)
+  );
 
   const totalCount =
     result[0].totalCount.length > 0 ? result[0].totalCount[0].count : 0;

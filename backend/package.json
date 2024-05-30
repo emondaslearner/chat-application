@@ -35,6 +35,7 @@
     "@middleware": "./src/middleware",
     "@models": "./src/models",
     "@lib": "./src/lib",
-    "@third-party": "./src/third-party"
+    "@third-party": "./src/third-party",
+    "@db": "./src/db"
   }
 }
