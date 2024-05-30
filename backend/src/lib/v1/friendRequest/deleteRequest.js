@@ -1,5 +1,6 @@
 const FriendRequest = require("@models/FriendRequest");
 const { error } = require("@utils");
+const { deleteKeysWithPrefix } = require("@third-party/redis");
 
 const deleteRequest = async ({ userId, friendId }) => {
   if (!userId || !friendId) {
@@ -23,6 +24,8 @@ const deleteRequest = async ({ userId, friendId }) => {
     sent_by: friendId,
     sent_to: userId,
   });
+
+  deleteKeysWithPrefix('friendRequest:')
 
   return data;
 };
