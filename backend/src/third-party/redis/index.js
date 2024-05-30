@@ -8,13 +8,13 @@ const addDataInRedis = async ({ key, value }) => {
   return result ? true : false;
 };
 
-const getDataFromRedis = async (key, query) => {
+const getDataFromRedis = async (key, query, name) => {
   let value = await client.get(key);
 
   if (!value) {
     console.log("cache miss");
     const data = await query();
-    if (data[0].allFriends.length === 0) return data;
+    if (data[0][name].length === 0) return data;
 
     value = JSON.stringify(data);
     await addDataInRedis({ key, value });

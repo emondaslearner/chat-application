@@ -12,11 +12,9 @@ const addFriend = async ({ friendId, userId }) => {
     throw error.badRequest("userId and friendId should not be same");
   }
 
-  const isExist = await Friend.findOne({
-    $or: [
-      { first_user: userId, second_user: friendId },
-      { first_user: friendId, second_user: userId },
-    ],
+  const isExist = await FriendRequest.findOne({
+    sent_to: friendId,
+    sent_by: userId,
   });
 
   if (isExist) {

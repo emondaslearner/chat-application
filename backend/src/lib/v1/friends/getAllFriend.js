@@ -1,7 +1,7 @@
 const Friend = require("@models/Friend");
 const { error } = require("@utils");
 const mongoose = require("mongoose");
-const { getDataFromRedis, addDataInRedis } = require("@third-party/redis");
+const { getDataFromRedis } = require("@third-party/redis");
 
 const getAllFriend = async ({
   userId,
@@ -107,7 +107,8 @@ const getAllFriend = async ({
 
   const result = await getDataFromRedis(
     key,
-    async () => await Friend.aggregate(pipeline)
+    async () => await Friend.aggregate(pipeline),
+    'allFriends'
   );
 
   const totalCount =
