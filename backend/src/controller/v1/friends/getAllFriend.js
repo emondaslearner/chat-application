@@ -20,15 +20,26 @@ const getAllFriend = async (req, res, next) => {
       totalResources: count,
     });
 
+    // hateoas
+    const hateoas = await functions.paginationLinks({
+      path: req.path,
+      page: filterData.page,
+      query: {
+        ...req.query,
+        page: parseInt(req.query.page),
+        limit: parseInt(req.query.limit),
+      },
+      hasPrev: !!pagination.prvPage,
+      hasNext: !!pagination.nxtPage,
+    });
+
     const response = {
       code: 200,
       message: "Fetched friend successfully",
       data: allFriends,
       pagination,
       self: req.url,
-      links: {
-        friend: "/user/friend",
-      },
+      links: hateoas,
     };
 
     res.status(response.code).json(response);

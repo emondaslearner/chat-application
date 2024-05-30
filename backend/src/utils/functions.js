@@ -27,7 +27,52 @@ const paginationDetails = ({ page, limit, totalResources }) => {
   return response;
 };
 
+const generateQueryString = ({ queryObject = {} }) => {
+  const queryString = Object.keys(queryObject)
+    .filter(
+      (key) =>
+        queryObject[key] !== undefined &&
+        queryObject[key] !== null &&
+        queryObject[key] !== ""
+    )
+    .map(
+      (key) =>
+        `${encodeURIComponent(key)}=${encodeURIComponent(queryObject[key])}`
+    )
+    .join("&");
+
+  return queryString ? `?${queryString}` : "";
+};
+
+// links
+const paginationLinks = async ({
+  path = "/",
+  page = 1,
+  query = {},
+  hasPrev = false,
+  hasNext = false,
+}) => {
+  const links = {};
+
+  if (hasPrev) {
+    const queryString = await generateQueryString({
+      queryObject: { ...query, page: page - 1 },
+    });
+    links.prvPage = `${path}/${queryString}`;
+  }
+
+  if (hasNext) {
+    const queryString = await generateQueryString({
+      queryObject: { ...query, page: page + 1 },
+    });
+    links.nxtPage = `${path}/${queryString}`;
+  }
+
+  return links;
+};
+
 module.exports = {
   deleteUploadedFile,
   paginationDetails,
+  paginationLinks
 };
