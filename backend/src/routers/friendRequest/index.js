@@ -10,6 +10,7 @@ const friendRequestRoutes = (router, authenticate) => {
     .post(authenticate, acceptRequest)
     .delete(authenticate, deleteRequest)
     .get(authenticate, findAllRequest);
+  router.delete("/user/friend-request/:id", authenticate, deleteRequest);
 };
 
 module.exports = friendRequestRoutes;

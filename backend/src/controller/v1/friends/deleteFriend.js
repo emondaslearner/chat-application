@@ -4,7 +4,7 @@ const { error } = require("@utils");
 const deleteFriend = async (req, res, next) => {
   try {
     const isDeleted = await deleteFriendLib({
-      friendId: req.query?.id,
+      friendId: req.params?.id,
       userId: req.user.id,
     });
 

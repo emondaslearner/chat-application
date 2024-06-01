@@ -8,13 +8,13 @@ const {
 
 const friendRoutes = (router, authenticate) => {
   router
-    .route("/user/friend")
+    .route("/user/friends")
     .post(authenticate, addFriend)
-    .delete(authenticate, deleteFriend)
     .patch(authenticate, blockFriend)
-    .get(authenticate, getSingleFriend);
+    .get(authenticate, getAllFriend);
 
-  router.get("/user/friends", authenticate, getAllFriend);
+  router.delete("/user/friend/:id", authenticate, deleteFriend);
+  router.get("/user/friend/:id", authenticate, getSingleFriend);
 };
 
 module.exports = friendRoutes;

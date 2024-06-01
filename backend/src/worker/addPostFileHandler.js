@@ -24,7 +24,11 @@ const uploadPostVideo = async (video, userId, percentage) => {
 
     // update the upload status via socket connection
     // socket.to(userId).emit("postUploaded", percentage * (i + 1));
-    parentPort.postMessage({ userId, percentage: percentage * (i + 1) });
+    parentPort.postMessage({
+      userId,
+      percentage: percentage * (i + 1),
+      status: "addPost",
+    });
     console.log(percentage * (i + 1));
   }
 
@@ -55,7 +59,11 @@ const uploadPostPhoto = async (photo, userId, percentage) => {
 
     // update the upload status via socket connection
     // socket.to(userId).emit("postUploaded", percentage * (i + 1));
-    parentPort.postMessage({ userId, percentage: percentage * (i + 1) });
+    parentPort.postMessage({
+      userId,
+      percentage: percentage * (i + 1),
+      status: "addPost",
+    });
     console.log(percentage * (i + 1));
   }
 
@@ -121,7 +129,7 @@ const addPost = async ({ title, color, photo, video, userId }) => {
   await data.save();
 
   // socket.to(userId).emit("postUploaded", 100);
-  parentPort.postMessage({ userId, percentage: 100 });
+  parentPort.postMessage({ userId, percentage: 100, status: "addPost" });
 
   return true;
 };

@@ -6,7 +6,16 @@ const worker_threads = new Worker(
   path.join(__dirname, "../../../", "worker", "index.js")
 );
 
-const addPost = async ({ title, color, photo, video, userId }) => {
+const updatePost = async ({ userId, postId, updateData }) => {
+  if (!userId || !postId) {
+    throw error.badRequest(
+      `${!userId && "userId:userId not provided"}|${
+        !postId && "postId:postId not provided"
+      }`
+    );
+  }
+
+  const { title, color, photo, video } = updateData;
   if (color && !title) {
     throw error.badRequest(
       "title:When you provide color then you must have to pass title"
@@ -43,9 +52,9 @@ const addPost = async ({ title, color, photo, video, userId }) => {
 
 // send update to user via socket
 worker_threads.on("message", (message) => {
-  if (message.userId && message.status === "addPost") {
+  if (message.userId && message.status === "updatePost") {
     global.io.to(message.userId).emit("postUploaded", message);
   }
 });
 
-module.exports = addPost;
+module.exports = updatePost;

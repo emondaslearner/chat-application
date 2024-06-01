@@ -4,7 +4,7 @@ const getSingleFriend = async (req, res, next) => {
   try {
     const friend = await getSingleFriendLib({
       userId: req.user.id,
-      friendId: req.query?.id,
+      friendId: req.params?.id,
     });
 
     const responseData = {

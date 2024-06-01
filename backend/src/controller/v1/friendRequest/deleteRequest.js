@@ -4,7 +4,7 @@ const deleteRequest = async (req, res, next) => {
   try {
     await deleteRequestLib({
       userId: req.user.id,
-      friendId: req.query?.friendId,
+      friendId: req.params?.id,
     });
 
     res.status(204).end();

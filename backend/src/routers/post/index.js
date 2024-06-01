@@ -1,4 +1,4 @@
-const { addPost } = require("@controller/v1/post");
+const { addPost, deletePost } = require("@controller/v1/post");
 const multer = require("multer");
 
 // multer upload
@@ -21,6 +21,8 @@ const uploadFields = upload.fields([
 
 const postRoutes = async (router, authenticate) => {
   router.route("/user/posts").post([authenticate, uploadFields], addPost);
+
+  router.route("/user/post/:id").delete(authenticate, deletePost);
 };
 
 module.exports = postRoutes;
