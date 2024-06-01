@@ -6,7 +6,7 @@ connectionUrl = connectionUrl.replace("<password>", process.env.DB_PASSWORD);
 
 const connection = async (status) => {
   await mongoose.connect(connectionUrl, { dbName: process.env.DB_NAME });
-  console.log("Database Connected");
+  console.log(`Database Connected${status === "worker" ? " in worker" : ""}`);
 };
 
 module.exports = connection;

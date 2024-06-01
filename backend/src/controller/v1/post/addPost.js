@@ -8,19 +8,27 @@ const addPost = async (req, res, next) => {
     const payloadData = {
       title: req.body?.title,
       color: req.body?.color,
-      photo,
+      photo: photo ? photo : [],
       video: video ? video : [],
       userId: req.user.id,
     };
 
-    const data = await addPostLib(payloadData);
+    const isSuccess = await addPostLib(payloadData);
 
-    const response = {
-      code: 201,
-      message: "Post added successfully",
-      data,
-      self: req.url,
-    };
+    let response = {};
+    if (isSuccess) {
+      response = {
+        code: 200,
+        message:
+          "Post will upload soon. Once it's upload we will let you now via notification.",
+        self: req.url,
+      };
+    } else {
+      response = {
+        code: 500,
+        message: "Something went wrong please try again later",
+      };
+    }
 
     res.status(response.code).json(response);
   } catch (err) {

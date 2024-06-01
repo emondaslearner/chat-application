@@ -2,7 +2,17 @@ const { addPost } = require("@controller/v1/post");
 const multer = require("multer");
 
 // multer upload
-const upload = multer({ dest: "./src/uploads/" });
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "./src/uploads/");
+  },
+  filename: (req, file, cb) => {
+    const originalName = file.originalname;
+    cb(null, originalName);
+  },
+});
+
+const upload = multer({ storage: storage });
 
 const uploadFields = upload.fields([
   { name: "photo", maxCount: 10 },

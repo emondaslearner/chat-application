@@ -22,7 +22,10 @@ const uploadPhotoToCloudinary = async ({
       overwrite,
     };
 
-    const uploadResponse = await cloudinary.uploader.upload(imagePath, options);
+    const uploadResponse = await cloudinary.v2.uploader.upload(
+      imagePath,
+      options
+    );
     return uploadResponse;
   } catch (error) {
     throw error;
@@ -31,23 +34,22 @@ const uploadPhotoToCloudinary = async ({
 
 const uploadVideoToCloudinary = async ({ videoPath, folderName }) => {
   try {
-    return new Promise((resolve, reject) => {
-      cloudinary.uploader.upload_large(
-        videoPath,
+    const data = await cloudinary.v2.uploader.upload(videoPath, {
+      folder: folderName,
+      resource_type: "video",
+      eager: [
+        { width: 300, height: 300, crop: "pad", audio_codec: "none" },
         {
-          resource_type: "video",
-          folder: folderName,
+          width: 160,
+          height: 100,
+          crop: "crop",
+          gravity: "south",
+          audio_codec: "none",
         },
-        function (error, result) {
-          if (error) {
-            console.error("Error uploading video:", error);
-          } else {
-            resolve(result.secure_url);
-          }
-        }
-      );
+      ],
     });
-  } catch (err) {
+    return data.secure_url || data.url;
+  } catch (error) {
     throw error;
   }
 };
