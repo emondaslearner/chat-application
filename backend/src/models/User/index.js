@@ -55,6 +55,10 @@ const userSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    chat_status: {
+      type: Boolean,
+      default: true,
+    },
   },
   {
     timestamps: true,

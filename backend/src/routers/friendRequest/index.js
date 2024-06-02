@@ -8,7 +8,6 @@ const friendRequestRoutes = (router, authenticate) => {
   router
     .route("/user/friend-request")
     .post(authenticate, acceptRequest)
-    .delete(authenticate, deleteRequest)
     .get(authenticate, findAllRequest);
   router.delete("/user/friend-request/:id", authenticate, deleteRequest);
 };
