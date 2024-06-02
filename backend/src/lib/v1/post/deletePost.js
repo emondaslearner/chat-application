@@ -1,5 +1,6 @@
 const Post = require("@models/Post");
 const { error } = require("@utils");
+const { deleteKeysWithPrefix } = require("@third-party/redis");
 
 const deletePost = async ({ userId, postId }) => {
   if (!userId || !postId) {
@@ -17,7 +18,7 @@ const deletePost = async ({ userId, postId }) => {
   }
 
   await Post.findOneAndDelete({ _id: postId });
-
+  deleteKeysWithPrefix("posts:");
   return true;
 };
 

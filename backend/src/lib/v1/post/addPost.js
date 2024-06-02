@@ -1,6 +1,7 @@
 const { error } = require("@utils");
 const path = require("path");
 const { Worker } = require("worker_threads");
+const { deleteKeysWithPrefix } = require("@third-party/redis");
 
 const worker_threads = new Worker(
   path.join(__dirname, "../../../", "worker", "index.js")
@@ -37,6 +38,8 @@ const addPost = async ({ title, color, photo, video, userId }) => {
     status: "addPost",
     data: JSON.stringify(data),
   });
+
+  deleteKeysWithPrefix('posts:');
 
   return true;
 };
