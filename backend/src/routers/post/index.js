@@ -2,7 +2,7 @@ const {
   addPost,
   deletePost,
   updatePost,
-  getMyPosts,
+  getPosts,
 } = require("@controller/v1/post");
 const multer = require("multer");
 
@@ -28,7 +28,7 @@ const postRoutes = async (router, authenticate) => {
   router
     .route("/user/posts")
     .post([authenticate, uploadFields], addPost)
-    .get(authenticate, getMyPosts);
+    .get(authenticate, getPosts);
 
   router
     .route("/user/post/:id")

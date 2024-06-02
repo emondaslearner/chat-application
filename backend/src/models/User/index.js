@@ -51,6 +51,10 @@ const userSchema = new Schema(
       default: "offline",
     },
     address: Address,
+    locked: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

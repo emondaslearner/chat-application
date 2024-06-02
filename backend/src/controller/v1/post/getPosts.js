@@ -1,4 +1,4 @@
-const { getMyPosts: getMyPostsLib } = require("@lib/v1/post");
+const { getPosts: getMyPostsLib } = require("@lib/v1/post");
 const { functions } = require("@utils");
 
 const getMyPosts = async (req, res, next) => {
@@ -12,6 +12,7 @@ const getMyPosts = async (req, res, next) => {
     };
 
     const { posts, counts } = await getMyPostsLib({
+      id: req.query?.id,
       userId: req.user.id,
       filterData,
     });

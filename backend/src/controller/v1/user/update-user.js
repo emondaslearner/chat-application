@@ -12,6 +12,7 @@ const updateUser = async (req, res, next) => {
       date_of_birth: req.body.dateOfBirth,
       bio: req.body.bio,
       status: req.body.status,
+      locked: req.body?.locked,
       profile_picture,
       cover_picture,
       address: {

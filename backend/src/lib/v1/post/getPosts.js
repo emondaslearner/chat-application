@@ -5,7 +5,7 @@ const { error } = require("@utils");
 const { getDataFromRedis } = require("@third-party/redis");
 const { functions } = require("@utils");
 
-const getMyPosts = async ({ userId, filterData }) => {
+const getMyPosts = async ({ id, userId, filterData }) => {
   if (!userId) {
     throw error.badRequest("userId:userId not provided");
   }
@@ -15,6 +15,7 @@ const getMyPosts = async ({ userId, filterData }) => {
   }`;
   const filter = {
     title: { $regex: filterData.search, $options: "i" },
+    user: id ? id : userId,
   };
 
   const getPosts = async () => {
@@ -39,7 +40,7 @@ const getMyPosts = async ({ userId, filterData }) => {
 
   const posts = await getDataFromRedis(key, getPosts);
 
-  const counts = await functions.countEntities(Post ,filter);
+  const counts = await functions.countEntities(Post, filter);
 
   return { posts, counts };
 };
