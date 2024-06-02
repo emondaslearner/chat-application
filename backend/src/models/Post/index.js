@@ -14,16 +14,16 @@ const postSchema = new Schema(
     color: {
       type: String,
     },
-    photos: [
-      {
-        type: Schema.ObjectId,
-        ref: "photo",
-      },
-    ],
     videos: [
       {
         type: Schema.ObjectId,
         ref: "video",
+      },
+    ],
+    photos: [
+      {
+        type: Schema.ObjectId,
+        ref: "photo",
       },
     ],
   },

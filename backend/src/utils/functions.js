@@ -73,8 +73,16 @@ const paginationLinks = async ({
   return links;
 };
 
+// count post
+const countEntities = async (model, filter) => {
+  const counts = await model.countDocuments(filter);
+
+  return counts;
+};
+
 module.exports = {
   deleteUploadedFile,
   paginationDetails,
   paginationLinks,
+  countEntities,
 };

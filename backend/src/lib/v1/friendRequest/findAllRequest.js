@@ -66,8 +66,7 @@ const findAllRequest = async ({ userId, filterData }) => {
 
   const result = await getDataFromRedis(
     key,
-    async () => await FriendRequest.aggregate(query),
-    "allRequests"
+    async () => await FriendRequest.aggregate(query)
   );
 
   const totalCount =

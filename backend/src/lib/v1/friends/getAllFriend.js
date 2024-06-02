@@ -107,8 +107,7 @@ const getAllFriend = async ({
 
   const result = await getDataFromRedis(
     key,
-    async () => await Friend.aggregate(pipeline),
-    'allFriends'
+    async () => await Friend.aggregate(pipeline)
   );
 
   const totalCount =

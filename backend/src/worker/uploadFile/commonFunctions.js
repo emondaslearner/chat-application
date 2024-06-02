@@ -1,13 +1,18 @@
 const {
   uploadPhotoToCloudinary,
   uploadVideoToCloudinary,
-} = require("../third-party/cloudinary");
-const Video = require("../models/Video");
-const Photo = require("../models/Photo");
-const Post = require("../models/Post");
+} = require("../../third-party/cloudinary");
+const Video = require("../../models/Video");
+const Photo = require("../../models/Photo");
 const { parentPort } = require("worker_threads");
 
-const uploadPostVideo = async (video, userId, percentage) => {
+const uploadPostVideo = async (
+  video,
+  userId,
+  perVideoPercentage,
+  percentage,
+  status
+) => {
   const videoSchemaIds = [];
   const video_list = [];
 
@@ -26,8 +31,8 @@ const uploadPostVideo = async (video, userId, percentage) => {
     // socket.to(userId).emit("postUploaded", percentage * (i + 1));
     parentPort.postMessage({
       userId,
-      percentage: percentage * (i + 1),
-      status: "addPost",
+      percentage: percentage + perVideoPercentage * (i + 1),
+      status,
     });
     console.log(percentage * (i + 1));
   }
@@ -39,7 +44,7 @@ const uploadPostVideo = async (video, userId, percentage) => {
   return videoSchemaIds;
 };
 
-const uploadPostPhoto = async (photo, userId, percentage) => {
+const uploadPostPhoto = async (photo, userId, percentage, status) => {
   const photoSchemaIds = [];
   const url_list = [];
 
@@ -62,7 +67,7 @@ const uploadPostPhoto = async (photo, userId, percentage) => {
     parentPort.postMessage({
       userId,
       percentage: percentage * (i + 1),
-      status: "addPost",
+      status,
     });
     console.log(percentage * (i + 1));
   }
@@ -96,44 +101,8 @@ const calculatePercentagePerFile = async (photoLength, videoLength) => {
   };
 };
 
-const addPost = async ({ title, color, photo, video, userId }) => {
-  let perVideoPercentage;
-  let perPhotoPercentage;
-  if (photo.length || video.length) {
-    const { photoPercentage, videoPercentage } =
-      await calculatePercentagePerFile(photo.length, video.length);
-    perVideoPercentage = videoPercentage;
-    perPhotoPercentage = photoPercentage;
-  }
-
-  // upload photo
-  let photoSchemaIds = [];
-  if (photo.length) {
-    photoSchemaIds = await uploadPostPhoto(photo, userId, perPhotoPercentage);
-  }
-
-  // upload video
-  let videoSchemaIds = [];
-  if (video.length) {
-    videoSchemaIds = await uploadPostVideo(video, userId, perVideoPercentage);
-  }
-
-  const data = new Post({
-    title,
-    color,
-    photos: photoSchemaIds,
-    videos: videoSchemaIds,
-    user: userId,
-  });
-
-  await data.save();
-
-  // socket.to(userId).emit("postUploaded", 100);
-  parentPort.postMessage({ userId, percentage: 100, status: "addPost" });
-
-  return true;
-};
-
 module.exports = {
-  addPost,
+  uploadPostVideo,
+  uploadPostPhoto,
+  calculatePercentagePerFile,
 };

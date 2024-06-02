@@ -1,26 +1,25 @@
-const { findAllRequest: findAllRequestLib } = require("@lib/v1/friendRequest");
+const { getMyPosts: getMyPostsLib } = require("@lib/v1/post");
 const { functions } = require("@utils");
 
-const findAllRequest = async (req, res, next) => {
+const getMyPosts = async (req, res, next) => {
   try {
-    const userId = req.user.id;
     const filterData = {
-      search: req.query?.search ? req.query?.search : "",
-      sortBy: req.query?.sortBy ? req.query?.sortBy : "updatedAt",
-      sortType: req.query?.sortType ? req.query?.sortType : "dsc",
-      page: req.query?.page ? parseInt(req.query?.page) : 1,
-      limit: req.query?.limit ? parseInt(req.query?.limit) : 10,
+      sortBy: req.query?.sortBy || "updatedAt",
+      sortType: req.query?.sortType || "dsc",
+      page: parseInt(req.query?.page) || 1,
+      limit: parseInt(req.query?.limit) || 10,
+      search: req.query?.search || "",
     };
 
-    const { allRequests, count } = await findAllRequestLib({
-      userId,
+    const { posts, counts } = await getMyPostsLib({
+      userId: req.user.id,
       filterData,
     });
 
     const pagination = functions.paginationDetails({
       page: filterData.page,
       limit: filterData.limit,
-      totalResources: count,
+      totalResources: counts,
     });
 
     // hateoas
@@ -38,8 +37,8 @@ const findAllRequest = async (req, res, next) => {
 
     const response = {
       code: 200,
-      message: "Fetched friend requests successfully",
-      data: allRequests,
+      message: "Posts fetched successfully",
+      data: posts,
       pagination,
       self: req.url,
       links: hateoas,
@@ -51,4 +50,4 @@ const findAllRequest = async (req, res, next) => {
   }
 };
 
-module.exports = findAllRequest;
+module.exports = getMyPosts;

@@ -2,22 +2,21 @@ const { getClient } = require("@db/connectRedis");
 
 const client = getClient();
 
-const addDataInRedis = async ({ key, value }) => {
-  const result = await client.set(key, value, "EX", 300);
+const addDataInRedis = async ({ key, value, expire }) => {
+  const result = await client.set(key, value, { EX: expire || 1300 });
 
   return result ? true : false;
 };
 
-const getDataFromRedis = async (key, query, name) => {
+const getDataFromRedis = async (key, query, expire) => {
   let value = await client.get(key);
 
   if (!value) {
     console.log("cache miss");
     const data = await query();
-    if (data[0][name].length === 0) return data;
 
     value = JSON.stringify(data);
-    await addDataInRedis({ key, value });
+    addDataInRedis({ key, value, expire });
   } else {
     console.log("cache hit");
   }

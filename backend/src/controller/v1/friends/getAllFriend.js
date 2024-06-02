@@ -25,9 +25,9 @@ const getAllFriend = async (req, res, next) => {
       path: req.path,
       page: filterData.page,
       query: {
-        ...req.query,
-        page: parseInt(req.query.page),
-        limit: parseInt(req.query.limit),
+        ...filterData,
+        page: parseInt(filterData.page),
+        limit: parseInt(filterData.limit),
       },
       hasPrev: !!pagination.prvPage,
       hasNext: !!pagination.nxtPage,

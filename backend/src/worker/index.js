@@ -1,5 +1,6 @@
 const { parentPort } = require("worker_threads");
-const { addPost } = require("./addPostFileHandler");
+const { addPost } = require("./uploadFile/addPostFileHandler");
+const { updatePost } = require("./uploadFile/updatePostFileHandler");
 const { connectDb } = require("../db");
 const { sentMessageToTopic } = require("../third-party/firebase");
 (async () => {
@@ -16,6 +17,22 @@ parentPort.on("message", async (allData) => {
           topic: data.userId,
           title: "Post status updated",
           body: `"Post uploaded successfully"`,
+        });
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  if (allData.status === "updatePost") {
+    try {
+      const data = JSON.parse(allData.data);
+      const savedData = await updatePost(data, allData.io);
+      if (savedData) {
+        await sentMessageToTopic({
+          topic: data.userId,
+          title: "Post status updated",
+          body: `"Post updated successfully"`,
         });
       }
     } catch (err) {

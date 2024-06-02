@@ -1,6 +1,7 @@
 const { error } = require("@utils");
 const path = require("path");
 const { Worker } = require("worker_threads");
+const Post = require("@models/Post");
 
 const worker_threads = new Worker(
   path.join(__dirname, "../../../", "worker", "index.js")
@@ -34,16 +35,23 @@ const updatePost = async ({ userId, postId, updateData }) => {
     );
   }
 
+  const isExist = await Post.findOne({ _id: postId });
+
+  if (!isExist) {
+    throw error.notFound();
+  }
+
   const data = {
     title,
     color,
     photo,
     video,
     userId,
+    postId,
   };
 
   worker_threads.postMessage({
-    status: "addPost",
+    status: "updatePost",
     data: JSON.stringify(data),
   });
 
