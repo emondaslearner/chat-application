@@ -1,5 +1,6 @@
 const { updateUser, getUser } = require("@controller/v1/user");
 const multer = require("multer");
+const { getAllUser } = require("@controller/v1/user");
 
 // multer upload
 const upload = multer({ dest: "./src/uploads/" });
@@ -14,6 +15,8 @@ const userRoutes = (router, authenticate) => {
     .route("/user")
     .patch([authenticate, uploadFields], updateUser)
     .get(authenticate, getUser);
+
+  router.get("/users", authenticate, getAllUser);
 };
 
 module.exports = userRoutes;
