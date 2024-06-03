@@ -1,5 +1,6 @@
 const Comment = require("@models/Comment");
 const { error } = require("@utils");
+const { deleteKeysWithPrefix } = require("@third-party/redis");
 
 const addComment = async ({ body, userId, postId }) => {
   if (!body || !userId || !postId) {
@@ -18,6 +19,7 @@ const addComment = async ({ body, userId, postId }) => {
 
   await comment.save();
 
+  deleteKeysWithPrefix('comments:');
   return comment;
 };
 

@@ -2,10 +2,12 @@ const Comment = require("@models/Comment");
 const { error } = require("@utils");
 const { deleteKeysWithPrefix } = require("@third-party/redis");
 
-const deleteComment = async ({ id, userId }) => {
-  if (!id || !userId) {
+const updateComment = async ({ body, userId, id }) => {
+  if (!body || !userId) {
     throw error.badRequest(
-      `${!id && "id:id is missing"}|${!userId && "userId:userId is missing"}`
+      `${!body && "body:body is missing"}|${
+        !userId && "userId:userId is missing"
+      }`
     );
   }
 
@@ -18,9 +20,13 @@ const deleteComment = async ({ id, userId }) => {
     throw error.notFound();
   }
 
-  deleteKeysWithPrefix('comments:');
+  comment.body = body;
 
-  return true;
+  await comment.save();
+
+  deleteKeysWithPrefix("comments:");
+
+  return comment;
 };
 
-module.exports = deleteComment;
+module.exports = updateComment;
