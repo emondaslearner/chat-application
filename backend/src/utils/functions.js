@@ -13,7 +13,7 @@ const deleteUploadedFile = async (filePath) => {
 const paginationDetails = ({ page, limit, totalResources }) => {
   const totalPage = Math.ceil(totalResources / limit);
 
-  const nxtPage = totalResources > page && page + 1;
+  const nxtPage = totalPage > page && page + 1;
   const prvPage = page > 1 && page - 1;
 
   const response = {

@@ -1,7 +1,6 @@
 const Comment = require("@models/Comment");
 const { getDataFromRedis } = require("@third-party/redis");
 const { error, functions } = require("@utils");
-const { deleteKeysWithPrefix } = require("@third-party/redis");
 
 const getAllComment = async ({ post, filterData }) => {
   if (!post || !filterData) {

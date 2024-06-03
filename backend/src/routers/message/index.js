@@ -2,6 +2,7 @@ const {
   sentMessage,
   deleteMessage,
   editMessage,
+  getChatMessages,
 } = require("@controller/v1/message");
 const multer = require("multer");
 
@@ -21,7 +22,10 @@ const upload = multer({ storage: storage });
 const uploadFields = upload.fields([{ name: "files", maxCount: 10 }]);
 
 const messageRoutes = (router, authenticate) => {
-  router.post("/user/:id/message", [authenticate, uploadFields], sentMessage);
+  router
+    .route("/user/:id/message")
+    .post([authenticate, uploadFields], sentMessage)
+    .get(authenticate, getChatMessages);
 
   router
     .route("/user/message/:id")
