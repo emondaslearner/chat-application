@@ -54,15 +54,7 @@ const userSchema = new Schema(
     locked: {
       type: Boolean,
       default: false,
-    },
-    chat_status: {
-      type: Boolean,
-      default: true,
-    },
-    unread_message_count: {
-      type: Number,
-      default: 0,
-    },
+    }
   },
   {
     timestamps: true,

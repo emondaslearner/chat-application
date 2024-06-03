@@ -10,19 +10,39 @@ const getAllChats = async ({ filterData, userId }) => {
   const sortStr = `${filterData.sortType === "dsc" ? "-" : ""}${
     filterData.sortBy
   }`;
+
   const filter = {
-    $or: [{ first_user: userId }, { second_user: userId }],
+    $and: [
+      { $or: [{ first_user: userId }, { second_user: userId }] },
+      { chat_deleted_for: { $nin: [userId] } },
+    ],
   };
 
   const getChants = async () => {
-    return await Friend.find(filter)
-      .populate(
-        "first_user",
-        "name profile_picture unread_message_count chat_status status"
-      )
+    const chats = await Friend.find(filter)
       .sort(sortStr)
       .skip(filterData.page * filterData.limit - filterData.limit)
       .limit(filterData.limit);
+
+    // Conditionally populate the fields
+    const populatedChats = await Promise.all(
+      chats.map(async (chat) => {
+        if (chat.first_user.toString() === userId.toString()) {
+          await chat.populate(
+            "second_user",
+            "name profile_picture unread_message_count status"
+          );
+        } else {
+          await chat.populate(
+            "first_user",
+            "name profile_picture unread_message_count status"
+          );
+        }
+        return chat;
+      })
+    );
+
+    return populatedChats;
   };
 
   // check in redis
@@ -33,7 +53,7 @@ const getAllChats = async ({ filterData, userId }) => {
   const chats = await getDataFromRedis(key, getChants);
 
   const counts = await functions.countEntities(Friend, filter);
-
+  console.log(counts);
   return { chats, counts };
 };
 

@@ -20,6 +20,13 @@ const friendSchema = new Schema(
       ref: "user",
       required: true,
     },
+    chat_deleted_for: {
+      type: [String],
+    },
+    unread_message_count: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,
