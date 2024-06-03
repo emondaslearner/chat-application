@@ -1,6 +1,9 @@
-const { sentMessage } = require("@controller/v1/message");
+const {
+  sentMessage,
+  deleteMessage,
+  editMessage,
+} = require("@controller/v1/message");
 const multer = require("multer");
-const { editMessage } = require("@controller/v1/message");
 
 // multer upload
 const storage = multer.diskStorage({
@@ -19,7 +22,11 @@ const uploadFields = upload.fields([{ name: "files", maxCount: 10 }]);
 
 const messageRoutes = (router, authenticate) => {
   router.post("/user/:id/message", [authenticate, uploadFields], sentMessage);
-  router.patch("/user/message/:id", authenticate, editMessage);
+
+  router
+    .route("/user/message/:id")
+    .patch(authenticate, editMessage)
+    .delete(authenticate, deleteMessage);
 };
 
 module.exports = messageRoutes;

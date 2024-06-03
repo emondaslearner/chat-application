@@ -26,6 +26,10 @@ const messageSchema = new Schema(
       type: Schema.ObjectId,
       ref: "message",
     },
+    deleted_for: {
+      type: Schema.ObjectId,
+      ref: "user",
+    },
   },
   {
     timestamps: true,
