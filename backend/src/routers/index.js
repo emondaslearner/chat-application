@@ -10,6 +10,7 @@ const postRoutes = require("./post");
 const notificationRoutes = require("./notification");
 const commentRoutes = require("./comment");
 const messageRoutes = require("./message");
+const chatsRoutes = require("./chats");
 
 const router = express.Router();
 
@@ -36,5 +37,8 @@ commentRoutes(router, authenticate);
 
 // message
 messageRoutes(router, authenticate);
+
+// chats
+chatsRoutes(router, authenticate);
 
 module.exports = router;

@@ -1,7 +1,7 @@
-const { getAllComment: getAllCommentLib } = require("@lib/v1/comment");
+const { getAllChats: getAllChatsLib } = require("@lib/v1/chats");
 const { functions } = require("@utils");
 
-const getAllComment = async (req, res, next) => {
+const getAllChats = async (req, res, next) => {
   try {
     const filterData = {
       search: req.query?.search ? req.query?.search : "",
@@ -11,9 +11,9 @@ const getAllComment = async (req, res, next) => {
       limit: req.query?.limit ? parseInt(req.query?.limit) : 10,
     };
 
-    const { comments, counts } = await getAllCommentLib({
-      post: req.params?.id,
+    const { chats, counts } = await getAllChatsLib({
       filterData,
+      userId: req.user.id,
     });
 
     const pagination = await functions.paginationDetails({
@@ -37,8 +37,8 @@ const getAllComment = async (req, res, next) => {
 
     const response = {
       code: 200,
-      message: "Successfully fetched message",
-      data: comments,
+      message: "Successfully fetched chats",
+      data: chats,
       pagination,
       self: req.url,
       links: hateoas,
@@ -50,4 +50,4 @@ const getAllComment = async (req, res, next) => {
   }
 };
 
-module.exports = getAllComment;
+module.exports = getAllChats;
