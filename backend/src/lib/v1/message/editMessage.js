@@ -1,5 +1,6 @@
 const Message = require("@models/Message");
 const { error } = require("@utils");
+const { deleteKeysWithPrefix } = require("@third-party/redis");
 
 const editMessage = async ({ message, userId, id }) => {
   if (!message && !userId) {
@@ -19,7 +20,7 @@ const editMessage = async ({ message, userId, id }) => {
   messageData.message = message;
 
   await messageData.save();
-
+  deleteKeysWithPrefix('messages:');
   return messageData;
 };
 

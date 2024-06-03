@@ -2,6 +2,7 @@ const Message = require("@models/Message");
 const { error } = require("@utils");
 const { Worker } = require("worker_threads");
 const path = require("path");
+const { deleteKeysWithPrefix } = require("@third-party/redis");
 
 const worker_threads = new Worker(
   path.join(__dirname, "../../../", "worker", "index.js")
@@ -34,7 +35,7 @@ const sentMessage = async ({ userId, sentTo, replied, message, files }) => {
     });
 
     await messageData.save();
-
+    deleteKeysWithPrefix('messages:');
     return messageData;
   }
 };

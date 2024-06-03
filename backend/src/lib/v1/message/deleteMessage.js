@@ -1,5 +1,6 @@
 const { error } = require("@utils");
 const Message = require("@models/Message");
+const { deleteKeysWithPrefix } = require("@third-party/redis");
 
 const deleteMessage = async ({ id, status, userId }) => {
   if (!id || !status || !userId) {
@@ -32,7 +33,7 @@ const deleteMessage = async ({ id, status, userId }) => {
   } else {
     await Message.findOneAndDelete(filter);
   }
-
+  deleteKeysWithPrefix('messages:');
   return true;
 };
 
