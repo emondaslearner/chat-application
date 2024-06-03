@@ -83,6 +83,13 @@ const updateUser = async ({ id, data }) => {
     .select("-password")
     .exec();
 
+  if (data?.status) {
+    global.io.to(id).emit("userStatus", {
+      id,
+      status: data.status,
+    });
+  }
+
   return updatedData;
 };
 
