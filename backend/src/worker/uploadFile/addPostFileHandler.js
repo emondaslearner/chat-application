@@ -49,8 +49,6 @@ const addPost = async ({ title, color, photo, video, userId }) => {
 
   await data.save();
 
-  console.log(data);
-
   // socket.to(userId).emit("postUploaded", 100);
   parentPort.postMessage({ userId, percentage: 100, status: "addPost" });
 

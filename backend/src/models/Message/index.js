@@ -11,7 +11,7 @@ const messageSchema = new Schema(
       type: String,
     },
     file: {
-      type: String,
+      type: [String],
     },
     sent_by: {
       type: Schema.ObjectId,

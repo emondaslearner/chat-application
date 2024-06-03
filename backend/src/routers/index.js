@@ -9,6 +9,7 @@ const friendRequestRoutes = require("./friendRequest");
 const postRoutes = require("./post");
 const notificationRoutes = require("./notification");
 const commentRoutes = require("./comment");
+const messageRoutes = require("./message");
 
 const router = express.Router();
 
@@ -32,5 +33,8 @@ notificationRoutes(router, authenticate);
 
 // comment
 commentRoutes(router, authenticate);
+
+// message
+messageRoutes(router, authenticate);
 
 module.exports = router;

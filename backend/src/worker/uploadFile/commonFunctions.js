@@ -34,12 +34,14 @@ const uploadPostVideo = async (
       percentage: percentage + perVideoPercentage * (i + 1),
       status,
     });
-    console.log(percentage * (i + 1));
   }
 
-  const video_data = await Video.insertMany(video_list);
-
-  video_data.map((data) => videoSchemaIds.push(data._id));
+  if (status !== "addMessage") {
+    const video_data = await Video.insertMany(video_list);
+    video_data.map((data) => videoSchemaIds.push(data._id));
+  } else {
+    video_list.map((data) => videoSchemaIds.push(data.video));
+  }
 
   return videoSchemaIds;
 };
@@ -69,12 +71,14 @@ const uploadPostPhoto = async (photo, userId, percentage, status) => {
       percentage: percentage * (i + 1),
       status,
     });
-    console.log(percentage * (i + 1));
   }
 
-  const photo_data = await Photo.insertMany(url_list);
-
-  photo_data.map((data) => photoSchemaIds.push(data._id));
+  if (status !== "addMessage") {
+    const photo_data = await Photo.insertMany(url_list);
+    photo_data.map((data) => photoSchemaIds.push(data._id));
+  } else {
+    url_list.map((data) => photoSchemaIds.push(data.photo));
+  }
 
   return photoSchemaIds;
 };

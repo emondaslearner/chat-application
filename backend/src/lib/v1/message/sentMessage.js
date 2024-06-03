@@ -1,31 +1,13 @@
 const Message = require("@models/Message");
 const { error } = require("@utils");
 const { Worker } = require("worker_threads");
+const path = require("path");
 
 const worker_threads = new Worker(
   path.join(__dirname, "../../../", "worker", "index.js")
 );
 
-function separateFiles(files) {
-  const videoExtensions = [".mp4", ".mkv", ".avi", ".mov"];
-  const pictureExtensions = [".jpg", ".jpeg", ".png", ".gif"];
-
-  const videos = [];
-  const pictures = [];
-
-  files.forEach((file) => {
-    const ext = path.extname(file).toLowerCase();
-    if (videoExtensions.includes(ext)) {
-      videos.push(file);
-    } else if (pictureExtensions.includes(ext)) {
-      pictures.push(file);
-    }
-  });
-
-  return { videos, pictures };
-}
-
-const sentMessage = async ({ userId, sentTo, replied, message, file }) => {
+const sentMessage = async ({ userId, sentTo, replied, message, files }) => {
   if (!userId || !sentTo) {
     throw error.badRequest(
       `${!userId && "userId:userId is missing"}|${
@@ -34,24 +16,34 @@ const sentMessage = async ({ userId, sentTo, replied, message, file }) => {
     );
   }
 
-  if (!message && !file.length) {
+  if (!message && !files.length) {
     throw error.badRequest("message:message is missing");
   }
 
-  if (file.length) {
-
+  if (files.length) {
+    worker_threads.postMessage({
+      status: "uploadFileOnMessage",
+      data: JSON.stringify({ sentTo, message, userId, replied, files }),
+    });
   } else {
-    const message = await Message({
+    const messageData = await Message({
       sent_to: sentTo,
       message,
       sent_by: userId,
       replied: replied ? replied : null,
     });
 
-    await message.save();
+    await messageData.save();
 
-    return message;
+    return messageData;
   }
 };
+
+// send update to user via socket
+worker_threads.on("message", (message) => {
+  if (message.userId && message.status === "addMessage") {
+    global.io.to(message.userId).emit("addMessage", message);
+  }
+});
 
 module.exports = sentMessage;
