@@ -53,7 +53,7 @@ const getAllChats = async ({ filterData, userId }) => {
   const chats = await getDataFromRedis(key, getChants);
 
   const counts = await functions.countEntities(Friend, filter);
-  console.log(counts);
+  
   return { chats, counts };
 };
 
