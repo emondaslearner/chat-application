@@ -1,6 +1,6 @@
 const nodeFcm = require("fcm-node");
 const admin = require("firebase-admin");
-const Notification = require("@models/Notification");
+const Notification = require("../../models/Notification");
 
 // fcm-node
 const fcm = new nodeFcm(process.env.SERVER_KEY);
