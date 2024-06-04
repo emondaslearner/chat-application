@@ -1,5 +1,5 @@
-const addReaction = require("./addReaction");
+const addOrCancelReaction = require("./addOrCancelReaction");
 
 module.exports = {
-  addReaction,
+  addOrCancelReaction,
 };

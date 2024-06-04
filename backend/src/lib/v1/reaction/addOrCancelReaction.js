@@ -2,7 +2,7 @@ const Reaction = require("@models/Reaction");
 const Post = require("@models/Post");
 const { error } = require("@utils");
 
-const addReaction = async ({ userId, postId, reaction }) => {
+const addOrCancelReaction = async ({ userId, postId, reaction }) => {
   if (!userId || !postId || !reaction) {
     throw error.badRequest(
       `${!userId && "userId:userId is missing"}|${
@@ -23,6 +23,36 @@ const addReaction = async ({ userId, postId, reaction }) => {
     throw error.notFound("Post not found");
   }
 
+  const reactionOb = await Reaction.findOne({
+    post: postId,
+    given_by: userId,
+  });
+
+  console.log(reactionOb);
+
+  if (reactionOb?.reaction === reaction && reactionOb) {
+    const list = [...post.reactions];
+
+    const index = list.indexOf(reactionOb._id);
+
+    list.splice(index, 1);
+
+    post.reactions = list;
+    await post.save();
+
+    await Reaction.deleteOne({
+      post: postId,
+      given_by: userId,
+    });
+
+    return "deleted";
+  } else if (reactionOb?.reaction !== reaction && reactionOb) {
+    reactionOb.reaction = reaction;
+
+    await reactionOb.save();
+    return "updated";
+  }
+
   const reactionData = await Reaction({
     reaction,
     post: postId,
@@ -35,7 +65,7 @@ const addReaction = async ({ userId, postId, reaction }) => {
 
   await post.save();
 
-  return post;
+  return "added";
 };
 
-module.exports = addReaction;
+module.exports = addOrCancelReaction;
