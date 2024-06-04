@@ -1,5 +1,6 @@
 const nodeFcm = require("fcm-node");
 const admin = require("firebase-admin");
+const Notification = require("@models/Notification");
 
 // fcm-node
 const fcm = new nodeFcm(process.env.SERVER_KEY);
@@ -44,10 +45,18 @@ const sentMessageToSpecificUser = async ({ tokens, title, body }) => {
     },
   };
 
-  fcm.send(message, function (err, response) {
+  fcm.send(message, async function (err, response) {
     if (err) {
       return false;
     } else {
+      const notification = new Notification({
+        title,
+        body,
+        userId: topic,
+      });
+
+      await notification.save();
+
       return true;
     }
   });
@@ -62,12 +71,18 @@ const sentMessageToTopic = async ({ topic, title, body }) => {
     },
   };
 
-  fcm.send(message, function (err, response) {
+  fcm.send(message, async function (err, response) {
     if (err) {
       console.log(err);
       return false;
     } else {
-      console.log(response);
+      const notification = new Notification({
+        title,
+        body,
+        userId: topic,
+      });
+
+      await notification.save();
       return true;
     }
   });

@@ -1,6 +1,7 @@
 const FriendRequest = require("@models/FriendRequest");
 const { error } = require("@utils");
 const { deleteKeysWithPrefix } = require("@third-party/redis");
+const { sentMessageToTopic } = require("@third-party/firebase");
 
 const addFriend = async ({ friendId, userId }) => {
   if (!friendId) {
@@ -27,7 +28,13 @@ const addFriend = async ({ friendId, userId }) => {
 
   await friendData.save();
 
-  deleteKeysWithPrefix('friendRequest:');
+  sentMessageToTopic({
+    topic: userId,
+    title: `New Friend Request`,
+    body: `Got a new friend request from a user`,
+  });
+
+  deleteKeysWithPrefix("friendRequest:");
   return friendData;
 };
 

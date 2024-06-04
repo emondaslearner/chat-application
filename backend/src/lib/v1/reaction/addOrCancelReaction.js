@@ -1,6 +1,8 @@
 const Reaction = require("@models/Reaction");
 const Post = require("@models/Post");
 const { error } = require("@utils");
+const { deleteKeysWithPrefix } = require("@third-party/redis");
+const { sentMessageToTopic } = require("@third-party/firebase");
 
 const addOrCancelReaction = async ({ userId, postId, reaction }) => {
   if (!userId || !postId || !reaction) {
@@ -28,7 +30,7 @@ const addOrCancelReaction = async ({ userId, postId, reaction }) => {
     given_by: userId,
   });
 
-  console.log(reactionOb);
+  deleteKeysWithPrefix("posts:");
 
   if (reactionOb?.reaction === reaction && reactionOb) {
     const list = [...post.reactions];
@@ -52,6 +54,12 @@ const addOrCancelReaction = async ({ userId, postId, reaction }) => {
     await reactionOb.save();
     return "updated";
   }
+
+  sentMessageToTopic({
+    topic: post.user,
+    title: `A friend reacted to your post`,
+    body: `A friend reacted to your post. post title is ${post.title}`,
+  });
 
   const reactionData = await Reaction({
     reaction,

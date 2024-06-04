@@ -30,10 +30,16 @@ const deleteMessage = async ({ id, status, userId }) => {
     findMessage.deleted_for = userId;
 
     await findMessage.save();
+
+    io.to(userId).emit("deleteMessage", {
+      id: userId,
+      messageId: findMessage._id,
+    });
   } else {
     await Message.findOneAndDelete(filter);
   }
-  deleteKeysWithPrefix('messages:');
+
+  deleteKeysWithPrefix("messages:");
   return true;
 };
 

@@ -39,7 +39,7 @@ const addPost = async ({ title, color, photo, video, userId }) => {
     data: JSON.stringify(data),
   });
 
-  deleteKeysWithPrefix('posts:');
+  deleteKeysWithPrefix("posts:");
 
   return true;
 };

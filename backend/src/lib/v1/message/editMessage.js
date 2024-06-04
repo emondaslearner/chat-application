@@ -20,7 +20,13 @@ const editMessage = async ({ message, userId, id }) => {
   messageData.message = message;
 
   await messageData.save();
-  deleteKeysWithPrefix('messages:');
+
+  io.to(userId).emit("editMessage", {
+    id: userId,
+    message,
+  });
+
+  deleteKeysWithPrefix("messages:");
   return messageData;
 };
 

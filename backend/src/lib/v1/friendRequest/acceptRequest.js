@@ -2,6 +2,7 @@ const FriendRequest = require("@models/FriendRequest");
 const Friend = require("@models/Friend");
 const { error } = require("@utils");
 const { deleteKeysWithPrefix } = require("@third-party/redis");
+const { sentMessageToTopic } = require("@third-party/firebase");
 
 const acceptRequest = async ({ userId, friendId }) => {
   if (!userId || !friendId) {
@@ -33,7 +34,13 @@ const acceptRequest = async ({ userId, friendId }) => {
     send_to: userId,
   });
 
-  deleteKeysWithPrefix('friend:');
+  sentMessageToTopic({
+    topic: friendId,
+    title: `A user accepted your friend request`,
+    body: `New friend added to your friend list. A user accepted your friend request`,
+  });
+
+  deleteKeysWithPrefix("friend:");
   return friendData;
 };
 
