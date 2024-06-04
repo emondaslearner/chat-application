@@ -4,6 +4,7 @@ const {
   updatePost,
   getPosts,
 } = require("@controller/v1/post");
+const { addReaction } = require("@controller/v1/reaction");
 const multer = require("multer");
 
 // multer upload
@@ -34,6 +35,8 @@ const postRoutes = async (router, authenticate) => {
     .route("/user/post/:id")
     .delete(authenticate, deletePost)
     .patch([authenticate, uploadFields], updatePost);
+
+  router.post("/user/post/:id/reaction", authenticate, addReaction);
 };
 
 module.exports = postRoutes;

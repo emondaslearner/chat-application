@@ -7,6 +7,12 @@ const postSchema = new Schema(
       ref: "user",
       required: true,
     },
+    reactions: [
+      {
+        type: Schema.ObjectId,
+        ref: "reaction",
+      },
+    ],
     title: {
       type: String,
       required: true,

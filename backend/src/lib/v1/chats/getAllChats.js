@@ -18,6 +18,11 @@ const getAllChats = async ({ filterData, userId }) => {
     ],
   };
 
+
+  if (filterData.filter === "unread") {
+    filter.$and.push({ unread_message_count: { $ne: 0 } });
+  }
+
   const getChants = async () => {
     const chats = await Friend.find(filter)
       .sort(sortStr)
@@ -53,7 +58,7 @@ const getAllChats = async ({ filterData, userId }) => {
   const chats = await getDataFromRedis(key, getChants);
 
   const counts = await functions.countEntities(Friend, filter);
-  
+
   return { chats, counts };
 };
 

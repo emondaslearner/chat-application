@@ -4,6 +4,7 @@ const { functions } = require("@utils");
 const getAllChats = async (req, res, next) => {
   try {
     const filterData = {
+      filter: req.query?.filter ? req.query?.filter : "",
       search: req.query?.search ? req.query?.search : "",
       sortBy: req.query?.sortBy ? req.query?.sortBy : "updatedAt",
       sortType: req.query?.sortType ? req.query?.sortType : "dsc",
