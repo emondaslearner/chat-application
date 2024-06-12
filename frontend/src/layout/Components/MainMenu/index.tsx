@@ -7,11 +7,11 @@ import logo from "../../../assets/logo/logo.svg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faMessage,
-  faPhone,
   faCircleUser,
   faUserGroup,
   faSun,
   faMoon,
+  faHouse,
 } from "@fortawesome/free-solid-svg-icons";
 import { Location, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -41,25 +41,28 @@ const MainMenu: React.FC<MainMenuProps> = () => {
       </div>
       <div className="flex flex-col gap-y-[55px]">
         <FontAwesomeIcon
+          onClick={() => navigate("/")}
+          icon={faHouse}
+          className={`text-[25px] cursor-pointer ${
+            location.pathname === "/" ? "text-white_" : "text-dark_gray_"
+          }`}
+          title="Home"
+        />
+        <FontAwesomeIcon
           onClick={() => navigate("/chat")}
           icon={faMessage}
           className={`text-[25px] cursor-pointer ${
             location.pathname === "/chat" ? "text-white_" : "text-dark_gray_"
           }`}
+          title="Chats"
         />
-        {/* <FontAwesomeIcon
-          onClick={() => navigate("/calls")}
-          icon={faPhone}
-          className={`text-[25px] cursor-pointer ${
-            location.pathname === "/calls" ? "text-white_" : "text-dark_gray_"
-          }`}
-        /> */}
         <FontAwesomeIcon
           onClick={() => navigate("/friends")}
           icon={faUserGroup}
           className={`text-[25px] cursor-pointer ${
             location.pathname === "/friends" ? "text-white_" : "text-dark_gray_"
           }`}
+          title="Friends"
         />
         <FontAwesomeIcon
           onClick={() => navigate("/profile")}
@@ -67,6 +70,7 @@ const MainMenu: React.FC<MainMenuProps> = () => {
           className={`text-[25px] cursor-pointer ${
             location.pathname === "/profile" ? "text-white_" : "text-dark_gray_"
           }`}
+          title="Profile"
         />
         {mode === "light" ? (
           <FontAwesomeIcon

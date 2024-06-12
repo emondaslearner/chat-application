@@ -2,7 +2,7 @@ const themeConfig = {
     themeColor: 'primary',
     mode: 'light',
     locale: 'en',
-    root: '/chat'
+    root: '/'
 }
 
 export default themeConfig;

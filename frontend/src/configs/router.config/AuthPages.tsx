@@ -1,10 +1,18 @@
 import MyProfile from '@src/pages/MyProfile';
 import RouteConfig from '../../Router/RouteConfig';
-import Calls from '../../pages/Calls';
+import DailyFeeds from '@src/pages/DailyFeeds';
 import Chat from '../../pages/Chat'
 import Friends from '../../pages/Friends';
 
 const AuthPages: RouteConfig[] = [
+    {
+        path: '/',
+		element: <DailyFeeds />,
+		meta: {
+			layout: 'vertical',
+			isMenu: true
+		}
+    },
     {
         path: '/chat',
 		element: <Chat />,
@@ -13,14 +21,6 @@ const AuthPages: RouteConfig[] = [
 			isMenu: true
 		}
     },
-    // {
-    //     path: '/calls',
-	// 	element: <Calls />,
-	// 	meta: {
-	// 		layout: 'vertical',
-	// 		isMenu: true
-	// 	}
-    // },
     {
         path: '/friends',
 		element: <Friends />,
