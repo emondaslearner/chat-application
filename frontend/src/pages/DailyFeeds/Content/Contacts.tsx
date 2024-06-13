@@ -1,8 +1,7 @@
 import AvatarSingle from "@src/components/shared/Avatar";
 import TextEllipsis from "@src/components/shared/TextEllipsis";
+import SearchBar from "@src/components/shared/SearchBar";
 import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 
 interface ContactsProps {}
 
@@ -15,10 +14,9 @@ const Contacts: React.FC<ContactsProps> = () => {
           Contacts
         </h3>
 
-        <FontAwesomeIcon
-          icon={faMagnifyingGlass}
-          className="cursor-pointer dark:text-dark_text_ text-[20px]"
-        />
+        <div className="max-w-[30px]">
+          <SearchBar />
+        </div>
       </div>
 
       <div className="flex flex-col gap-y-[10px]">

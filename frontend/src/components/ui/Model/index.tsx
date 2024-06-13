@@ -12,7 +12,7 @@ interface ModalProps {
   openButton: ReactNode;
   title: string | ReactNode;
   children: ReactNode;
-  position: "right" | "left" | "middle";
+  position: "right" | "left" | "middle" | "top";
   size?:
     | "xs"
     | "sm"
@@ -60,6 +60,8 @@ const Modal: React.FC<ModalProps> = ({
             position === "right" && "absolute right-0 top-0 h-full !m-0"
           } ${
             position === "left" && "absolute left-0 top-0 h-full !m-0"
+          } ${
+            position === "top" && "absolute left-[29%] top-[10%] !m-0 rounded-[10px]"
           } dark:bg-dark_bg_`}
         >
           {(onClose) => (
