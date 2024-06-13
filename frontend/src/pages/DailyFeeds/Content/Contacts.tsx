@@ -8,7 +8,7 @@ interface ContactsProps {}
 const Contacts: React.FC<ContactsProps> = () => {
   const data = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}];
   return (
-    <div className="w-[23%] overflow-y-auto max-h-[100%] bg-white_ dark:bg-dark_bg_ mt-[20px] p-[15px] rounded-[10px] pb-[30px]">
+    <div className="w-[23%] lg:block hidden overflow-y-auto max-h-[100%] bg-white_ dark:bg-dark_bg_ mt-[20px] p-[15px] rounded-[10px] pb-[30px]">
       <div className="mb-[15px] flex items-center justify-between">
         <h3 className="text-[20px] font-semibold text-dark_ dark:text-white_">
           Contacts

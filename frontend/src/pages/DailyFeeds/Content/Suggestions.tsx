@@ -2,8 +2,6 @@ import AvatarSingle from "@src/components/shared/Avatar";
 import Button from "@components/shared/Button";
 import TextEllipsis from "@src/components/shared/TextEllipsis";
 import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import SearchBar from "@src/components/shared/SearchBar";
 
 interface SuggestionsProps {}
@@ -11,7 +9,7 @@ interface SuggestionsProps {}
 const Suggestions: React.FC<SuggestionsProps> = () => {
   const data = [{}, {}, {}, {}, {}, {}];
   return (
-    <div className="w-[23%] overflow-y-auto max-h-[100%] bg-white_ dark:bg-dark_bg_ mt-[20px] p-[15px] rounded-[10px] pb-[30px]">
+    <div className=" md:block hidden w-[40%] lg:w-[23%] overflow-y-auto max-h-[100%] bg-white_ dark:bg-dark_bg_ mt-[20px] p-[15px] rounded-[10px] pb-[30px]">
       <div className="flex items-center justify-between mb-[10px]">
         <h3 className="text-[20px] font-semibold text-dark_ dark:text-white_">
           Suggestions

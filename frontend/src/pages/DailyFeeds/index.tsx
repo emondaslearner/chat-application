@@ -11,10 +11,10 @@ const DailyFeeds: React.FC<DailyFeedsProps> = () => {
   const viewStatus: "list" | "grid" = "list";
 
   return (
-    <div className="w-full h-[100vh] overflow-hidden bg-light_bg_ dark:bg-dark_light_bg_">
-      <div className="w-[85%] mx-auto h-[100vh] flex items-start">
+    <div className="w-full h-[100vh] overflow-hidden bg-light_bg_ dark:bg-dark_light_bg_ flex justify-end">
+      <div className="w-[98%] md:w-[92%] xl:w-[85%] mx-auto md:mx-0 xl:mx-auto h-[100vh] flex items-start">
         <Contacts />
-        <div className="w-[48%] mx-[2%] overflow-y-auto h-[100%]">
+        <div className="w-full md:w-[58%] lg:w-[48%] mx-[1%] overflow-y-auto h-[100%]">
           {/* create post */}
           <AddPost>
             <div className="my-[20px] w-full bg-white_ dark:bg-dark_bg_ p-[15px] rounded-[10px] cursor-pointer">

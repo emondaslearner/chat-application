@@ -65,33 +65,7 @@ const items: Items[] = [
         className="p-[20px] rounded-full cursor-pointer table mx-auto"
       ></div>
     ),
-  },
-  {
-    key: "https://scontent.fcgp3-1.fna.fbcdn.net/v/t39.16376-6/27971368_423110001455136_5789798837665136640_n.jpg?_nc_cat=1&ccb=1-7&_nc_sid=427b5c&_nc_eui2=AeExHkcLTO89TSzjX_LMp2WZ0MjEoEQcna_QyMSgRBydr0618-db8yvGaVkMwQAQ-oAfmVyL76CzST_3hYg69HXv&_nc_ohc=WNH47udLYbQAX9Dn1rR&_nc_ht=scontent.fcgp3-1.fna&oh=00_AfDX0VhZ-Q9plOM3yjuzMNSZuxDbzQEHetytfZbOJkn6-g&oe=655F73E9",
-    label: (
-      <div
-        style={{
-          backgroundImage:
-            "url(https://scontent.fcgp3-1.fna.fbcdn.net/v/t39.16376-6/27971368_423110001455136_5789798837665136640_n.jpg?_nc_cat=1&ccb=1-7&_nc_sid=427b5c&_nc_eui2=AeExHkcLTO89TSzjX_LMp2WZ0MjEoEQcna_QyMSgRBydr0618-db8yvGaVkMwQAQ-oAfmVyL76CzST_3hYg69HXv&_nc_ohc=WNH47udLYbQAX9Dn1rR&_nc_ht=scontent.fcgp3-1.fna&oh=00_AfDX0VhZ-Q9plOM3yjuzMNSZuxDbzQEHetytfZbOJkn6-g&oe=655F73E9)",
-          backgroundSize: "cover",
-        }}
-        className="p-[20px] rounded-full cursor-pointer table mx-auto"
-      ></div>
-    ),
-  },
-  {
-    key: "https://scontent.fcgp3-1.fna.fbcdn.net/v/t39.16376-6/29160588_435684666861727_3152817560781586432_n.jpg?_nc_cat=1&ccb=1-7&_nc_sid=427b5c&_nc_eui2=AeG2OMlqCJNHOxFKSi91g-3NbpAppzliuMpukCmnOWK4yuqDjOATvKD3mo4lVKR6Py5L1OX9iCjlEIu5bsOk9gmF&_nc_ohc=LO8vX7lu8fwAX-7l50k&_nc_ht=scontent.fcgp3-1.fna&oh=00_AfDm-jrAjah1E67jAUGNxnDmO0rt7p0pEedbLotIv7pjVw&oe=655FAD07",
-    label: (
-      <div
-        style={{
-          backgroundImage:
-            "url(https://scontent.fcgp3-1.fna.fbcdn.net/v/t39.16376-6/29160588_435684666861727_3152817560781586432_n.jpg?_nc_cat=1&ccb=1-7&_nc_sid=427b5c&_nc_eui2=AeG2OMlqCJNHOxFKSi91g-3NbpAppzliuMpukCmnOWK4yuqDjOATvKD3mo4lVKR6Py5L1OX9iCjlEIu5bsOk9gmF&_nc_ohc=LO8vX7lu8fwAX-7l50k&_nc_ht=scontent.fcgp3-1.fna&oh=00_AfDm-jrAjah1E67jAUGNxnDmO0rt7p0pEedbLotIv7pjVw&oe=655FAD07)",
-          backgroundSize: "cover",
-        }}
-        className="p-[20px] rounded-full cursor-pointer table mx-auto"
-      ></div>
-    ),
-  },
+  }
 ];
 
 const Colors: React.FC<ColorsProps> = ({
@@ -111,7 +85,7 @@ const Colors: React.FC<ColorsProps> = ({
           </DropdownTrigger>
           <DropdownMenu
             aria-label="Dynamic Actions"
-            className="colorDropdown max-w-[400px]"
+            className="colorDropdown"
             items={items}
           >
             {(item: Items) => (
