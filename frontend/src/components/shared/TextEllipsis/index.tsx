@@ -1,5 +1,4 @@
-import React, { ReactElement, ReactEventHandler, RefObject } from "react";
-import PropTypes from "prop-types";
+import { ReactElement, ReactEventHandler, RefObject } from "react";
 
 interface TextEllipsisProps {
   text?: string;
@@ -17,26 +16,14 @@ const TextEllipsis = (props: TextEllipsisProps): ReactElement => {
   return (
     <p
       ref={ref}
-      className={`${`w-[${maxTextWidth}%] ${[className]} truncate`}`}
+      className={`${className} truncate`}
+      style={{ maxWidth: `${maxTextWidth || 100}%` }}
       onMouseLeave={onMouseLeave}
       onMouseEnter={onMouseEnter}
     >
       {text}
     </p>
-
   );
-};
-
-TextEllipsis.propTypes = {
-  text: PropTypes.string,
-  maxTextWidth: PropTypes.number,
-  ref: PropTypes.oneOfType([
-    PropTypes.func,
-    PropTypes.shape({ current: PropTypes.any }),
-  ]),
-  onMouseEnter: PropTypes.func,
-  onMouseLeave: PropTypes.func,
-  className: PropTypes.string,
 };
 
 TextEllipsis.defaultProps = {

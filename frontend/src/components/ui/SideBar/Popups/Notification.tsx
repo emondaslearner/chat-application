@@ -3,8 +3,8 @@ import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { IoMailOpenOutline } from "react-icons/io5";
-import Model from "../Model";
-import AvatarSingle from "@src/components/shared/Avatar";
+import Model from "../../Model";
+import Avatar from "../../../shared/Avatar";
 
 interface NotificationProps {}
 
@@ -52,7 +52,7 @@ const Notification: React.FC<NotificationProps> = () => {
                   data?.id === 1 && "border-t-[1px]"
                 } border-b-[1px] dark:border-dark_border_ border-light_border_ relative`}
               >
-                <AvatarSingle
+                <Avatar
                   className="!w-[55px] !h-[55px]"
                   src="https://play-lh.googleusercontent.com/0SAFn-mRhhDjQNYU46ZwA7tz0xmRiQG4ZuZmuwU8lYmqj6zEpnqsee_6QDuhQ4ZofwXj=w240-h480-rw"
                   alt=""
@@ -69,9 +69,7 @@ const Notification: React.FC<NotificationProps> = () => {
                   </p>
                 </div>
 
-                <div className="w-[10px] h-[10px] rounded-full bg-primary_ absolute right-3 top-2">
-
-                </div>
+                <div className="w-[10px] h-[10px] rounded-full bg-primary_ absolute right-3 top-2"></div>
               </div>
             );
           })}

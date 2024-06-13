@@ -9,7 +9,7 @@ const Content: React.FC<ContentProps> = () => {
   const [viewStatus, setViewStatus] = useState<'list' | 'grid'>("list");
 
   return (
-    <div className="w-full h-[100vh] overflow-hidden dark:bg-dark_light_bg_">
+    <div className="w-full h-[100vh] overflow-hidden bg-light_bg_ dark:bg-dark_light_bg_">
       <div className="w-[60%] mx-auto h-[100vh]">
 
         {/* change view */}

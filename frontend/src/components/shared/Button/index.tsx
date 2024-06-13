@@ -1,8 +1,5 @@
 import React, { ReactNode } from "react";
 
-// components
-import PropTypes from "prop-types";
-
 interface ButtonProps {
   fill: boolean;
   children: ReactNode;
@@ -34,13 +31,6 @@ const Button: React.FC<ButtonProps> = ({ fill, children, className, onClick }) =
 
 Button.defaultProps = {
   fill: false,
-};
-
-Button.propTypes = {
-  fill: PropTypes.bool.isRequired,
-  className: PropTypes.string.isRequired,
-  children: PropTypes.node.isRequired,
-  onClick: PropTypes.func
 };
 
 export default Button;

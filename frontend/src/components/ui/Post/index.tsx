@@ -27,7 +27,7 @@ const Post: React.FC<PostProps> = ({ viewStatus, border = "" }) => {
   return (
     <div
       className={`${viewStatus === "list" ? "py-3" : "pt-3"} w-full relative ${
-        border !== "none" && "border-[2px] bg-light_gray_ dark:bg-dark_bg_"
+        border !== "none" && "border-[2px] bg-white_ dark:bg-dark_bg_"
       } border-light_border_ dark:border-dark_border_ rounded-[5px]`}
     >
       {/* post header  */}

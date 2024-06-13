@@ -1,7 +1,7 @@
 import Button from "@src/components/shared/Button";
 import DragFile from "@src/components/shared/DragFile";
 import Modal from "@src/components/ui/Model";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, ReactNode } from "react";
 import { IoMdClose } from "react-icons/io";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
@@ -14,7 +14,10 @@ interface FileUploadComProps {
   setColor: (e: any) => void;
 }
 
-const FileUploadCom: React.FC<FileUploadComProps> = ({ setFileStatus, setColor }) => {
+const FileUploadCom: React.FC<FileUploadComProps> = ({
+  setFileStatus,
+  setColor,
+}) => {
   return (
     <div
       onClick={(e) => {
@@ -37,7 +40,7 @@ const FileUploadCom: React.FC<FileUploadComProps> = ({ setFileStatus, setColor }
           onClick={(e) => {
             e.stopPropagation();
             setFileStatus("background");
-            setColor('#000000')
+            setColor("#000000");
           }}
           className="absolute top-[5px] right-[5px] bg-white_ dark:bg p-[10px] border-[1px] hover:bg-light_gray_ dark:bg-dark_bg_ dark:hover:bg-dark_light_bg_ border-light_border_ dark:border-dark_border_ rounded-full"
         >
@@ -48,9 +51,11 @@ const FileUploadCom: React.FC<FileUploadComProps> = ({ setFileStatus, setColor }
   );
 };
 
-interface AddPostProps {}
+interface AddPostProps {
+  children: ReactNode;
+}
 
-const AddPost: React.FC<AddPostProps> = () => {
+const AddPost: React.FC<AddPostProps> = ({ children }) => {
   const [uploadStatus, setUploadStatus] = useState<string>("file");
   const [color, setColor] = useState<string>();
 
@@ -77,11 +82,7 @@ const AddPost: React.FC<AddPostProps> = () => {
 
   return (
     <Modal
-      openButton={
-        <Button fill={true} className="!w-full">
-          Add photos & videos
-        </Button>
-      }
+      openButton={children}
       title={
         <p className="text-[25px] text-center font-semibold text-dark_ dark:text-white_ ">
           Add Post
@@ -135,7 +136,12 @@ const AddPost: React.FC<AddPostProps> = () => {
           <DragFile
             name="file"
             multiple={true}
-            children={<FileUploadCom setFileStatus={setUploadStatus} setColor={setColor} />}
+            children={
+              <FileUploadCom
+                setFileStatus={setUploadStatus}
+                setColor={setColor}
+              />
+            }
             onChange={handleFileChange}
           />
         )}
@@ -227,7 +233,9 @@ const AddPost: React.FC<AddPostProps> = () => {
         </div>
 
         {/* button */}
-        <Button className="w-full mt-5" fill={true}>Post</Button>
+        <Button className="w-full mt-5" fill={true}>
+          Post
+        </Button>
       </div>
     </Modal>
   );

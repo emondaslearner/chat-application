@@ -1,11 +1,11 @@
 import AvatarSingle from "@src/components/shared/Avatar";
-import Button from "@src/components/shared/Button";
 import React, { ReactNode, useRef } from "react";
 import { FaCamera } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import Dropdown from "../../Dropdown";
-import EditProfile from "@src/pages/MyProfile/Content/Popups/EditProfile";
-import AddPost from "@src/pages/MyProfile/Content/Popups/AddPost";
+import EditProfile from "../Popups/EditProfile";
+import AddPost from "../Popups/AddPost";
+import Button from "@src/components/shared/Button";
 
 interface ProfileProps {}
 
@@ -97,7 +97,11 @@ const Profile: React.FC<ProfileProps> = () => {
 
       <div className="flex items-center justify-between w-[90%] mx-auto mt-3">
         <div className="w-[48%]">
-          <AddPost />
+          <AddPost>
+            <Button fill={true} className="!w-full">
+              Add photos & videos
+            </Button>
+          </AddPost>
         </div>
 
         <div className="w-[48%]">
