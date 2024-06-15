@@ -37,7 +37,7 @@ const MainMenu: React.FC<MainMenuProps> = () => {
       {/* large screen menu */}
       <div className="lg:flex hidden bg-primary_ fixed top-0 left-0 w-[70px] h-[100vh] flex-col items-center justify-center">
         <div
-          onClick={() => navigate("/chat")}
+          onClick={() => navigate("/")}
           className="p-[5px] bg-white_ w-[45px] h-[40px] top-[10px] rounded-[5px] flex justify-center items-center absolute"
         >
           <img src={logo} className="w-[60px]" alt="" />
