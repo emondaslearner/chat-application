@@ -5,7 +5,9 @@ import AvatarSingle from "../../../shared/Avatar";
 import { HiOutlineLocationMarker } from "react-icons/hi";
 import TextEllipsis from "../../../shared/TextEllipsis";
 
-interface FriendsListProps {}
+interface FriendsListProps {
+  setChat?: (value: boolean) => void;
+}
 
 // this is for testing purpose
 type TestData = {
@@ -41,7 +43,7 @@ const testList: TestData[] = names.map((name, index) => ({
   name,
 }));
 
-const FriendsList: React.FC<FriendsListProps> = () => {
+const FriendsList: React.FC<FriendsListProps> = ({ setChat }) => {
   // dispatch
   const dispatch = useDispatch();
 
@@ -56,6 +58,7 @@ const FriendsList: React.FC<FriendsListProps> = () => {
             onClick={() => {
               setActiveChat(data?.id);
               dispatch(changeChatOpenedVar(true));
+              setChat && setChat(true);
             }}
             key={data?.id}
             className={`${
@@ -74,14 +77,19 @@ const FriendsList: React.FC<FriendsListProps> = () => {
               </p>
 
               <div className="flex items-center">
-                <HiOutlineLocationMarker size={20} className={`${activeChat === data?.id ? 'text-white_' : 'dark:text-dark_text_'}`} />
+                <HiOutlineLocationMarker
+                  size={20}
+                  className={`${
+                    activeChat === data?.id
+                      ? "text-white_"
+                      : "dark:text-dark_text_"
+                  }`}
+                />
                 <TextEllipsis
                   className={`overflow-hidden text-ellipsis ml-2 ${
                     activeChat !== data?.id && "dark:text-dark_text_"
                   }`}
-                  text={
-                    "1134 Ridder Park Road, San Fransisco, CA 94851"
-                  }
+                  text={"1134 Ridder Park Road, San Fransisco, CA 94851"}
                   maxTextWidth={92}
                 />
               </div>

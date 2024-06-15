@@ -8,6 +8,7 @@ import {
   PlusCircle,
   Smile,
 } from "react-feather";
+import { FaRegArrowAltCircleLeft } from "react-icons/fa";
 import Input from "../../../components/shared/Input";
 import Dropdown from "@src/components/ui/Dropdown";
 import AvatarSingle from "@src/components/shared/Avatar";
@@ -19,7 +20,7 @@ interface HeaderProps {}
 interface Items {
   key: string;
   label: string;
-  icon?: ReactNode
+  icon?: ReactNode;
 }
 // sidebar header dropdown options
 const items: Items[] = [
@@ -45,7 +46,11 @@ const Header: React.FC<HeaderProps> = () => {
   return (
     <div className="px-8 py-3 border-light_border_ dark:border-dark_border_ dark:bg-dark_bg_ border-b-[1px] flex justify-between h-[9%]">
       <div className="flex items-center">
-        <AvatarSingle src="https://marketplace.canva.com/EAFSZhFumYM/1/0/800w/canva-dark-red-neon-futuristic-instagram-profile-picture-C7X0FDvE02Q.jpg" alt="Profile Pic" status="online" />
+        <AvatarSingle
+          src="https://marketplace.canva.com/EAFSZhFumYM/1/0/800w/canva-dark-red-neon-futuristic-instagram-profile-picture-C7X0FDvE02Q.jpg"
+          alt="Profile Pic"
+          status="online"
+        />
         <div className="ml-3">
           <p className="text-dark_ font-semibold dark:text-white_">Emon Das</p>
           <p className="mt-[0px] text-[14px] font-semibold text-dark_gray_">
@@ -56,11 +61,9 @@ const Header: React.FC<HeaderProps> = () => {
 
       <div className="flex items-center gap-x-4">
         <Phone size={20} className="text-dark_gray_ cursor-pointer" />
-        
+
         {/* Dropdown */}
-        <Dropdown
-          items={items}
-        >
+        <Dropdown items={items}>
           <MoreVertical size={20} className="text-dark_gray_ cursor-pointer" />
         </Dropdown>
       </div>
