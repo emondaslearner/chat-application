@@ -50,7 +50,7 @@ const Profile: React.FC<ProfileProps> = () => {
 
   return (
     <div className="w-full h-[100%] scrollHidden overflow-y-auto">
-      <div className="w-[90%] mx-auto rounded-[15px] border-[1px] border-light_border_ dark:border-dark_border_ mt-8 h-[200px] relative overflow-hidden">
+      <div className="w-[95%] mx-auto rounded-[15px] border-[1px] border-light_border_ dark:border-dark_border_ mt-4 lg:mt-8 h-[200px] relative overflow-hidden">
         <img
           className="w-full h-full"
           src="https://images.unsplash.com/photo-1528465424850-54d22f092f9d?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Y292ZXIlMjBwaG90b3xlbnwwfHwwfHx8MA%3D%3D"
@@ -95,7 +95,7 @@ const Profile: React.FC<ProfileProps> = () => {
         </p>
       </div>
 
-      <div className="flex items-center justify-between w-[90%] mx-auto mt-3">
+      <div className="flex items-center justify-between w-[95%] mx-auto mt-3">
         <div className="w-[48%]">
           <AddPost>
             <Button fill={true} className="!w-full">
@@ -110,7 +110,7 @@ const Profile: React.FC<ProfileProps> = () => {
       </div>
 
       {/* Friends */}
-      <div className="w-[90%] mx-auto mt-4">
+      <div className="w-[95%] mx-auto mt-4">
         <p className="text-[20px] text-dark_ dark:text-white_ font-semibold">
           Friends
         </p>
@@ -149,7 +149,7 @@ const Profile: React.FC<ProfileProps> = () => {
       </div>
 
       {/* Photos */}
-      <div className="w-[90%] mx-auto mt-4">
+      <div className="w-[95%] mx-auto mt-4">
         <div className="flex items-center justify-between">
           <p className="text-[20px] text-dark_ dark:text-white_ font-semibold">
             Photos
@@ -176,7 +176,7 @@ const Profile: React.FC<ProfileProps> = () => {
       </div>
 
       {/* Videos */}
-      <div className="w-[90%] mx-auto mt-4">
+      <div className="w-[95%] mx-auto mt-4">
         <div className="flex items-center justify-between">
           <p className="text-[20px] text-dark_ dark:text-white_ font-semibold">
             Videos

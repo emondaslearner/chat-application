@@ -8,7 +8,6 @@ import {
   PlusCircle,
   Smile,
 } from "react-feather";
-import { FaRegArrowAltCircleLeft } from "react-icons/fa";
 import Input from "../../../components/shared/Input";
 import Dropdown from "@src/components/ui/Dropdown";
 import AvatarSingle from "@src/components/shared/Avatar";
