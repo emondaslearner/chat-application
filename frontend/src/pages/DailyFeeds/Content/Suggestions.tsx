@@ -9,7 +9,7 @@ interface SuggestionsProps {}
 const Suggestions: React.FC<SuggestionsProps> = () => {
   const data = [{}, {}, {}, {}, {}, {}];
   return (
-    <div className=" md:block hidden w-[40%] lg:w-[23%] overflow-y-auto max-h-[100%] bg-white_ dark:bg-dark_bg_ mt-[20px] p-[15px] rounded-[10px] pb-[30px]">
+    <div className="overflow-y-auto max-h-[100%] bg-white_ dark:bg-dark_bg_ mt-[20px] p-[15px] rounded-[10px] pb-[30px]">
       <div className="flex items-center justify-between mb-[10px]">
         <h3 className="text-[20px] font-semibold text-dark_ dark:text-white_">
           Suggestions
