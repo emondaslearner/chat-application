@@ -4,7 +4,9 @@ import { changeChatOpenedVar } from "../../../../store/actions/siteConfig";
 import AvatarSingle from "../../../shared/Avatar";
 import TextEllipsis from "../../../shared/TextEllipsis";
 
-interface ChatProps {}
+interface ChatProps {
+  setChat?: (value: boolean) => void;
+}
 
 // this is for testing purpose
 interface TestData {
@@ -14,8 +16,7 @@ const testList: TestData[] = Array.from({ length: 20 }, (_, index) => ({
   id: index + 1,
 }));
 
-const ChatList: React.FC<ChatProps> = () => {
-
+const ChatList: React.FC<ChatProps> = ({ setChat }) => {
   // dispatch
   const dispatch = useDispatch();
 
@@ -30,6 +31,7 @@ const ChatList: React.FC<ChatProps> = () => {
             onClick={() => {
               setActiveChat(data?.id);
               dispatch(changeChatOpenedVar(true));
+              setChat && setChat(true);
             }}
             key={data?.id}
             className={`${

@@ -33,7 +33,7 @@ const MainMenu: React.FC<MainMenuProps> = () => {
   const mode: string = useSelector((state: any) => state?.themeConfig.mode);
 
   return (
-    <div className="bg-light_bg_ lg:bg-transparent dark:bg-dark_light_bg_">
+    <div className={`${location.pathname === '/' ? 'bg-light_bg_' : 'bg-white_'} lg:bg-transparent dark:bg-dark_light_bg_`}>
       {/* large screen menu */}
       <div className="lg:flex hidden bg-primary_ fixed top-0 left-0 w-[70px] h-[100vh] flex-col items-center justify-center">
         <div

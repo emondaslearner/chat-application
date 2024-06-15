@@ -7,15 +7,16 @@ import CallList from "./Variant/CallList";
 import FriendsList from "./Variant/FriendsList";
 import Profile from "./Variant/Profile";
 
-interface SideBarProps {}
+interface SideBarProps {
+  setChat?: (value: boolean) => void;
+}
 
-const SideBar: React.FC<SideBarProps> = () => {
+const SideBar: React.FC<SideBarProps> = ({ setChat }) => {
   // location
   const location = useLocation();
 
   return (
     <div className="border-r-[1px] border-light_border_ dark:border-dark_border_ h-[100vh] overflow-hidden dark:bg-dark_bg_">
-
       {/* if page is not profile */}
       {location.pathname !== "/profile" && (
         <>
@@ -32,7 +33,7 @@ const SideBar: React.FC<SideBarProps> = () => {
               {location.pathname === "/chat" && (
                 <>
                   {/* Chat list */}
-                  <ChatList />
+                  <ChatList setChat={setChat} />
                 </>
               )}
 

@@ -96,65 +96,61 @@ const MobileMenu: React.FC<MobileMenuProps> = () => {
   const [screenSize, setScreenSize] = useState<number>(window.innerWidth);
 
   useEffect(() => {
-    if (location.pathname === "/") {
-      const isExist = items.find(
-        (data) => data.key === "Suggestions & Contacts"
-      );
+    const isExist = items.find((data) => data.key === "Suggestions & Contacts");
 
-      if (!isExist && screenSize > 550) {
+    if (!isExist && screenSize > 550) {
+      items.push({
+        key: "Suggestions & Contacts",
+        label: (
+          <div className="flex items-center gap-x-[10px] pl-[10px] w-full bg-white hover:bg-light_gray_ rounded-[30px] dark:bg-transparent hover:dark:bg-dark_light_bg_ transition-all duration-300 py-[10px]">
+            <MdOutlineContacts size={25} className="dark:text-white" />
+            <p className="md:hidden block font-semibold text-[16px] dark:text-light_gray_">
+              Suggestions & Contacts
+            </p>
+            <p className="md:block hidden font-semibold text-[16px] dark:text-light_gray_">
+              Contacts
+            </p>
+          </div>
+        ),
+        onClick: () => {
+          navigate("/?suggestionAndContact");
+        },
+      });
+    }
+
+    if (screenSize <= 550 && screenSize !== 0) {
+      const isExist = items.find((data) => data.key === "Suggestions");
+
+      if (!isExist) {
         items.push({
-          key: "Suggestions & Contacts",
+          key: "Contacts",
           label: (
             <div className="flex items-center gap-x-[10px] pl-[10px] w-full bg-white hover:bg-light_gray_ rounded-[30px] dark:bg-transparent hover:dark:bg-dark_light_bg_ transition-all duration-300 py-[10px]">
               <MdOutlineContacts size={25} className="dark:text-white" />
-              <p className="md:hidden block font-semibold text-[16px] dark:text-light_gray_">
-                Suggestions & Contacts
-              </p>
-              <p className="md:block hidden font-semibold text-[16px] dark:text-light_gray_">
+              <p className="font-semibold text-[16px] dark:text-light_gray_">
                 Contacts
               </p>
             </div>
           ),
           onClick: () => {
-            navigate("/?suggestionAndContact");
+            navigate("/?Contact");
           },
         });
-      }
 
-      if (screenSize <= 550 && screenSize !== 0) {
-        const isExist = items.find((data) => data.key === "Suggestions");
-
-        if (!isExist) {
-          items.push({
-            key: "Contacts",
-            label: (
-              <div className="flex items-center gap-x-[10px] pl-[10px] w-full bg-white hover:bg-light_gray_ rounded-[30px] dark:bg-transparent hover:dark:bg-dark_light_bg_ transition-all duration-300 py-[10px]">
-                <MdOutlineContacts size={25} className="dark:text-white" />
-                <p className="font-semibold text-[16px] dark:text-light_gray_">
-                  Contacts
-                </p>
-              </div>
-            ),
-            onClick: () => {
-              navigate("/?Contact");
-            },
-          });
-
-          items.push({
-            key: "Suggestions",
-            label: (
-              <div className="flex items-center gap-x-[10px] pl-[10px] w-full bg-white hover:bg-light_gray_ rounded-[30px] dark:bg-transparent hover:dark:bg-dark_light_bg_ transition-all duration-300 py-[10px]">
-                <MdOutlineContacts size={25} className="dark:text-white" />
-                <p className="font-semibold text-[16px] dark:text-light_gray_">
-                  Suggestions
-                </p>
-              </div>
-            ),
-            onClick: () => {
-              navigate("/?Suggestions");
-            },
-          });
-        }
+        items.push({
+          key: "Suggestions",
+          label: (
+            <div className="flex items-center gap-x-[10px] pl-[10px] w-full bg-white hover:bg-light_gray_ rounded-[30px] dark:bg-transparent hover:dark:bg-dark_light_bg_ transition-all duration-300 py-[10px]">
+              <MdOutlineContacts size={25} className="dark:text-white" />
+              <p className="font-semibold text-[16px] dark:text-light_gray_">
+                Suggestions
+              </p>
+            </div>
+          ),
+          onClick: () => {
+            navigate("/?Suggestions");
+          },
+        });
       }
     }
   }, [location, screenSize]);
@@ -173,7 +169,7 @@ const MobileMenu: React.FC<MobileMenuProps> = () => {
   }, []);
 
   return (
-    <div className="flex lg:hidden  items-center justify-between w-[95%] mx-auto pt-[10px]">
+    <div className="flex lg:hidden items-center justify-between w-[95%] mx-auto pt-[10px]">
       <div
         onClick={() => navigate("/")}
         className="p-[5px] bg-white_ w-[45px] h-[40px] rounded-[5px] flex justify-center items-center"

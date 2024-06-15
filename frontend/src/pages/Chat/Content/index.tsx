@@ -10,6 +10,7 @@ import {
 } from "react-feather";
 import Input from "../../../components/shared/Input";
 import Dropdown from "@src/components/ui/Dropdown";
+import AvatarSingle from "@src/components/shared/Avatar";
 
 interface ContentProps {}
 
@@ -44,11 +45,7 @@ const Header: React.FC<HeaderProps> = () => {
   return (
     <div className="px-8 py-3 border-light_border_ dark:border-dark_border_ dark:bg-dark_bg_ border-b-[1px] flex justify-between h-[9%]">
       <div className="flex items-center">
-        <img
-          className="min-w-[50px] w-[50px] h-[50px] rounded-[50%]"
-          src="https://marketplace.canva.com/EAFSZhFumYM/1/0/800w/canva-dark-red-neon-futuristic-instagram-profile-picture-C7X0FDvE02Q.jpg"
-          alt=""
-        />
+        <AvatarSingle src="https://marketplace.canva.com/EAFSZhFumYM/1/0/800w/canva-dark-red-neon-futuristic-instagram-profile-picture-C7X0FDvE02Q.jpg" alt="Profile Pic" status="online" />
         <div className="ml-3">
           <p className="text-dark_ font-semibold dark:text-white_">Emon Das</p>
           <p className="mt-[0px] text-[14px] font-semibold text-dark_gray_">
