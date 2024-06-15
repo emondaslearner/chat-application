@@ -9,7 +9,8 @@ interface InputsProps {
   placeholder?: string;
   value?: string | number;
   onChange?: (e: any) => void;
-  ref?: any
+  ref?: any;
+  id?: string;
 }
 
 const Input: React.FC<InputsProps> = ({
@@ -19,6 +20,7 @@ const Input: React.FC<InputsProps> = ({
   value,
   onChange,
   ref,
+  id,
   ...props
 }) => {
   return (
@@ -30,6 +32,7 @@ const Input: React.FC<InputsProps> = ({
       placeholder={placeholder}
       onChange={onChange}
       ref={ref}
+      id={id}
     />
   );
 };

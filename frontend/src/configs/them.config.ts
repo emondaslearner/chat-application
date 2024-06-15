@@ -1,6 +1,6 @@
 const themeConfig = {
     themeColor: 'primary',
-    mode: 'light',
+    mode: 'dark',
     locale: 'en',
     root: '/'
 }

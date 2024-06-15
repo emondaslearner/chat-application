@@ -7,11 +7,15 @@ import { useSelector } from "react-redux";
 interface DatePickerProps {
     value: Date;
     onChange: (e: any) => void;
+    className?: string;
+    id?: string
 }
 
 const DatePicker: React.FC<DatePickerProps> = ({
     value,
-    onChange
+    onChange,
+    className,
+    id
 }) => {
   const themeConfig = useSelector((state: any) => state.themeConfig);
 
@@ -23,9 +27,9 @@ const DatePicker: React.FC<DatePickerProps> = ({
 
 
   return (
-    <div className="DatePicker">
+    <div id={id} className="DatePicker">
       <ThemeProvider theme={darkTheme}>
-        <DatePickers  className="w-full" onChange={onChange} defaultValue={dayjs(value)} />
+        <DatePickers  className={`w-full ${className}`} onChange={onChange} defaultValue={dayjs(value)} />
       </ThemeProvider>
     </div>
   );
