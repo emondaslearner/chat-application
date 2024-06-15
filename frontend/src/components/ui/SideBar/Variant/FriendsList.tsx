@@ -4,6 +4,7 @@ import { changeChatOpenedVar } from "../../../../store/actions/siteConfig";
 import AvatarSingle from "../../../shared/Avatar";
 import { HiOutlineLocationMarker } from "react-icons/hi";
 import TextEllipsis from "../../../shared/TextEllipsis";
+import { AppDispatch } from "@src/store/store";
 
 interface FriendsListProps {
   setChat?: (value: boolean) => void;
@@ -45,7 +46,7 @@ const testList: TestData[] = names.map((name, index) => ({
 
 const FriendsList: React.FC<FriendsListProps> = ({ setChat }) => {
   // dispatch
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
 
   // states
   const [activeChat, setActiveChat] = useState<number | null>(null); //store active check (means which chat is active now)

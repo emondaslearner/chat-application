@@ -4,6 +4,7 @@ import { changeChatOpenedVar } from "../../../../store/actions/siteConfig";
 import AvatarSingle from "../../../shared/Avatar";
 import { MdPhoneCallback } from "react-icons/md";
 import { IoCallOutline } from "react-icons/io5";
+import { AppDispatch } from "@src/store/store";
 
 interface ChatProps {}
 
@@ -17,7 +18,7 @@ const testList: TestData[] = Array.from({ length: 20 }, (_, index) => ({
 
 const CallList: React.FC<ChatProps> = () => {
   // dispatch
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch =  useDispatch();
 
   // states
   const [activeChat, setActiveChat] = useState<number | null>(null); //store active check (means which chat is active now)

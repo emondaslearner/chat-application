@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { changeChatOpenedVar } from "../../../../store/actions/siteConfig";
 import AvatarSingle from "../../../shared/Avatar";
 import TextEllipsis from "../../../shared/TextEllipsis";
+import { AppDispatch } from "@src/store/store";
 
 interface ChatProps {
   setChat?: (value: boolean) => void;
@@ -18,7 +19,7 @@ const testList: TestData[] = Array.from({ length: 20 }, (_, index) => ({
 
 const ChatList: React.FC<ChatProps> = ({ setChat }) => {
   // dispatch
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
 
   // states
   const [activeChat, setActiveChat] = useState<number | null>(null); //store active check (means which chat is active now)

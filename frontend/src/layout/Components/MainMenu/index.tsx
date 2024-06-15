@@ -15,9 +15,9 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { Location, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Dispatch } from "@reduxjs/toolkit";
 import { changeMode } from "@src/store/actions/themeConfig";
 import MobileMenu from "../MobileMenu";
+import { AppDispatch } from "@src/store/store";
 // import nav from '../../../configs/nav.config.ts'
 
 interface MainMenuProps {}
@@ -27,7 +27,7 @@ const MainMenu: React.FC<MainMenuProps> = () => {
   const navigate = useNavigate();
 
   // dispatch
-  const dispatch: Dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
 
   // mode status
   const mode: string = useSelector((state: any) => state?.themeConfig.mode);

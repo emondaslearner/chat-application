@@ -1,3 +1,4 @@
+import Spinner from '@src/components/shared/Spinner';
 import React, { Suspense, ReactNode } from 'react';
 
 interface PrivateRouteProps {
@@ -5,7 +6,8 @@ interface PrivateRouteProps {
 }
 
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
-  return <Suspense fallback={null}>{children}</Suspense>;
+  
+  return <Suspense fallback={<Spinner />}>{children}</Suspense>;
 }
 
 export default PrivateRoute;
