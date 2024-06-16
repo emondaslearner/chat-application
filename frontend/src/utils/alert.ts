@@ -3,30 +3,39 @@ import { toast, ToastPosition } from "react-toastify";
 interface ToastProps {
   message: string;
   position?: ToastPosition;
+  themeColor: "light" | "dark";
 }
 
-export const success = ({ message, position = "top-right" }: ToastProps): void => {
+export const success = ({
+  message,
+  position = "top-right",
+  themeColor,
+}: ToastProps) => {
   toast.success(message, {
     position,
-    autoClose: 5000,
+    autoClose: 3000,
     hideProgressBar: false,
     closeOnClick: true,
     pauseOnHover: true,
     draggable: true,
     progress: undefined,
-    theme: "light"
+    theme: themeColor,
   });
 };
 
-export const error = ({ message, position = "top-right" }: ToastProps): void => {
+export const error = ({
+  message,
+  position = "top-right",
+  themeColor,
+}: ToastProps): void => {
   toast.error(message, {
     position,
-    autoClose: 5000,
+    autoClose: 3000,
     hideProgressBar: false,
     closeOnClick: true,
     pauseOnHover: true,
     draggable: true,
     progress: undefined,
-    theme: "light"
+    theme: themeColor,
   });
 };

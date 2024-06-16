@@ -8,7 +8,7 @@ import themeCon from "../../configs/them.config"; // Corrected the import path
 // Define the initial state type
 interface ThemeState {
   themeColor: string | undefined;
-  mode: string | undefined;
+  mode: 'light' | 'dark';
 }
 
 const initialState: ThemeState = {
@@ -20,7 +20,7 @@ const themeConfig = createSlice({
   name: "themeConfig",
   initialState,
   reducers: {
-    changeMode(state, action: PayloadAction<string>) {
+    changeMode(state, action: PayloadAction<'light' | 'dark'>) {
       state.mode = action.payload;
     },
     changeThemColor(state, action: PayloadAction<string>) {

@@ -154,3 +154,11 @@ code {
 /* .sc-aXZVg {
   @apply !w-full !max-w-[100%] !border-[1px] !border-light_border_ dark:!border-dark_border_ !border-solid
 } */
+
+.spinner-color-default {
+  @apply border-b-white_
+}
+
+.spinner-color-primary {
+  @apply border-b-primary_
+}

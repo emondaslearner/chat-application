@@ -12,12 +12,7 @@ axios.interceptors.response.use(
       return response;
     },
     (err: AxiosError) => {
-      if (!err.response) {
-        error({
-          message: "Server unable to respond at this time. Please try again later",
-        });
-      }
-      return Promise.reject(err); // Ensure the error is properly propagated
+      return Promise.reject(err);
     }
   );
 

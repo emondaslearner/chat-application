@@ -3,9 +3,12 @@ import Button from "@src/components/shared/Button";
 import DatePicker from "@src/components/shared/DatePicker";
 import Input from "@src/components/shared/Input";
 import Label from "@src/components/shared/Label";
-import { error } from "@src/utils/alert";
+import { RootState } from "@src/store/store";
+import { success } from "@src/utils/alert";
+import { handleAxiosError } from "@src/utils/error";
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { Link, NavigateFunction, useNavigate } from "react-router-dom";
 
 interface SignUpProps {}
 
@@ -14,6 +17,16 @@ const SignUp: React.FC<SignUpProps> = () => {
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+
+  // themeColor
+  const themeColor: "light" | "dark" = useSelector(
+    (state: RootState) => state.themeConfig.mode
+  );
+
+  // loader
+  const [loader, setLoader] = useState(false);
+
+  const navigate: NavigateFunction = useNavigate();
 
   const clearStates = () => {
     setDate(new Date());
@@ -24,21 +37,26 @@ const SignUp: React.FC<SignUpProps> = () => {
 
   const SignUpToBeAMember = async (e: any) => {
     try {
+      setLoader(true);
       e.preventDefault();
 
-      const apiData = await signUp({
+      const apiData: any = await signUp({
         name,
         email,
         dateOfBirth: date,
+        password,
       });
+      setLoader(false);
 
-      console.log(apiData);
-      // clearStates();
+      if (apiData.code === 201) {
+        localStorage.setItem("token", apiData.token);
+        success({ message: apiData.message, themeColor });
+        navigate("/");
+      }
+      clearStates();
     } catch (err: any) {
-      if(err?.response?.status === 400) {
-
-      } 
-      console.log(err)
+      setLoader(false);
+      handleAxiosError(err, themeColor);
     }
   };
 
@@ -106,7 +124,12 @@ const SignUp: React.FC<SignUpProps> = () => {
             />
           </div>
 
-          <Button fill={true} className="w-full mt-[20px]">
+          <Button
+            fill={true}
+            loader={loader}
+            loaderMessage="Processing..."
+            className="w-full mt-[20px]"
+          >
             Sign Up
           </Button>
           <Link

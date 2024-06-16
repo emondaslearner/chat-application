@@ -39,7 +39,7 @@ function App() {
           </QueryClientProvider>
         </NextUIProvider>
       </BrowserRouter>
-      <ToastContainer />
+      <ToastContainer limit={2} />
     </div>
   );
 }
