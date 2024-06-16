@@ -1,5 +1,4 @@
-import axiosClient, { AxiosResponse, AxiosError, AxiosInstance } from "axios";
-import { error } from "./utils/alert";
+import axiosClient, { AxiosResponse, AxiosError, AxiosInstance } from "axios"
 
 const baseURL: string = "http://localhost:6500";
 

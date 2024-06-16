@@ -13,7 +13,7 @@ interface ThemeState {
 
 const initialState: ThemeState = {
   themeColor: themeCon?.themeColor,
-  mode: themeCon?.mode,
+  mode: 'dark',
 };
 
 const themeConfig = createSlice({

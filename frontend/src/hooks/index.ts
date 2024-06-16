@@ -1,5 +1,4 @@
 import useTheme from "./useTheme";
+import useSystemTheme from "./useSystemTheme";
 
-export {
-    useTheme
-}
+export { useTheme, useSystemTheme };

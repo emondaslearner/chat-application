@@ -1,15 +1,13 @@
 interface ThemeConfigState {
-    themeColor: string;
-    mode: 'light' | 'dark';
-    locale: string,
-    root: string
+  themeColor: string;
+  locale: string;
+  root: string;
 }
 
 const themeConfig: ThemeConfigState = {
-    themeColor: 'primary',
-    mode: 'dark',
-    locale: 'en',
-    root: '/'
-}
+  themeColor: "primary",
+  locale: "en",
+  root: "/",
+};
 
 export default themeConfig;
