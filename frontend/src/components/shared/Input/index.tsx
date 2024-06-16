@@ -11,6 +11,7 @@ interface InputsProps {
   onChange?: (e: any) => void;
   ref?: any;
   id?: string;
+  required?: boolean
 }
 
 const Input: React.FC<InputsProps> = ({
@@ -21,6 +22,7 @@ const Input: React.FC<InputsProps> = ({
   onChange,
   ref,
   id,
+  required,
   ...props
 }) => {
   return (
@@ -33,6 +35,7 @@ const Input: React.FC<InputsProps> = ({
       onChange={onChange}
       ref={ref}
       id={id}
+      required={required}
     />
   );
 };

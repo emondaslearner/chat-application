@@ -6,6 +6,11 @@ import { useEffect } from "react";
 import Spinner from "./components/shared/Spinner";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { ToastContainer } from "react-toastify";
+import { QueryClient, QueryClientProvider } from "react-query";
+import 'react-toastify/dist/ReactToastify.css';
+
+export const queryClient = new QueryClient();
 
 function App() {
   // change mode
@@ -25,13 +30,16 @@ function App() {
     <div className="max-w-[1800px] mx-auto relative">
       <BrowserRouter>
         <NextUIProvider>
-          <Suspense fallback={<Spinner />}>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <QueryClientProvider client={queryClient}>
+            <Suspense fallback={<Spinner />}>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <Components />
-            </LocalizationProvider>
-          </Suspense>
+              </LocalizationProvider>
+            </Suspense>
+          </QueryClientProvider>
         </NextUIProvider>
       </BrowserRouter>
+      <ToastContainer />
     </div>
   );
 }
