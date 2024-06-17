@@ -1,4 +1,4 @@
-import useTheme from "./useTheme";
 import useSystemTheme from "./useSystemTheme";
+import useAuth from "./useAuth";
 
-export { useTheme, useSystemTheme };
+export { useSystemTheme, useAuth };

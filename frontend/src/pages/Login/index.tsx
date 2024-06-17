@@ -1,12 +1,55 @@
+import { signIn } from "@src/apis/auth";
 import Button from "@src/components/shared/Button";
 import Input from "@src/components/shared/Input";
 import Label from "@src/components/shared/Label";
-import React from "react";
-import { Link } from "react-router-dom";
+import { RootState } from "@src/store/store";
+import { success } from "@src/utils/alert";
+import { handleAxiosError } from "@src/utils/error";
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
+import { Link, NavigateFunction, useNavigate } from "react-router-dom";
 
 interface LoginProps {}
 
 const Login: React.FC<LoginProps> = () => {
+  // themeColor
+  const themeColor: "light" | "dark" = useSelector(
+    (state: RootState) => state.themeConfig.mode
+  );
+
+  // states
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loader, setLoader] = useState(false);
+
+  // router dom
+  const navigate: NavigateFunction = useNavigate();
+
+
+  const clearStates = () => {
+    setEmail("");
+    setPassword("");
+  };
+
+  const handleLogin = async (e: any) => {
+    e.preventDefault();
+    try {
+      setLoader(true);
+      const data: any = await signIn({ email, password });
+      setLoader(false);
+
+      if(data.code === 200) {
+        localStorage.setItem("token", data.token);
+        success({ message: data.message, themeColor });
+        navigate("/");
+      }
+      clearStates();
+    } catch (err) {
+      setLoader(false);
+      handleAxiosError(err, themeColor);
+    }
+  };
+
   return (
     <div className="w-full h-[100vh] flex justify-center items-center dark:bg-dark_light_bg_">
       <div
@@ -17,10 +60,20 @@ const Login: React.FC<LoginProps> = () => {
           Login
         </h1>
 
-        <div className="w-[90%] mx-auto">
+        <form onSubmit={handleLogin} className="w-[90%] mx-auto">
           <div className=" mt-[10px]">
             <Label htmlFor="email">Email:</Label>
-            <Input placeholder="Enter an email" id="email" type="text" className="rounded-[5px] mt-[4px]" />
+            <Input
+              placeholder="Enter an email"
+              id="email"
+              type="text"
+              className="rounded-[5px] mt-[4px]"
+              value={email}
+              required
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setEmail(e.target.value)
+              }
+            />
           </div>
 
           <div className=" mt-[10px]">
@@ -38,10 +91,15 @@ const Login: React.FC<LoginProps> = () => {
               id="password"
               type="password"
               className="rounded-[5px] mt-[4px]"
+              value={password}
+              required
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setPassword(e.target.value)
+              }
             />
           </div>
 
-          <Button fill={true} className="w-full mt-[20px]">
+          <Button loader={loader} loaderMessage="Processing..." fill={true} className="w-full mt-[20px]">
             Login
           </Button>
           <Link
@@ -50,7 +108,7 @@ const Login: React.FC<LoginProps> = () => {
           >
             Don't have any account?
           </Link>
-        </div>
+        </form>
       </div>
     </div>
   );

@@ -10,7 +10,8 @@ const AuthPages: RouteConfig[] = [
 		element: <DailyFeeds />,
 		meta: {
 			layout: 'vertical',
-			isMenu: true
+			isMenu: true,
+			publicRoute: false
 		}
     },
     {

@@ -19,7 +19,7 @@ const handleAxiosError = (err: any, themeColor: "light" | "dark"): void => {
           error({ message: data.data[i].errorData, themeColor });
         }
       } else {
-        error({ message: "Bad Request", themeColor });
+        error({ message: data.message, themeColor });
       }
       break;
     case 401:

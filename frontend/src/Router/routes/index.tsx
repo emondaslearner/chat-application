@@ -9,6 +9,7 @@ import AuthPages from '../../configs/router.config/AuthPages';
 // Layouts
 import BlankLayout from '../../layout/BlankLayout';
 import VerticalLayout from '../../layout/VerticalLayout';
+import PrivateRoute from '@src/security/PrivateRoute';
 // import PrivateRoute from '../../security/PrivateRoute';
 
 // Hooks
@@ -57,11 +58,11 @@ const MergeLayoutRoutes = (layout: LayoutType, defaultLayout: LayoutType): Route
         ((route.meta === undefined || route.meta.layout === undefined) &&
           defaultLayout === layout)
       ) {
-        let RouteTag: any = PublicRoute;
+        let RouteTag: any = PrivateRoute;
 
         if (route.meta) {
           isBlank = route.meta.layout === 'blank';
-          RouteTag = PublicRoute;
+          RouteTag = route.meta?.publicRoute ? PublicRoute : PrivateRoute;;
         }
 
         if (route.element) {

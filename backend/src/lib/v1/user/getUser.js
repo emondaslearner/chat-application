@@ -6,7 +6,7 @@ const getUser = async ({ id, userId }) => {
     throw error.badRequest("Id is not provided");
   }
 
-  const user = await User.findById(id).select(
+  const user = await User.findById(id || userId).select(
     `${id ? "-email" : ""} -password -verified`
   );
 

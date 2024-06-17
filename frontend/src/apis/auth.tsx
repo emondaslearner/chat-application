@@ -7,23 +7,48 @@ interface SignUpProps {
   dateOfBirth: Date;
 }
 
-const signUp = ({ name, email, password, dateOfBirth }: SignUpProps): Promise<void> => {
+const signUp = ({
+  name,
+  email,
+  password,
+  dateOfBirth,
+}: SignUpProps): Promise<void> => {
   return new Promise((resolve, reject) => {
-    axios.post('/auth/sign-up', {
-      name,
-      email,
-      password,
-      dateOfBirth
-    })
-    .then(response => {
-      resolve(response?.data);
-    })
-    .catch(error => {
-      reject(error);
-    });
+    axios
+      .post("/auth/sign-up", {
+        name,
+        email,
+        password,
+        dateOfBirth,
+      })
+      .then((response) => {
+        resolve(response?.data);
+      })
+      .catch((error) => {
+        reject(error);
+      });
   });
+};
+
+interface SignInProps {
+  email: string;
+  password: string;
 }
 
-export {
-  signUp
-}
+const signIn = ({ email, password }: SignInProps): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    axios
+      .post("/auth/sign-in", {
+        email,
+        password,
+      })
+      .then((response) => {
+        resolve(response?.data);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+};
+
+export { signUp, signIn };

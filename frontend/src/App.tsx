@@ -16,9 +16,10 @@ import { changeMode } from "./store/actions/themeConfig";
 export const queryClient = new QueryClient();
 
 function App() {
-  const systemTheme = useSystemTheme();
   const dispatch: AppDispatch = useDispatch();
 
+  // check application theme and user system theme
+  const systemTheme = useSystemTheme();
   const localColor = localStorage.getItem("themeColor");
 
   const themeColor =
