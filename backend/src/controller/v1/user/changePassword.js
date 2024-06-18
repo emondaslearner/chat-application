@@ -1,4 +1,4 @@
-const { changePassword: changePasswordLib } = require("./changePassword");
+const { changePassword: changePasswordLib } = require("@lib/v1/user");
 
 const changePassword = async (req, res, next) => {
   try {
@@ -16,7 +16,7 @@ const changePassword = async (req, res, next) => {
 
     res.status(response.code).json(response);
   } catch (err) {
-    next();
+    next(err);
   }
 };
 

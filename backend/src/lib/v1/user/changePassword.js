@@ -1,6 +1,5 @@
 const User = require("@models/User");
-const { error } = require("@utils");
-const { hash } = require("@utils");
+const { error, hash } = require("@utils");
 
 const changePassword = async ({ currentPassword, password, userId }) => {
   if (!currentPassword || !password) {
@@ -32,6 +31,4 @@ const changePassword = async ({ currentPassword, password, userId }) => {
   return true;
 };
 
-module.exports = {
-  changePassword,
-};
+module.exports = changePassword;
