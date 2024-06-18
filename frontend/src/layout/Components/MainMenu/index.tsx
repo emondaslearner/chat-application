@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactNode } from "react";
 
 // images
 import logo from "../../../assets/logo/logo.svg";
@@ -18,6 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { changeMode } from "@src/store/actions/themeConfig";
 import MobileMenu from "../MobileMenu";
 import { AppDispatch } from "@src/store/store";
+import { IoMdLogOut } from "react-icons/io";
 // import nav from '../../../configs/nav.config.ts'
 
 interface MainMenuProps {}
@@ -31,6 +32,11 @@ const MainMenu: React.FC<MainMenuProps> = () => {
 
   // mode status
   const mode: string = useSelector((state: any) => state?.themeConfig.mode);
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
 
   return (
     <div
@@ -83,6 +89,7 @@ const MainMenu: React.FC<MainMenuProps> = () => {
             }`}
             title="Profile"
           />
+
           {mode === "light" ? (
             <FontAwesomeIcon
               onClick={() => {
@@ -104,6 +111,14 @@ const MainMenu: React.FC<MainMenuProps> = () => {
               className={`text-[25px] cursor-pointer text-dark_gray_`}
             />
           )}
+
+          {/* setting dropdown */}
+          <IoMdLogOut
+            size={30}
+            title="Logout"
+            className={`text-[25px] cursor-pointer text-red-500`}
+            onClick={logout}
+          />
         </div>
       </div>
 
