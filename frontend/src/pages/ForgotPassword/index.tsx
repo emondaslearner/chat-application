@@ -33,7 +33,7 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = () => {
       if (data.code === 200) {
         localStorage.setItem("token", data.token);
         success({ message: data.message, themeColor });
-        navigate("/verify-otp");
+        navigate(`/verify-otp?email=${email}`);
       }
     } catch (err) {
       setLoader(false);

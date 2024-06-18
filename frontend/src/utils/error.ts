@@ -29,7 +29,7 @@ const handleAxiosError = (err: any, themeColor: "light" | "dark"): void => {
       error({ message: "Forbidden", themeColor });
       break;
     case 404:
-      error({ message: "Resource not found", themeColor });
+      error({ message: data.message, themeColor });
       break;
     case 500:
       error({

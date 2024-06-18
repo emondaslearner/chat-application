@@ -72,4 +72,25 @@ const sentForgotPasswordMailtoUser = ({
   });
 };
 
-export { signUp, signIn, sentForgotPasswordMailtoUser };
+interface verifyOtpProps {
+  otp: number | string;
+  email: string | null;
+}
+
+const verifyOtp = ({ otp, email }: verifyOtpProps): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    axios
+      .post("/auth/verify-otp", {
+        email,
+        otp,
+      })
+      .then((response) => {
+        resolve(response?.data);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+};
+
+export { signUp, signIn, sentForgotPasswordMailtoUser, verifyOtp };

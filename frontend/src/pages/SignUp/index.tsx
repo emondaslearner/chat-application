@@ -6,7 +6,7 @@ import Label from "@src/components/shared/Label";
 import { RootState } from "@src/store/store";
 import { success } from "@src/utils/alert";
 import { handleAxiosError } from "@src/utils/error";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, NavigateFunction, useNavigate } from "react-router-dom";
 
@@ -27,6 +27,15 @@ const SignUp: React.FC<SignUpProps> = () => {
   const [loader, setLoader] = useState(false);
 
   const navigate: NavigateFunction = useNavigate();
+
+  // check logged in or not
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      navigate("/");
+    }
+  }, [navigate]);
 
   const clearStates = () => {
     setDate(new Date());

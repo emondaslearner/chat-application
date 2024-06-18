@@ -5,7 +5,7 @@ import Label from "@src/components/shared/Label";
 import { RootState } from "@src/store/store";
 import { success } from "@src/utils/alert";
 import { handleAxiosError } from "@src/utils/error";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, NavigateFunction, useNavigate } from "react-router-dom";
 
@@ -25,11 +25,19 @@ const Login: React.FC<LoginProps> = () => {
   // router dom
   const navigate: NavigateFunction = useNavigate();
 
-
   const clearStates = () => {
     setEmail("");
     setPassword("");
   };
+
+  // check logged in or not
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      navigate("/");
+    }
+  }, [navigate]);
 
   const handleLogin = async (e: any) => {
     e.preventDefault();
@@ -38,7 +46,7 @@ const Login: React.FC<LoginProps> = () => {
       const data: any = await signIn({ email, password });
       setLoader(false);
 
-      if(data.code === 200) {
+      if (data.code === 200) {
         localStorage.setItem("token", data.token);
         success({ message: data.message, themeColor });
         navigate("/");
@@ -99,7 +107,12 @@ const Login: React.FC<LoginProps> = () => {
             />
           </div>
 
-          <Button loader={loader} loaderMessage="Processing..." fill={true} className="w-full mt-[20px]">
+          <Button
+            loader={loader}
+            loaderMessage="Processing..."
+            fill={true}
+            className="w-full mt-[20px]"
+          >
             Login
           </Button>
           <Link
