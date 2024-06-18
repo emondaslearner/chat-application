@@ -1,6 +1,10 @@
-const { updateUser, getUser } = require("@controller/v1/user");
+const {
+  updateUser,
+  getUser,
+  changePassword,
+  getAllUser,
+} = require("@controller/v1/user");
 const multer = require("multer");
-const { getAllUser } = require("@controller/v1/user");
 
 // multer upload
 const upload = multer({ dest: "./src/uploads/" });
@@ -11,6 +15,8 @@ const uploadFields = upload.fields([
 ]);
 
 const userRoutes = (router, authenticate) => {
+  router.patch("/user/password", authenticate, changePassword);
+
   router
     .route("/user")
     .patch([authenticate, uploadFields], updateUser)
