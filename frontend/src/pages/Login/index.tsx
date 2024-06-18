@@ -18,9 +18,9 @@ const Login: React.FC<LoginProps> = () => {
   );
 
   // states
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loader, setLoader] = useState(false);
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [loader, setLoader] = useState<boolean>(false);
 
   // router dom
   const navigate: NavigateFunction = useNavigate();

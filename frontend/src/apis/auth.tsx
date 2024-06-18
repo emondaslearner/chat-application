@@ -51,4 +51,25 @@ const signIn = ({ email, password }: SignInProps): Promise<void> => {
   });
 };
 
-export { signUp, signIn };
+interface ForgotPasswordStates {
+  email: string;
+}
+
+const sentForgotPasswordMailtoUser = ({
+  email,
+}: ForgotPasswordStates): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    axios
+      .post("/auth/forgot-password", {
+        email,
+      })
+      .then((response) => {
+        resolve(response?.data);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+};
+
+export { signUp, signIn, sentForgotPasswordMailtoUser };
