@@ -93,4 +93,31 @@ const verifyOtp = ({ otp, email }: verifyOtpProps): Promise<void> => {
   });
 };
 
-export { signUp, signIn, sentForgotPasswordMailtoUser, verifyOtp };
+interface RequestForAccessToken {
+  token: string | null;
+}
+
+const requestForAccessToken = ({
+  token,
+}: RequestForAccessToken): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    axios
+      .post("/auth/refresh", {
+        token,
+      })
+      .then((response) => {
+        resolve(response?.data);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+};
+
+export {
+  signUp,
+  signIn,
+  sentForgotPasswordMailtoUser,
+  verifyOtp,
+  requestForAccessToken,
+};

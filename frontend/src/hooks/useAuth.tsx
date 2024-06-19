@@ -17,17 +17,13 @@ const useAuth = () => {
   });
 
   dispatch(changeLoaderValue(isLoading));
-  
+
   const userData: any = data;
 
   if (userData?.code === 200) {
-    dispatch(
-      setUserData({
-        profile_picture: userData?.data?.profile_picture,
-        email: userData?.data?.email,
-        name: userData?.data?.name,
-      })
-    );
+    console.log('userData?.data', userData?.data);
+    
+    dispatch(setUserData(userData?.data));
 
     return true;
   }

@@ -1,38 +1,41 @@
 /* eslint-disable  object-shorthand */
 
-import { createSlice, PayloadAction } from "@reduxjs/toolkit"
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 // Define the initial state type
-interface InitialStates {
-    name: string;
-    email: string;
-    profile_picture: string;
+export interface AuthStoreInitialState {
+  name: string;
+  email: string;
+  profile_picture: string;
+  date_of_birth: string;
+  bio: string;
+  cover_picture: string;
 }
 
 // Define the payload type for the setData action
-interface UserDataPayload {
-    name: string;
-    email: string;
-    profile_picture: string;
-}
-
-const initialState: InitialStates = {
-    name: '',
-    email: '',
-    profile_picture: ''
-}
+const initialState: AuthStoreInitialState = {
+  name: "",
+  email: "",
+  profile_picture: "",
+  date_of_birth: "",
+  bio: "",
+  cover_picture: "",
+};
 
 const siteConfig = createSlice({
-    name: "user",
-    initialState,
-    reducers: {
-        setUserData: (state, action: PayloadAction<UserDataPayload>) => {
-            state.name = action.payload.name;
-            state.email = action.payload.email;
-            state.profile_picture = action.payload.profile_picture;
-        }
-    }
-})
+  name: "user",
+  initialState,
+  reducers: {
+    setUserData: (state, action: PayloadAction<AuthStoreInitialState>) => {
+      state.name = action.payload.name;
+      state.email = action.payload.email;
+      state.profile_picture = action.payload.profile_picture;
+      state.date_of_birth = action.payload.date_of_birth;
+      state.bio = action.payload.bio;
+      state.cover_picture = action.payload.cover_picture;
+    },
+  },
+});
 
 export const { setUserData } = siteConfig.actions;
 export default siteConfig.reducer;
