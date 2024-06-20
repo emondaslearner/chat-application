@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, useEffect } from "react";
 import {
   Modal as Modals,
   ModalContent,
@@ -9,7 +9,7 @@ import {
 
 interface ModalProps {
   status: "custom";
-  openButton: ReactNode;
+  openButton?: ReactNode;
   title: string | ReactNode;
   children: ReactNode;
   position: "right" | "left" | "middle" | "top";
@@ -27,6 +27,7 @@ interface ModalProps {
   closeButton?: boolean;
   customCloseButton?: ReactNode;
   dismissable?: boolean;
+  isOpenPopup?: (onOpen: any) => void;
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -39,8 +40,15 @@ const Modal: React.FC<ModalProps> = ({
   closeButton,
   customCloseButton,
   dismissable,
+  isOpenPopup,
 }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+  useEffect(() => {
+    if(isOpenPopup) {
+      isOpenPopup(onOpen);
+    }
+  }, [isOpenPopup, onOpen]);
 
   return (
     <div className="w-full">
@@ -58,10 +66,9 @@ const Modal: React.FC<ModalProps> = ({
         <ModalContent
           className={`${
             position === "right" && "absolute right-0 top-0 h-full !m-0"
-          } ${
-            position === "left" && "absolute left-0 top-0 h-full !m-0"
-          } ${
-            position === "top" && "absolute left-[29%] top-[10%] !m-0 rounded-[10px]"
+          } ${position === "left" && "absolute left-0 top-0 h-full !m-0"} ${
+            position === "top" &&
+            "absolute left-[29%] top-[10%] !m-0 rounded-[10px]"
           } dark:bg-dark_bg_`}
         >
           {(onClose) => (

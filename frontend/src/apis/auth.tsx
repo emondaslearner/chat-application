@@ -99,17 +99,17 @@ interface RequestForAccessToken {
 
 const requestForAccessToken = ({
   token,
-}: RequestForAccessToken): Promise<void> => {
+}: RequestForAccessToken): Promise<any> => {
   return new Promise((resolve, reject) => {
     axios
       .post("/auth/refresh", {
         token,
       })
       .then((response) => {
-        resolve(response?.data);
+        resolve(response?.data); // Resolve with response data
       })
       .catch((error) => {
-        reject(error);
+        reject(error); // Reject the promise with the error
       });
   });
 };

@@ -1,5 +1,5 @@
 import AvatarSingle from "@src/components/shared/Avatar";
-import React, { ReactNode, useEffect, useRef, useState } from "react";
+import React, { ReactNode, useRef, useState } from "react";
 import { FaCamera } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import Dropdown from "../../Dropdown";
@@ -9,6 +9,7 @@ import Button from "@src/components/shared/Button";
 import { useSelector } from "react-redux";
 import { RootState } from "@src/store/store";
 import { AuthStoreInitialState } from "@src/store/actions/auth";
+import SavePicture from "@src/pages/MyProfile/Popups/ProfilePic";
 
 interface ProfileProps {}
 
@@ -32,17 +33,15 @@ const Profile: React.FC<ProfileProps> = () => {
 
   // cover picture
   const [coverPicture, setCoverPicture] = useState<File | null>(null);
+  const [coverPictureTempUrl, setCoverPictureTempUrl] = useState<string>("");
 
   // profile picture
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
+  const [profilePictureTempUrl, setProfilePictureTempUrl] =
+    useState<string>("");
 
-  // handle cover picture
-  useEffect(() => {
-    // setCoverPicture(coverPicture); 
-    if(coverPicture) {
-      
-    }
-  }, [coverPicture]);
+  console.log(coverPicture);
+  console.log(profilePicture);
 
   // cover photo dropdown options
   const items: Items[] = [
@@ -85,10 +84,22 @@ const Profile: React.FC<ProfileProps> = () => {
             <FaCamera size={25} className="text-black_" />
           </div>
         </Dropdown>
+
+        {/* Cover Picture Popup */}
+        {coverPicture && (
+          <SavePicture
+            src={coverPictureTempUrl}
+            title="Update Cover Picture"
+            setFiles={setCoverPicture}
+          />
+        )}
+
         <input
-          onChange={(e: any) =>
-            e.target?.files?.length > 0 && setCoverPicture(e.target.files[0])
-          }
+          onChange={(e: any) => {
+            setCoverPicture(e.target.files[0]);
+            const url: string = URL.createObjectURL(e.target.files[0]);
+            setCoverPictureTempUrl(url);
+          }}
           className="hidden"
           type="file"
           ref={CoverPhoto}
@@ -109,7 +120,25 @@ const Profile: React.FC<ProfileProps> = () => {
             <FaCamera size={20} className="text-black_" />
           </div>
         </Dropdown>
-        <input className="hidden" type="file" ref={ProfilePicture} />
+
+        {/* Profile Picture Popup */}
+        {profilePicture && (
+          <SavePicture
+            src={profilePictureTempUrl}
+            title="Update Profile Picture"
+            setFiles={setProfilePicture}
+          />
+        )}
+        <input
+          onChange={(e: any) => {
+            setProfilePicture(e.target.files[0]);
+            const url: string = URL.createObjectURL(e.target.files[0]);
+            setProfilePictureTempUrl(url);
+          }}
+          className="hidden"
+          type="file"
+          ref={ProfilePicture}
+        />
       </div>
 
       {/* Other info */}

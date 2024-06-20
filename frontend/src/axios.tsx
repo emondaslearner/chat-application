@@ -24,15 +24,17 @@ axios.interceptors.response.use(
       _retry?: boolean;
     };
 
+    const currentToken = localStorage.getItem("token");
+
     if (
       err?.response?.status === 401 &&
       originalRequest &&
-      !originalRequest._retry
+      !originalRequest._retry &&
+      currentToken
     ) {
       originalRequest._retry = true;
 
       try {
-        const currentToken = localStorage.getItem("token");
         const data: any = await requestForAccessToken({ token: currentToken });
 
         if (data.code === 200) {
@@ -43,10 +45,11 @@ axios.interceptors.response.use(
 
           // Retry the original request with the new token
           return axios(originalRequest);
+        } else {
+          localStorage.removeItem("token");
         }
       } catch (refreshError) {
         localStorage.removeItem("token");
-        return Promise.reject(refreshError);
       }
     }
     return Promise.reject(err);
