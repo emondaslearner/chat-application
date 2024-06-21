@@ -21,8 +21,6 @@ const useAuth = () => {
   const userData: any = data;
 
   if (userData?.code === 200) {
-    console.log('userData?.data', userData?.data);
-    
     dispatch(setUserData(userData?.data));
 
     return true;

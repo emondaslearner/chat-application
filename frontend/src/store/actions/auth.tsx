@@ -10,6 +10,8 @@ export interface AuthStoreInitialState {
   date_of_birth: string;
   bio: string;
   cover_picture: string;
+  country: string;
+  city: string;
 }
 
 // Define the payload type for the setData action
@@ -20,6 +22,8 @@ const initialState: AuthStoreInitialState = {
   date_of_birth: "",
   bio: "",
   cover_picture: "",
+  city: "",
+  country: "",
 };
 
 const siteConfig = createSlice({
@@ -33,6 +37,8 @@ const siteConfig = createSlice({
       state.date_of_birth = action.payload.date_of_birth;
       state.bio = action.payload.bio;
       state.cover_picture = action.payload.cover_picture;
+      state.city = action.payload.city;
+      state.country = action.payload.country;
     },
   },
 });

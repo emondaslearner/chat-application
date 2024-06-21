@@ -7,14 +7,18 @@ interface ProfilePicProps {
   children?: ReactNode;
   title: string;
   src: string;
-  setFiles: (file: File | null) => void;
+  nullifyState: () => void;
+  buttonLoader: boolean;
+  savePicture: (e: any) => void;
 }
 
 const ProfilePic: React.FC<ProfilePicProps> = ({
   children,
   title,
   src,
-  setFiles,
+  nullifyState,
+  buttonLoader,
+  savePicture
 }) => {
   const isOpenPopup = (open: any) => {
     open();
@@ -34,14 +38,17 @@ const ProfilePic: React.FC<ProfilePicProps> = ({
       openButton={children}
       isOpenPopup={isOpenPopup}
       customCloseButton={
-        <div onClick={() => setFiles(null)} className="p-[10px] !bg-dark_gray_ dark:bg-light_gray_">
-          <IoMdClose size={30} className="text-dark_" />
-        </div>}
+        <div
+          className="p-[10px] !bg-red-500 dark:bg-light_gray_ bg="
+        >
+          <IoMdClose onClick={nullifyState} size={30} className="text-dark_" />
+        </div>
+      }
     >
       <div className="w-[90%] mx-auto">
         <img className="mt-1 w-full" src={src} alt="Uploaded Pic" />
         <div className="mt-5 w-full mb-5">
-          <Button fill={true} className=" py-[12px] w-full">
+          <Button onClick={(e: any) => savePicture(e)} loader={buttonLoader} loaderMessage="Processing..." fill={true} className=" py-[12px] w-full">
             Save
           </Button>
         </div>

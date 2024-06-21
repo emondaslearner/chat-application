@@ -6,10 +6,13 @@ import Dropdown from "../../Dropdown";
 import EditProfile from "../Popups/EditProfile";
 import AddPost from "../Popups/AddPost";
 import Button from "@src/components/shared/Button";
-import { useSelector } from "react-redux";
-import { RootState } from "@src/store/store";
-import { AuthStoreInitialState } from "@src/store/actions/auth";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@src/store/store";
+import { AuthStoreInitialState, setUserData } from "@src/store/actions/auth";
 import SavePicture from "@src/pages/MyProfile/Popups/ProfilePic";
+import { handleAxiosError } from "@src/utils/error";
+import { updateUserData } from "@src/apis/user";
+import { success } from "@src/utils/alert";
 
 interface ProfileProps {}
 
@@ -23,6 +26,14 @@ interface Items {
   onClick?: () => void;
 }
 
+interface ProfileInformation {
+  name: string;
+  bio: string;
+  city: string;
+  country: string;
+  dateOfBirth: Date;
+}
+
 const testList: TestData[] = Array.from({ length: 20 }, (_, index) => ({
   id: index + 1,
 }));
@@ -30,6 +41,13 @@ const testList: TestData[] = Array.from({ length: 20 }, (_, index) => ({
 const Profile: React.FC<ProfileProps> = () => {
   const CoverPhoto = useRef<HTMLInputElement | null>(null);
   const ProfilePicture = useRef<HTMLInputElement | null>(null);
+
+  const dispatch: AppDispatch = useDispatch();
+
+  // theme color
+  const themeColor: "dark" | "light" = useSelector(
+    (state: RootState) => state.themeConfig.mode
+  );
 
   // cover picture
   const [coverPicture, setCoverPicture] = useState<File | null>(null);
@@ -40,8 +58,37 @@ const Profile: React.FC<ProfileProps> = () => {
   const [profilePictureTempUrl, setProfilePictureTempUrl] =
     useState<string>("");
 
-  console.log(coverPicture);
-  console.log(profilePicture);
+  const [loader, setLoader] = useState<boolean>(false);
+
+  // profile information
+  const [bio, setBio] = useState<string>("");
+  const [name, setName] = useState<string>("");
+  const [dateOfBirth, setDateOfBirth] = useState<Date | null>(null);
+  const [city, setCity] = useState<string>("");
+  const [country, setCountry] = useState<string>("");
+
+  // set profile information
+  const updateProfileInformation = async ({
+    name,
+    bio,
+    dateOfBirth,
+    city,
+    country,
+  }: ProfileInformation) => {
+    setBio(bio);
+    setName(name);
+    setDateOfBirth(dateOfBirth);
+    setCity(city);
+    setCountry(country);
+  };
+
+  const nullifyProfilePicture = () => {
+    setProfilePicture(null);
+  };
+
+  const nullifyCoverPicture = () => {
+    setCoverPicture(null);
+  };
 
   // cover photo dropdown options
   const items: Items[] = [
@@ -69,6 +116,42 @@ const Profile: React.FC<ProfileProps> = () => {
     (state: RootState) => state.auth
   );
 
+  const saveProfileInformationToDb = async (e: any) => {
+    e.preventDefault();
+    try {
+      setLoader(true);
+      const data: any = await updateUserData({
+        name,
+        bio,
+        dateOfBirth,
+        city,
+        country,
+        profile_picture: profilePicture,
+        cover_picture: coverPicture,
+      });
+      setLoader(false);
+
+      if (data.code === 200) {
+        dispatch(
+          setUserData({
+            name: data.data.name,
+            email: data.data.email,
+            profile_picture: data.data.profile_picture,
+            date_of_birth: data.data.date_of_birth,
+            bio: data.data.bio,
+            cover_picture: data.data.cover_picture,
+            city: data.data.city,
+            country: data.data.country,
+          })
+        );
+        success({ message: "Profile Information Updated", themeColor });
+      }
+    } catch (err) {
+      setLoader(false);
+      handleAxiosError(err, themeColor);
+    }
+  };
+
   return (
     <div className="w-full h-[100%] scrollHidden overflow-y-auto">
       <div className="w-[95%] mx-auto rounded-[15px] border-[1px] border-light_border_ dark:border-dark_border_ mt-4 lg:mt-8 h-[200px] relative overflow-hidden">
@@ -90,7 +173,9 @@ const Profile: React.FC<ProfileProps> = () => {
           <SavePicture
             src={coverPictureTempUrl}
             title="Update Cover Picture"
-            setFiles={setCoverPicture}
+            nullifyState={nullifyCoverPicture}
+            buttonLoader={loader}
+            savePicture={saveProfileInformationToDb}
           />
         )}
 
@@ -126,7 +211,9 @@ const Profile: React.FC<ProfileProps> = () => {
           <SavePicture
             src={profilePictureTempUrl}
             title="Update Profile Picture"
-            setFiles={setProfilePicture}
+            nullifyState={nullifyProfilePicture}
+            buttonLoader={loader}
+            savePicture={saveProfileInformationToDb}
           />
         )}
         <input
@@ -163,7 +250,11 @@ const Profile: React.FC<ProfileProps> = () => {
         </div>
 
         <div className="w-[48%]">
-          <EditProfile />
+          <EditProfile
+            saveProfileInformationToDb={saveProfileInformationToDb}
+            changeInformation={updateProfileInformation}
+            buttonLoader={loader}
+          />
         </div>
       </div>
 

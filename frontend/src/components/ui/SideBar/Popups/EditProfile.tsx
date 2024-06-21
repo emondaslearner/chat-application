@@ -2,36 +2,66 @@ import Button from "@src/components/shared/Button";
 import DatePicker from "@src/components/shared/DatePicker";
 import Input from "@src/components/shared/Input";
 import Modal from "@src/components/ui/Model";
+import { RootState } from "@src/store/store";
 import React, { useState, useEffect } from "react";
 import { IoMdClose } from "react-icons/io";
+import { useSelector } from "react-redux";
 
-interface EditProfileProps {}
+interface EditProfileProps {
+  changeInformation: (info: {
+    name: string;
+    bio: string;
+    dateOfBirth: Date;
+    city: string;
+    country: string;
+  }) => void;
+  saveProfileInformationToDb: (e: any) => void;
+  buttonLoader: boolean
+}
 
 interface InputEditStatus {
   name: boolean;
   dateOfBirth: boolean;
   city: boolean;
   bio: boolean;
-  country: boolean
+  country: boolean;
 }
 
-const EditProfile: React.FC<EditProfileProps> = () => {
+interface InputStates {
+  name: string;
+  dateOfBirth: Date;
+  city: string;
+  bio: string;
+  country: string;
+}
+
+const EditProfile: React.FC<EditProfileProps> = ({
+  changeInformation,
+  saveProfileInformationToDb,
+  buttonLoader
+}) => {
+
+  // profile data
+  const profileData = useSelector((state: RootState) => state.auth)
+
   // input status
   const [inputsEditStatus, setInputEditStatus] = useState<InputEditStatus>({
     name: false,
     dateOfBirth: false,
     city: false,
     bio: false,
-    country: false
+    country: false,
   });
 
+  const profileDate = new Date(profileData.date_of_birth);
+
   // input values
-  const [inputValue, setInputValue] = useState({
-    name: "Emon Das",
-    dateOfBirth: new Date(),
-    city: 'Chittagong',
-    bio: 'This is emon',
-    country: 'Bangladesh'
+  const [inputValue, setInputValue] = useState<InputStates>({
+    name: profileData.name,
+    dateOfBirth: profileDate,
+    city: profileData.city,
+    bio: profileData.bio,
+    country: profileData.country,
   });
 
   const ChangeInputValue = (value: string, name: string) => {
@@ -42,7 +72,7 @@ const EditProfile: React.FC<EditProfileProps> = () => {
   };
 
   useEffect(() => {
-    console.log(inputValue);
+    changeInformation(inputValue);
   }, [inputValue]);
 
   return (
@@ -68,7 +98,10 @@ const EditProfile: React.FC<EditProfileProps> = () => {
       }
       dismissable={false}
     >
-      <div className="max-h-[80vh] p-5">
+      <form
+        onSubmit={(e: any) => saveProfileInformationToDb(e)}
+        className="max-h-[80vh] p-5"
+      >
         {/* Name  */}
         <div className="">
           <div className="flex items-center justify-between w-full">
@@ -95,6 +128,7 @@ const EditProfile: React.FC<EditProfileProps> = () => {
             </p>
           ) : (
             <Input
+              required
               type="text"
               placeholder="Enter Name"
               className="mt-1 !rounded-[5px]"
@@ -136,6 +170,7 @@ const EditProfile: React.FC<EditProfileProps> = () => {
               placeholder="Enter Bio"
               className="mt-1 !rounded-[5px]"
               value={inputValue?.bio}
+              required
               onChange={(e: any) => {
                 ChangeInputValue(e.target.value, "bio");
               }}
@@ -209,6 +244,7 @@ const EditProfile: React.FC<EditProfileProps> = () => {
             </p>
           ) : (
             <Input
+              required
               onChange={(e: any) => {
                 ChangeInputValue(e.target.value, "city");
               }}
@@ -219,12 +255,11 @@ const EditProfile: React.FC<EditProfileProps> = () => {
           )}
         </div>
 
-        
         {/* Country  */}
         <div className="">
           <div className="flex items-center justify-between w-full">
             <p className="text-[20px] text-dark_ font-semibold dark:text-light_gray_">
-            Country
+              Country
             </p>
             {!inputsEditStatus?.country && (
               <p
@@ -247,6 +282,7 @@ const EditProfile: React.FC<EditProfileProps> = () => {
           ) : (
             <Input
               type="text"
+              required
               placeholder="Enter Bio"
               className="mt-1 !rounded-[5px]"
               value={inputValue?.country}
@@ -256,7 +292,10 @@ const EditProfile: React.FC<EditProfileProps> = () => {
             />
           )}
         </div>
-      </div>
+        <Button loader={buttonLoader} loaderMessage="Processing..." fill={true} className="mt-4 py-[12px] w-full">
+          Save
+        </Button>
+      </form>
     </Modal>
   );
 };

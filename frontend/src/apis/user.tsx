@@ -1,5 +1,4 @@
 import axios from "@src/axios";
-import { error } from "@src/utils/alert";
 
 const getUserDataByToken = async () => {
   return new Promise((resolve, reject) => {
@@ -15,50 +14,38 @@ const getUserDataByToken = async () => {
 };
 
 interface UserData {
-  dateOfBirth?: string;
+  dateOfBirth?: Date | null;
   name?: string;
   email?: string;
   bio?: string;
   status?: string;
   locked?: boolean;
-  profile_picture?: string;
-  cover_picture?: string;
+  profile_picture?: File | null;
+  cover_picture?: File | null;
   city?: string;
   country?: string;
-  themeColor: "dark" | "light";
 }
 
 const updateUserData = async (data: UserData): Promise<void> => {
-  const updateData = {
-    dateOfBirth: data.dateOfBirth,
-    name: data.name,
-    email: data.email,
-    date_of_birth: data.dateOfBirth, // This seems redundant, you may want to remove it
-    bio: data.bio,
-    status: data.status,
-    locked: data?.locked,
-    profile_picture: data.profile_picture,
-    cover_picture: data.cover_picture,
-    address: {
-      city: data.city,
-      country: data.country,
-    },
-  };
+  const formData = new FormData();
 
-  const themeColor = data.themeColor;
-
-  // Check if any field has changed
-  const hasChanged = Object.values(updateData).some(
-    (value) => value !== undefined
-  );
-
-  if (!hasChanged) {
-    error({ message: "At least one field must be changed.", themeColor });
-  }
+  if (data.dateOfBirth)
+    formData.append("date_of_birth", data.dateOfBirth.toISOString());
+  if (data.name) formData.append("name", data.name);
+  if (data.email) formData.append("email", data.email);
+  if (data.bio) formData.append("bio", data.bio);
+  if (data.status) formData.append("status", data.status);
+  if (data.locked === false || data.locked === true)
+    formData.append("locked", data.locked.toString());
+  if (data.profile_picture)
+    formData.append("profile_picture", data.profile_picture);
+  if (data.cover_picture) formData.append("cover_picture", data.cover_picture);
+  if (data.city) formData.append("city", data.city);
+  if (data.country) formData.append("country", data.country);
 
   return new Promise((resolve, reject) => {
     axios
-      .get("/user")
+      .patch("/user", formData)
       .then((response) => {
         resolve(response?.data);
       })
