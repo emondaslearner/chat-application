@@ -42,7 +42,7 @@ function App() {
   }, [themeConfig.mode]);
 
   // components
-  const Components = lazy(() => import("./Router"));
+  const Components = lazy(() => import("./layout"));
 
   return (
     <div className="max-w-[1800px] mx-auto relative">

@@ -1,7 +1,7 @@
 import AvatarSingle from "@src/components/shared/Avatar";
 import React, { ReactNode, useRef, useState } from "react";
 import { FaCamera } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Dropdown from "../../Dropdown";
 import EditProfile from "../Popups/EditProfile";
 import AddPost from "../Popups/AddPost";
@@ -13,6 +13,9 @@ import SavePicture from "@src/pages/MyProfile/Popups/ProfilePic";
 import { handleAxiosError } from "@src/utils/error";
 import { updateUserData } from "@src/apis/user";
 import { success } from "@src/utils/alert";
+import { useQuery } from "react-query";
+import { getFriendList } from "@src/apis/friend";
+import Spinner from "@src/components/shared/Spinner";
 
 interface ProfileProps {}
 
@@ -152,6 +155,29 @@ const Profile: React.FC<ProfileProps> = () => {
     }
   };
 
+  // get params id
+  const { id } = useParams();
+
+  console.log("id", id);
+
+  // get friends
+  const { data, isLoading } = useQuery({
+    queryFn: () =>
+      getFriendList({
+        limit: 8,
+        page: 1,
+        sortBy: "updatedAt",
+        sortType: "dsc",
+        search: "",
+      }),
+    staleTime: Infinity,
+    queryKey: ["userFriend"],
+  });
+
+  const friends: any = data;
+
+  console.log("friends.data", friends);
+
   return (
     <div className="w-full h-[100%] scrollHidden overflow-y-auto">
       <div className="w-[95%] mx-auto rounded-[15px] border-[1px] border-light_border_ dark:border-dark_border_ mt-4 lg:mt-8 h-[200px] relative overflow-hidden">
@@ -279,21 +305,34 @@ const Profile: React.FC<ProfileProps> = () => {
           </Link>
         </div>
 
-        <div className="w-full grid grid-cols-4 mt-4 gap-3 max-h-[260px] h-full overflow-hidden">
-          {testList.map((data: TestData) => {
-            return (
-              <div key={data?.id} className="">
-                <img
-                  className="rounded-[10px] h-[100px]"
-                  src="https://wallpapers.com/images/hd/cool-profile-picture-1ecoo30f26bkr14o.jpg"
-                  alt=""
-                />
-                <p className="text-[16px] font-semibold dark:text-dark_text_">
-                  Biplob Das
-                </p>
-              </div>
-            );
-          })}
+        <div
+          className={`w-full ${
+            isLoading ? "flex" : "grid grid-cols-4"
+          } mt-4 gap-3 max-h-[260px] h-full overflow-hidden`}
+        >
+          {isLoading ? (
+            <div className="w-full h-full flex justify-center items-center">
+              <Spinner loaderStatus={"elementLoader"} />
+            </div>
+          ) : (
+            friends.data.map((data: any) => {
+              return (
+                <div key={data?.id} className="cursor-pointer">
+                  <img
+                    className="rounded-[10px] h-[100px]"
+                    src={
+                      data.second_user.profile_picture ||
+                      "https://pipilikasoft.com/wp-content/uploads/2018/08/demo.jpg"
+                    }
+                    alt={data.second_user.name}
+                  />
+                  <p className="text-[16px] font-semibold dark:text-dark_text_">
+                    {data.second_user.name}
+                  </p>
+                </div>
+              );
+            })
+          )}
         </div>
       </div>
 

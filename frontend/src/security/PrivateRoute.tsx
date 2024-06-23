@@ -1,8 +1,5 @@
-import Spinner from "@src/components/shared/Spinner";
 import { useAuth } from "@src/hooks";
-import { RootState } from "@src/store/store";
-import React, { Suspense, ReactNode } from "react";
-import { useSelector } from "react-redux";
+import React, { ReactNode } from "react";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 
 interface PrivateRouteProps {
@@ -12,8 +9,6 @@ interface PrivateRouteProps {
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
   const navigate: NavigateFunction = useNavigate();
 
-  // loader status
-  const loader = useSelector((state: RootState) => state.siteConfig.loader);
 
   // token
   const token = localStorage.getItem("token");
@@ -25,17 +20,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
   // check login
   useAuth();
 
-  console.log('loaderloaderloader', loader);
-
-  return (
-    <>
-      {loader ? (
-        <Spinner />
-      ) : (
-        <Suspense fallback={<Spinner />}>{children}</Suspense>
-      )}
-    </>
-  );
+  return <>{children}</>;
 };
 
 export default PrivateRoute;

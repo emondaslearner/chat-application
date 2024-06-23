@@ -2,6 +2,7 @@ import { getUserDataByToken } from "@src/apis/user";
 import { setUserData } from "@src/store/actions/auth";
 import { changeLoaderValue } from "@src/store/actions/siteConfig";
 import { AppDispatch } from "@src/store/store";
+import { useEffect } from "react";
 import { useQuery } from "react-query";
 import { useDispatch } from "react-redux";
 import { NavigateFunction, useNavigate } from "react-router-dom";
@@ -16,7 +17,10 @@ const useAuth = () => {
     queryKey: ["userData"],
   });
 
-  dispatch(changeLoaderValue(isLoading));
+  useEffect(() => {
+    console.log("loader react query", isLoading);
+    dispatch(changeLoaderValue(isLoading));
+  }, [isLoading, dispatch]);
 
   const userData: any = data;
 

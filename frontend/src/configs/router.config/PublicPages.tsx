@@ -1,16 +1,14 @@
 import Login from "@src/pages/Login";
-import RouteConfig from "../../Router/RouteConfig"; // Import the appropriate type if you have defined it
 import SignUp from "@src/pages/SignUp";
 import ForgotPassword from "@src/pages/ForgotPassword";
 import VerifyOtp from "@src/pages/VerifyOtp";
 
-const PublicPages: RouteConfig[] = [
+const PublicPages = [
   {
     path: "/login",
     element: <Login />,
     meta: {
       layout: "blank",
-      isMenu: false,
       publicRoute: true,
     },
   },
@@ -19,7 +17,6 @@ const PublicPages: RouteConfig[] = [
     element: <SignUp />,
     meta: {
       layout: "blank",
-      isMenu: false,
       publicRoute: true,
     },
   },
@@ -28,7 +25,6 @@ const PublicPages: RouteConfig[] = [
     element: <ForgotPassword />,
     meta: {
       layout: "blank",
-      isMenu: false,
       publicRoute: true,
     },
   },
@@ -37,7 +33,6 @@ const PublicPages: RouteConfig[] = [
     element: <VerifyOtp />,
     meta: {
       layout: "blank",
-      isMenu: false,
       publicRoute: true,
     },
   },

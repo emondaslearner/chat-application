@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React from "react";
 
 // images
 import logo from "../../../assets/logo/logo.svg";

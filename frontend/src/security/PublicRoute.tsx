@@ -1,11 +1,11 @@
-import React, { Suspense, ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 
 interface PublicRouteProps {
   children: ReactNode;
 }
 
 const PublicRoute: React.FC<PublicRouteProps> = ({ children }) => {
-  return <Suspense fallback={null}>{children}</Suspense>;
+  return <>{children}</>;
 }
 
 export default PublicRoute;
