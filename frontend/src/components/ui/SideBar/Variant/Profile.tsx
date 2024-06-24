@@ -9,7 +9,7 @@ import Button from "@src/components/shared/Button";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@src/store/store";
 import { AuthStoreInitialState, setUserData } from "@src/store/actions/auth";
-import SavePicture from "@src/pages/MyProfile/Popups/ProfilePic";
+import UploadPicture from "@src/pages/MyProfile/Popups/UploadPicture";
 import { handleAxiosError } from "@src/utils/error";
 import { updateUserData } from "@src/apis/user";
 import { success } from "@src/utils/alert";
@@ -17,12 +17,10 @@ import { useQuery } from "react-query";
 import { getFriendList } from "@src/apis/friend";
 import Spinner from "@src/components/shared/Spinner";
 import { getAllPhoto } from "@src/apis/photo";
+import { getAllVideo } from "@src/apis/video";
 
 interface ProfileProps {}
 
-interface TestData {
-  id: number;
-}
 interface Items {
   key: string;
   label: string;
@@ -37,10 +35,6 @@ interface ProfileInformation {
   country: string;
   dateOfBirth: Date;
 }
-
-const testList: TestData[] = Array.from({ length: 20 }, (_, index) => ({
-  id: index + 1,
-}));
 
 const Profile: React.FC<ProfileProps> = () => {
   const CoverPhoto = useRef<HTMLInputElement | null>(null);
@@ -187,11 +181,27 @@ const Profile: React.FC<ProfileProps> = () => {
         sortType: "dsc",
         search: "",
       }),
+    staleTime: Infinity,
+    queryKey: ["userPhotos"],
   });
 
   const photos: any = photoData;
 
-  console.log("photosphotos", photos);
+  // get videos
+  const { data: videoData, isLoading: videoLoadingStatus } = useQuery({
+    queryFn: () =>
+      getAllVideo({
+        limit: 8,
+        page: 1,
+        sortBy: "updatedAt",
+        sortType: "dsc",
+        search: "",
+      }),
+    staleTime: Infinity,
+    queryKey: ["userVideos"],
+  });
+
+  const videos: any = videoData;
 
   return (
     <div className="w-full h-[100%] scrollHidden overflow-y-auto">
@@ -211,7 +221,7 @@ const Profile: React.FC<ProfileProps> = () => {
 
         {/* Cover Picture Popup */}
         {coverPicture && (
-          <SavePicture
+          <UploadPicture
             src={coverPictureTempUrl}
             title="Update Cover Picture"
             nullifyState={nullifyCoverPicture}
@@ -249,7 +259,7 @@ const Profile: React.FC<ProfileProps> = () => {
 
         {/* Profile Picture Popup */}
         {profilePicture && (
-          <SavePicture
+          <UploadPicture
             src={profilePictureTempUrl}
             title="Update Profile Picture"
             nullifyState={nullifyProfilePicture}
@@ -363,7 +373,11 @@ const Profile: React.FC<ProfileProps> = () => {
           </Link>
         </div>
 
-        <div className="w-full grid grid-cols-4 mt-4 gap-3 max-h-[220px] h-full overflow-hidden">
+        <div
+          className={`w-full ${
+            photoLoadingStatus ? "flex" : "grid grid-cols-4"
+          } mt-4 gap-3 max-h-[220px] h-full overflow-hidden`}
+        >
           {photoLoadingStatus ? (
             <div className="w-full h-full flex justify-center items-center">
               <Spinner loaderStatus={"elementLoader"} />
@@ -385,7 +399,7 @@ const Profile: React.FC<ProfileProps> = () => {
       </div>
 
       {/* Videos */}
-      <div className="w-[95%] mx-auto mt-4">
+      <div className="w-[95%] mx-auto mt-4 mb-4">
         <div className="flex items-center justify-between">
           <p className="text-[20px] text-dark_ dark:text-white_ font-semibold">
             Videos
@@ -396,18 +410,25 @@ const Profile: React.FC<ProfileProps> = () => {
           </Link>
         </div>
 
-        <div className="w-full grid grid-cols-4 mt-4 gap-3 max-h-[220px] h-full overflow-hidden">
-          {testList.map((data: TestData) => {
-            return (
-              <div key={data?.id} className="">
-                <img
-                  className="rounded-[10px] h-[100px]"
-                  src="https://wallpapers.com/images/hd/cool-profile-picture-1ecoo30f26bkr14o.jpg"
-                  alt=""
+        <div
+          className={`w-full ${
+            videoLoadingStatus ? "flex" : "grid grid-cols-4"
+          } mt-4 gap-3 max-h-[220px] h-full overflow-hidden`}
+        >
+          {videoLoadingStatus ? (
+            <div className="w-full h-full flex justify-center items-center">
+              <Spinner loaderStatus={"elementLoader"} />
+            </div>
+          ) : (
+            videos.data.map((data: any, i: number) => {
+              return (
+                <VideoThumbnail
+                  videoSrc={data.video}
+                  thumbnailSrc="https://img.freepik.com/free-photo/green-park-view_1417-1492.jpg?size=626&ext=jpg&ga=GA1.1.1141335507.1719187200&semt=ais_user"
                 />
-              </div>
-            );
-          })}
+              );
+            })
+          )}
         </div>
       </div>
     </div>
@@ -415,3 +436,52 @@ const Profile: React.FC<ProfileProps> = () => {
 };
 
 export default Profile;
+
+interface VideoThumbnailProps {
+  videoSrc: string;
+  thumbnailSrc: string;
+}
+
+const VideoThumbnail = ({ videoSrc, thumbnailSrc }: VideoThumbnailProps) => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+
+  const handleMouseEnter = () => {
+    if (videoRef.current && !isPlaying) {
+      videoRef.current
+        .play()
+        .then(() => {
+          setIsPlaying(true);
+        })
+        .catch((error) => {
+          console.error("Error playing video:", error);
+        });
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (videoRef.current && isPlaying) {
+      setTimeout(() => {
+        videoRef.current?.pause();
+        videoRef.current!.currentTime = 0;
+        setIsPlaying(false);
+      }, 100); // Add a small delay before pausing
+    }
+  };
+
+  return (
+    <div
+      className="relative inline-block h-[100px] overflow-hidden cursor-pointer"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <video
+        ref={videoRef}
+        src={videoSrc}
+        className={` object-cover rounded-[10px] h-[100px]`}
+        muted
+        loop
+      />
+    </div>
+  );
+};

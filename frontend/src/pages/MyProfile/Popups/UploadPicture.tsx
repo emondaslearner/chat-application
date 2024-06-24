@@ -46,7 +46,7 @@ const ProfilePic: React.FC<ProfilePicProps> = ({
       }
     >
       <div className="w-[90%] mx-auto">
-        <img className="mt-1 w-full" src={src} alt="Uploaded Pic" />
+        <img className="mt-1 w-full max-h-[500px]" src={src} alt="Uploaded Pic" />
         <div className="mt-5 w-full mb-5">
           <Button onClick={(e: any) => savePicture(e)} loader={buttonLoader} loaderMessage="Processing..." fill={true} className=" py-[12px] w-full">
             Save
