@@ -1,9 +1,13 @@
 import axios from "@src/axios";
 
-const getUserDataByToken = async () => {
+interface getUserDataProps {
+  userId?: string;
+}
+
+const getUserData = async ({ userId }: getUserDataProps) => {
   return new Promise((resolve, reject) => {
     axios
-      .get("/user")
+      .get(userId ? `/user?userId=${userId}` : `/user`)
       .then((response) => {
         resolve(response?.data);
       })
@@ -55,4 +59,4 @@ const updateUserData = async (data: UserData): Promise<void> => {
   });
 };
 
-export { getUserDataByToken, updateUserData };
+export { getUserData, updateUserData };

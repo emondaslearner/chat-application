@@ -12,6 +12,7 @@ export interface AuthStoreInitialState {
   cover_picture: string;
   country: string;
   city: string;
+  id: string;
 }
 
 // Define the payload type for the setData action
@@ -24,6 +25,7 @@ const initialState: AuthStoreInitialState = {
   cover_picture: "",
   city: "",
   country: "",
+  id: ""
 };
 
 const siteConfig = createSlice({
@@ -31,6 +33,7 @@ const siteConfig = createSlice({
   initialState,
   reducers: {
     setUserData: (state, action: PayloadAction<AuthStoreInitialState>) => {
+      
       state.name = action.payload.name;
       state.email = action.payload.email;
       state.profile_picture = action.payload.profile_picture;

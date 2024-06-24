@@ -1,4 +1,4 @@
-import { getUserDataByToken } from "@src/apis/user";
+import { getUserData } from "@src/apis/user";
 import { setUserData } from "@src/store/actions/auth";
 import { changeLoaderValue } from "@src/store/actions/siteConfig";
 import { AppDispatch } from "@src/store/store";
@@ -12,10 +12,10 @@ const useAuth = () => {
   const navigate: NavigateFunction = useNavigate();
 
   const { data, isLoading, isError } = useQuery({
-    queryFn: getUserDataByToken,
+    queryFn: () => getUserData({}),
     staleTime: Infinity,
     queryKey: ["userData"],
-    retry: 0
+    retry: 0,
   });
 
   useEffect(() => {
@@ -33,7 +33,7 @@ const useAuth = () => {
   const userData: any = data;
 
   if (userData?.code === 200) {
-    dispatch(setUserData(userData?.data));
+    dispatch(setUserData({ ...userData?.data, id: userData?.data._id }));
 
     return true;
   }

@@ -11,7 +11,7 @@ import { AppDispatch, RootState } from "@src/store/store";
 import { AuthStoreInitialState, setUserData } from "@src/store/actions/auth";
 import UploadPicture from "@src/pages/MyProfile/Popups/UploadPicture";
 import { handleAxiosError } from "@src/utils/error";
-import { updateUserData } from "@src/apis/user";
+import { getUserData, updateUserData } from "@src/apis/user";
 import { success } from "@src/utils/alert";
 import { useQuery } from "react-query";
 import { getFriendList } from "@src/apis/friend";
@@ -99,6 +99,7 @@ const Profile: React.FC<ProfileProps> = () => {
     },
   ];
 
+  // profile picture dropdown options
   const ProfilePictureItems: Items[] = [
     {
       key: "selectPhoto",
@@ -113,6 +114,15 @@ const Profile: React.FC<ProfileProps> = () => {
   const profileData: AuthStoreInitialState = useSelector(
     (state: RootState) => state.auth
   );
+
+  // normal user data
+  const { data: normalUserDataApiData } = useQuery({
+    queryFn: () => getUserData({ userId: id }),
+    staleTime: Infinity,
+    queryKey: ["normalUserData"],
+  });
+
+  const normalUserData: any = normalUserDataApiData;
 
   const saveProfileInformationToDb = async (e: any) => {
     e.preventDefault();
@@ -140,6 +150,7 @@ const Profile: React.FC<ProfileProps> = () => {
             cover_picture: data.data.cover_picture,
             city: data.data.city,
             country: data.data.country,
+            id: data.data._id,
           })
         );
         success({ message: "Profile Information Updated", themeColor });
@@ -153,8 +164,6 @@ const Profile: React.FC<ProfileProps> = () => {
   // get params id
   const { id } = useParams();
 
-  console.log("id", id);
-
   // get friends
   const { data, isLoading } = useQuery({
     queryFn: () =>
@@ -164,6 +173,7 @@ const Profile: React.FC<ProfileProps> = () => {
         sortBy: "updatedAt",
         sortType: "dsc",
         search: "",
+        id,
       }),
     staleTime: Infinity,
     queryKey: ["userFriend"],
@@ -180,6 +190,7 @@ const Profile: React.FC<ProfileProps> = () => {
         sortBy: "updatedAt",
         sortType: "dsc",
         search: "",
+        id,
       }),
     staleTime: Infinity,
     queryKey: ["userPhotos"],
@@ -196,6 +207,7 @@ const Profile: React.FC<ProfileProps> = () => {
         sortBy: "updatedAt",
         sortType: "dsc",
         search: "",
+        id,
       }),
     staleTime: Infinity,
     queryKey: ["userVideos"],
@@ -203,21 +215,39 @@ const Profile: React.FC<ProfileProps> = () => {
 
   const videos: any = videoData;
 
+  // show this message when profile not found
+  if (id && !videos && !friends && !photos && !normalUserData) {
+    return (
+      <div className="w-full h-full flex justify-center items-center">
+        <p className="text-dark_ dark:text-dark_text_ text-[20px] font-semibold">
+          Profile not found
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full h-[100%] scrollHidden overflow-y-auto">
       <div className="w-[95%] mx-auto rounded-[15px] border-[1px] border-light_border_ dark:border-dark_border_ mt-4 lg:mt-8 h-[200px] relative overflow-hidden">
         <img
           className="w-full h-full"
-          src={profileData.cover_picture}
+          src={
+            (!id
+              ? profileData.cover_picture
+              : normalUserData.data.cover_picture) ||
+            "https://img.freepik.com/free-vector/white-abstract-background-design_23-2148825582.jpg?size=626&ext=jpg&ga=GA1.1.2116175301.1719252000&semt=ais_user"
+          }
           alt="Cover pic"
         />
 
         {/* Dropdown */}
-        <Dropdown items={items}>
-          <div className="absolute right-2 bottom-2 p-[10px] rounded-full dark:bg-dark_gray_ cursor-pointer bg-light_gray_">
-            <FaCamera size={25} className="text-black_" />
-          </div>
-        </Dropdown>
+        {!id && (
+          <Dropdown items={items}>
+            <div className="absolute right-2 bottom-2 p-[10px] rounded-full dark:bg-dark_gray_ cursor-pointer bg-light_gray_">
+              <FaCamera size={25} className="text-black_" />
+            </div>
+          </Dropdown>
+        )}
 
         {/* Cover Picture Popup */}
         {coverPicture && (
@@ -246,16 +276,22 @@ const Profile: React.FC<ProfileProps> = () => {
       <div className="mt-[-70px] ml-[7%] relative w-auto table">
         <AvatarSingle
           className="!w-[150px] !h-[150px] border-[5px] rounded-full border-light_border_ dark:border-dark_border_ "
-          src={profileData.profile_picture}
+          src={
+            !id
+              ? profileData.profile_picture
+              : normalUserData.data.profile_picture
+          }
           alt="Profile picture"
         />
 
         {/* Dropdown */}
-        <Dropdown items={ProfilePictureItems}>
-          <div className="absolute right-[0px] bottom-[0] p-[10px] rounded-full dark:bg-dark_gray_ cursor-pointer bg-light_gray_">
-            <FaCamera size={20} className="text-black_" />
-          </div>
-        </Dropdown>
+        {!id && (
+          <Dropdown items={ProfilePictureItems}>
+            <div className="absolute right-[0px] bottom-[0] p-[10px] rounded-full dark:bg-dark_gray_ cursor-pointer bg-light_gray_">
+              <FaCamera size={20} className="text-black_" />
+            </div>
+          </Dropdown>
+        )}
 
         {/* Profile Picture Popup */}
         {profilePicture && (
@@ -282,121 +318,48 @@ const Profile: React.FC<ProfileProps> = () => {
       {/* Other info */}
       <div className="ml-[7%]">
         <p className="text-[23px] font-semibold dark:text-white_ text-dark_">
-          {profileData.name}
+          {id ? normalUserData?.data.name : profileData.name}
         </p>
 
         {/* Bio */}
         <p className="text-[16px] text-dark_ dark:text-dark_text_">
-          {profileData.bio}
+          {id ? normalUserData?.data?.bio : profileData.bio}
         </p>
       </div>
 
       <div className="flex items-center justify-between w-[95%] mx-auto mt-3">
-        <div className="w-[48%]">
-          <AddPost>
-            <Button fill={true} className="!w-full">
-              Add photos & videos
-            </Button>
-          </AddPost>
-        </div>
+        {!id ? (
+          <>
+            <div className="w-[48%]">
+              <AddPost>
+                <Button fill={true} className="!w-full">
+                  Add photos & videos
+                </Button>
+              </AddPost>
+            </div>
 
-        <div className="w-[48%]">
-          <EditProfile
-            saveProfileInformationToDb={saveProfileInformationToDb}
-            changeInformation={updateProfileInformation}
-            buttonLoader={loader}
-          />
-        </div>
+            <div className="w-[48%]">
+              <EditProfile
+                saveProfileInformationToDb={saveProfileInformationToDb}
+                changeInformation={updateProfileInformation}
+                buttonLoader={loader}
+              />
+            </div>
+          </>
+        ) : (
+          <></>
+        )}
       </div>
 
       {/* Friends */}
-      <div className="w-[95%] mx-auto mt-4">
-        <p className="text-[20px] text-dark_ dark:text-white_ font-semibold">
-          Friends
-        </p>
-
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <span className="text-[16px] font-semibold text-dark_ dark:text-white_">
-              1.8K
-            </span>{" "}
-            <p className="text-[15px] text-dark_gray_ dark:text-dark_text_ ml-[5px]">
-              Friends
-            </p>
-          </div>
-
-          <Link to="/friends" className="text-primary_">
-            See all
-          </Link>
-        </div>
-
-        <div
-          className={`w-full ${
-            isLoading ? "flex" : "grid grid-cols-4"
-          } mt-4 gap-3 max-h-[260px] h-full overflow-hidden`}
-        >
-          {isLoading ? (
-            <div className="w-full h-full flex justify-center items-center">
-              <Spinner loaderStatus={"elementLoader"} />
-            </div>
-          ) : (
-            friends.data.map((data: any) => {
-              return (
-                <div key={data?.id} className="cursor-pointer">
-                  <img
-                    className="rounded-[10px] h-[100px]"
-                    src={
-                      data.second_user.profile_picture ||
-                      "https://pipilikasoft.com/wp-content/uploads/2018/08/demo.jpg"
-                    }
-                    alt={data.second_user.name}
-                  />
-                  <p className="text-[16px] font-semibold dark:text-dark_text_">
-                    {data.second_user.name}
-                  </p>
-                </div>
-              );
-            })
-          )}
-        </div>
-      </div>
+      <Friends
+        profileData={profileData}
+        isLoading={isLoading}
+        friends={friends}
+      />
 
       {/* Photos */}
-      <div className="w-[95%] mx-auto mt-4">
-        <div className="flex items-center justify-between">
-          <p className="text-[20px] text-dark_ dark:text-white_ font-semibold">
-            Photos
-          </p>
-
-          <Link to="/friends" className="text-primary_">
-            See all
-          </Link>
-        </div>
-
-        <div
-          className={`w-full ${
-            photoLoadingStatus ? "flex" : "grid grid-cols-4"
-          } mt-4 gap-3 max-h-[220px] h-full overflow-hidden`}
-        >
-          {photoLoadingStatus ? (
-            <div className="w-full h-full flex justify-center items-center">
-              <Spinner loaderStatus={"elementLoader"} />
-            </div>
-          ) : (
-            photos.data.map((data: any, i: number) => {
-              return (
-                <div key={i} className="">
-                  <img
-                    className="rounded-[10px] h-[100px]"
-                    src={data.photo}
-                    alt="User Pictures"
-                  />
-                </div>
-              );
-            })
-          )}
-        </div>
-      </div>
+      <Photos photoLoadingStatus={photoLoadingStatus} photos={photos} />
 
       {/* Videos */}
       <div className="w-[95%] mx-auto mt-4 mb-4">
@@ -410,26 +373,30 @@ const Profile: React.FC<ProfileProps> = () => {
           </Link>
         </div>
 
-        <div
-          className={`w-full ${
-            videoLoadingStatus ? "flex" : "grid grid-cols-4"
-          } mt-4 gap-3 max-h-[220px] h-full overflow-hidden`}
-        >
-          {videoLoadingStatus ? (
-            <div className="w-full h-full flex justify-center items-center">
-              <Spinner loaderStatus={"elementLoader"} />
-            </div>
-          ) : (
-            videos.data.map((data: any, i: number) => {
+        {videoLoadingStatus ? (
+          <div className="w-full h-full flex justify-center items-center">
+            <Spinner loaderStatus={"elementLoader"} />
+          </div>
+        ) : videos.data.length ? (
+          <div
+            className={`w-full mt-4 gap-3 max-h-[220px] h-full overflow-hidden`}
+          >
+            {videos.data.map((data: any, i: number) => {
               return (
-                <VideoThumbnail
-                  videoSrc={data.video}
-                  thumbnailSrc="https://img.freepik.com/free-photo/green-park-view_1417-1492.jpg?size=626&ext=jpg&ga=GA1.1.1141335507.1719187200&semt=ais_user"
-                />
+                <div key={i}>
+                  <VideoThumbnail
+                    videoSrc={data.video}
+                    thumbnailSrc="https://img.freepik.com/free-photo/green-park-view_1417-1492.jpg?size=626&ext=jpg&ga=GA1.1.1141335507.1719187200&semt=ais_user"
+                  />
+                </div>
               );
-            })
-          )}
-        </div>
+            })}
+          </div>
+        ) : (
+          <div className="text-center text-white_ w-full flex justify-center">
+            <p>There is no video</p>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -482,6 +449,120 @@ const VideoThumbnail = ({ videoSrc, thumbnailSrc }: VideoThumbnailProps) => {
         muted
         loop
       />
+    </div>
+  );
+};
+
+interface PhotosProps {
+  photoLoadingStatus: boolean;
+  photos: any;
+}
+
+const Photos = ({ photoLoadingStatus, photos }: PhotosProps) => {
+  return (
+    <div className="w-[95%] mx-auto mt-4">
+      <div className="flex items-center justify-between">
+        <p className="text-[20px] text-dark_ dark:text-white_ font-semibold">
+          Photos
+        </p>
+
+        <Link to="/friends" className="text-primary_">
+          See all
+        </Link>
+      </div>
+
+      {photoLoadingStatus ? (
+        <div className="w-full h-full flex justify-center items-center">
+          <Spinner loaderStatus={"elementLoader"} />
+        </div>
+      ) : photos.data.length ? (
+        <div
+          className={`w-full grid grid-cols-4 mt-4 gap-3 max-h-[220px] h-full overflow-hidden`}
+        >
+          {photos.data.map((data: any, i: number) => {
+            return (
+              <div key={i} className="">
+                <img
+                  className="rounded-[10px] h-[100px]"
+                  src={data.photo}
+                  alt="User Pictures"
+                />
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="text-center text-white_ w-full flex justify-center">
+          <p>There is no photo</p>
+        </div>
+      )}
+    </div>
+  );
+};
+
+interface FriendsProps {
+  isLoading: boolean;
+  profileData: any;
+  friends: any;
+}
+
+const Friends = ({ isLoading, profileData, friends }: FriendsProps) => {
+  return (
+    <div className="w-[95%] mx-auto mt-4">
+      <p className="text-[20px] text-dark_ dark:text-white_ font-semibold">
+        Friends
+      </p>
+
+      <div className="flex items-center justify-between">
+        <div className="flex items-center">
+          <span className="text-[16px] text-dark_ dark:text-white_">
+            {friends.pagination.totalResources}
+          </span>
+          <p className="text-[15px] text-dark_gray_ dark:text-dark_text_ ml-[5px] mt-[2px]">
+            Friends
+          </p>
+        </div>
+
+        <Link to="/friends" className="text-primary_">
+          See all
+        </Link>
+      </div>
+
+      <div
+        className={`w-full ${
+          isLoading ? "flex" : "grid grid-cols-4"
+        } mt-4 gap-3 max-h-[260px] h-full overflow-hidden`}
+      >
+        {isLoading ? (
+          <div className="w-full h-full flex justify-center items-center">
+            <Spinner loaderStatus={"elementLoader"} />
+          </div>
+        ) : (
+          friends.data.map((data: any) => {
+            return (
+              <div key={data?.id} className="cursor-pointer">
+                <img
+                  className="rounded-[10px] h-[100px]"
+                  src={
+                    (profileData.id === data.second_user._id
+                      ? data.second_user.profile_picture
+                      : data.first_user.profile_picture) ||
+                    "https://pipilikasoft.com/wp-content/uploads/2018/08/demo.jpg"
+                  }
+                  alt={
+                    profileData.id === data.second_user._id
+                      ? data.second_user.profile_picture
+                      : data.first_user.profile_picture
+                  }
+                />
+                <p className="text-[16px] font-semibold dark:text-dark_text_">
+                  {data.second_user.name}
+                </p>
+              </div>
+            );
+          })
+        )}
+      </div>
     </div>
   );
 };

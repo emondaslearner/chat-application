@@ -15,10 +15,12 @@ const SideBar: React.FC<SideBarProps> = ({ setChat }) => {
   // location
   const location = useLocation();
 
+  const split = location.pathname.split("/");
+
   return (
     <div className="border-r-[1px] border-light_border_ dark:border-dark_border_ h-[100vh] overflow-hidden dark:bg-dark_bg_">
       {/* if page is not profile */}
-      {location.pathname !== "/profile" && (
+      {split?.[1] !== "profile" && (
         <>
           {/* chat header */}
           <SideBarHeader />
