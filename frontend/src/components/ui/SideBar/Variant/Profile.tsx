@@ -16,6 +16,7 @@ import { success } from "@src/utils/alert";
 import { useQuery } from "react-query";
 import { getFriendList } from "@src/apis/friend";
 import Spinner from "@src/components/shared/Spinner";
+import { getAllPhoto } from "@src/apis/photo";
 
 interface ProfileProps {}
 
@@ -176,7 +177,21 @@ const Profile: React.FC<ProfileProps> = () => {
 
   const friends: any = data;
 
-  console.log("friends.data", friends);
+  // get photos
+  const { data: photoData, isLoading: photoLoadingStatus } = useQuery({
+    queryFn: () =>
+      getAllPhoto({
+        limit: 8,
+        page: 1,
+        sortBy: "updatedAt",
+        sortType: "dsc",
+        search: "",
+      }),
+  });
+
+  const photos: any = photoData;
+
+  console.log("photosphotos", photos);
 
   return (
     <div className="w-full h-[100%] scrollHidden overflow-y-auto">
@@ -349,17 +364,23 @@ const Profile: React.FC<ProfileProps> = () => {
         </div>
 
         <div className="w-full grid grid-cols-4 mt-4 gap-3 max-h-[220px] h-full overflow-hidden">
-          {testList.map((data: TestData) => {
-            return (
-              <div key={data?.id} className="">
-                <img
-                  className="rounded-[10px] h-[100px]"
-                  src="https://wallpapers.com/images/hd/cool-profile-picture-1ecoo30f26bkr14o.jpg"
-                  alt=""
-                />
-              </div>
-            );
-          })}
+          {photoLoadingStatus ? (
+            <div className="w-full h-full flex justify-center items-center">
+              <Spinner loaderStatus={"elementLoader"} />
+            </div>
+          ) : (
+            photos.data.map((data: any, i: number) => {
+              return (
+                <div key={i} className="">
+                  <img
+                    className="rounded-[10px] h-[100px]"
+                    src={data.photo}
+                    alt="User Pictures"
+                  />
+                </div>
+              );
+            })
+          )}
         </div>
       </div>
 

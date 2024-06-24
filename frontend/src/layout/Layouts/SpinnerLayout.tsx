@@ -11,6 +11,8 @@ const SpinnerLayout: React.FC<SpinnerLayoutProps> = ({ children }) => {
   // loader status
   const loader = useSelector((state: RootState) => state.siteConfig.loader);
 
+  console.log('loader status', loader);
+
   return (
     <>
       {loader ? (

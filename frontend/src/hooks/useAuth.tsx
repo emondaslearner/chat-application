@@ -11,16 +11,24 @@ const useAuth = () => {
   const dispatch: AppDispatch = useDispatch();
   const navigate: NavigateFunction = useNavigate();
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryFn: getUserDataByToken,
     staleTime: Infinity,
     queryKey: ["userData"],
+    retry: 0
   });
 
   useEffect(() => {
-    console.log("loader react query", isLoading);
     dispatch(changeLoaderValue(isLoading));
   }, [isLoading, dispatch]);
+
+  useEffect(() => {
+    if (isError) {
+      dispatch(changeLoaderValue(false));
+      navigate("/login");
+      localStorage.removeItem("token");
+    }
+  }, [isError, dispatch, navigate]);
 
   const userData: any = data;
 
@@ -29,8 +37,6 @@ const useAuth = () => {
 
     return true;
   }
-
-  navigate("/login");
 
   return false;
 };

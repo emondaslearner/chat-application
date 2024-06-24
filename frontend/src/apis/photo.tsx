@@ -9,7 +9,7 @@ interface Pagination {
   id?: string;
 }
 
-const getFriendList = ({
+const getAllPhoto = ({
   limit,
   page,
   search,
@@ -19,8 +19,8 @@ const getFriendList = ({
 }: Pagination) => {
   return new Promise((resolve, reject) => {
     const url = id
-      ? `/user/friends?page=${page}&limit=${limit}&search=${search}&sortBy=${sortBy}&sortType=${sortType}&id=${id}`
-      : `/user/friends?page=${page}&limit=${limit}&search=${search}&sortBy=${sortBy}&sortType=${sortType}`;
+      ? `/user/photos?page=${page}&limit=${limit}&search=${search}&sortBy=${sortBy}&sortType=${sortType}&id=${id}`
+      : `/user/photos?page=${page}&limit=${limit}&search=${search}&sortBy=${sortBy}&sortType=${sortType}`;
     axios
       .get(url)
       .then((response) => {
@@ -32,4 +32,4 @@ const getFriendList = ({
   });
 };
 
-export { getFriendList };
+export { getAllPhoto };
