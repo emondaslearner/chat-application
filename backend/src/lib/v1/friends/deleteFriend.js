@@ -20,10 +20,9 @@ const deleteFriend = async ({ friendId, userId }) => {
   });
 
   if (deleteData) {
+    deleteKeysWithPrefix("friend:");
     return true;
   }
-
-  deleteKeysWithPrefix('friend:');
 
   return false;
 };

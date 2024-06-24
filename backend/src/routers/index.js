@@ -11,6 +11,8 @@ const notificationRoutes = require("./notification");
 const commentRoutes = require("./comment");
 const messageRoutes = require("./message");
 const chatsRoutes = require("./chats");
+const photoRoutes = require("./photo");
+const videoRoutes = require("./video");
 
 const router = express.Router();
 
@@ -40,5 +42,11 @@ messageRoutes(router, authenticate);
 
 // chats
 chatsRoutes(router, authenticate);
+
+// photos
+photoRoutes(router, authenticate);
+
+// videos
+videoRoutes(router, authenticate);
 
 module.exports = router;

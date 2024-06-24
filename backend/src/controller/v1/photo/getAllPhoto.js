@@ -1,7 +1,7 @@
-const { getAllFriend: getAllFriendLib } = require("@lib/v1/friends");
+const { getAllPhoto: getAllPhotoLib } = require("@lib/v1/photo");
 const { functions } = require("@utils");
 
-const getAllFriend = async (req, res, next) => {
+const getAllPhoto = async (req, res, next) => {
   try {
     const userId = req.query.id || req.user.id;
     const filterData = {
@@ -12,12 +12,12 @@ const getAllFriend = async (req, res, next) => {
       limit: req.query?.limit ? parseInt(req.query?.limit) : 10,
     };
 
-    const { allFriends, count } = await getAllFriendLib({ userId, filterData });
+    const { photos, counts } = await getAllPhotoLib({ userId, filterData });
 
     const pagination = functions.paginationDetails({
       page: filterData.page,
       limit: filterData.limit,
-      totalResources: count,
+      totalResources: counts,
     });
 
     // hateoas
@@ -35,8 +35,8 @@ const getAllFriend = async (req, res, next) => {
 
     const response = {
       code: 200,
-      message: "Fetched friend successfully",
-      data: allFriends,
+      message: "Fetched photos successfully",
+      data: photos,
       pagination,
       self: req.url,
       links: hateoas,
@@ -48,4 +48,4 @@ const getAllFriend = async (req, res, next) => {
   }
 };
 
-module.exports = getAllFriend;
+module.exports = getAllPhoto;
