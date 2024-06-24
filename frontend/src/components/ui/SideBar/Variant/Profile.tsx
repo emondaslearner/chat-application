@@ -347,7 +347,19 @@ const Profile: React.FC<ProfileProps> = () => {
             </div>
           </>
         ) : (
-          <></>
+          <>
+            <div className="w-[48%]">
+              <Button fill={true} className="!w-full">
+                Add Friend
+              </Button>
+            </div>
+
+            <div className="w-[48%]">
+              <Button fill={false} className="!w-full">
+                Message
+              </Button>
+            </div>
+          </>
         )}
       </div>
 
@@ -516,7 +528,7 @@ const Friends = ({ isLoading, profileData, friends }: FriendsProps) => {
       <div className="flex items-center justify-between">
         <div className="flex items-center">
           <span className="text-[16px] text-dark_ dark:text-white_">
-            {friends.pagination.totalResources}
+            {friends?.pagination?.totalResources}
           </span>
           <p className="text-[15px] text-dark_gray_ dark:text-dark_text_ ml-[5px] mt-[2px]">
             Friends
@@ -539,21 +551,20 @@ const Friends = ({ isLoading, profileData, friends }: FriendsProps) => {
           </div>
         ) : (
           friends.data.map((data: any) => {
+            console.log("data", data);
+            console.log("profileData", profileData.id);
+            console.log("data?.second_user._id", data?.second_user._id);
             return (
               <div key={data?.id} className="cursor-pointer">
                 <img
                   className="rounded-[10px] h-[100px]"
                   src={
-                    (profileData.id === data.second_user._id
-                      ? data.second_user.profile_picture
-                      : data.first_user.profile_picture) ||
+                    (profileData.id === data?.second_user._id
+                      ? data?.second_user?.profile_picture
+                      : data?.first_user?.profile_picture) ||
                     "https://pipilikasoft.com/wp-content/uploads/2018/08/demo.jpg"
                   }
-                  alt={
-                    profileData.id === data.second_user._id
-                      ? data.second_user.profile_picture
-                      : data.first_user.profile_picture
-                  }
+                  alt="Profile"
                 />
                 <p className="text-[16px] font-semibold dark:text-dark_text_">
                   {data.second_user.name}

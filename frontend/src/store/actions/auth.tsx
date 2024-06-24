@@ -25,7 +25,7 @@ const initialState: AuthStoreInitialState = {
   cover_picture: "",
   city: "",
   country: "",
-  id: ""
+  id: "",
 };
 
 const siteConfig = createSlice({
@@ -33,7 +33,7 @@ const siteConfig = createSlice({
   initialState,
   reducers: {
     setUserData: (state, action: PayloadAction<AuthStoreInitialState>) => {
-      
+      state.id = action.payload.id;
       state.name = action.payload.name;
       state.email = action.payload.email;
       state.profile_picture = action.payload.profile_picture;
