@@ -226,6 +226,10 @@ const Profile: React.FC<ProfileProps> = () => {
     );
   }
 
+  const addFriend = () => {
+    
+  }
+
   return (
     <div className="w-full h-[100%] scrollHidden overflow-y-auto">
       <div className="w-[95%] mx-auto rounded-[15px] border-[1px] border-light_border_ dark:border-dark_border_ mt-4 lg:mt-8 h-[200px] relative overflow-hidden">
@@ -349,7 +353,7 @@ const Profile: React.FC<ProfileProps> = () => {
         ) : (
           <>
             <div className="w-[48%]">
-              <Button fill={true} className="!w-full">
+              <Button onClick={addFriend} fill={true} className="!w-full">
                 Add Friend
               </Button>
             </div>

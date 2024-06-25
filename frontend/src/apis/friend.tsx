@@ -32,4 +32,17 @@ const getFriendList = ({
   });
 };
 
-export { getFriendList };
+const addFriend = () => {
+  return new Promise((resolve, reject) => {
+    axios
+      .post("")
+      .then((response) => {
+        resolve(response?.data);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+};
+
+export { getFriendList, addFriend };
