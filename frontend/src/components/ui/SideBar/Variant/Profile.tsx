@@ -12,9 +12,9 @@ import { AuthStoreInitialState, setUserData } from "@src/store/actions/auth";
 import UploadPicture from "@src/pages/MyProfile/Popups/UploadPicture";
 import { handleAxiosError } from "@src/utils/error";
 import { getUserData, updateUserData } from "@src/apis/user";
-import { success } from "@src/utils/alert";
-import { useQuery } from "react-query";
-import { getFriendList } from "@src/apis/friend";
+import { error, success } from "@src/utils/alert";
+import { useMutation, useQuery } from "react-query";
+import { addFriendAPI, getFriendList } from "@src/apis/friend";
 import Spinner from "@src/components/shared/Spinner";
 import { getAllPhoto } from "@src/apis/photo";
 import { getAllVideo } from "@src/apis/video";
@@ -35,6 +35,17 @@ interface ProfileInformation {
   city: string;
   country: string;
   dateOfBirth: Date;
+}
+
+interface FriendData {
+  // Define the structure of data returned upon successful mutation
+  id: string;
+  name: string;
+  // Add more fields as per your actual data structure
+}
+
+interface friendProps {
+  data: any;
 }
 
 const Profile: React.FC<ProfileProps> = () => {
@@ -217,11 +228,8 @@ const Profile: React.FC<ProfileProps> = () => {
   const videos: any = videoData;
 
   // check already given request or not
-  interface friendRequestProps {
-    data: any;
-  }
 
-  const { data: friendRequest }: friendRequestProps = useQuery({
+  const { data: friendRequest }: friendProps = useQuery({
     queryFn: () =>
       getSingleFriendRequest({ sent_by: profileData.id, sent_to: id }),
     staleTime: Infinity,
@@ -229,6 +237,51 @@ const Profile: React.FC<ProfileProps> = () => {
   });
 
   // check already friend or not
+  const { data: checkFriendStatus }: friendProps = useQuery({
+    queryFn: () =>
+      getSingleFriendRequest({ sent_by: profileData.id, sent_to: id }),
+    staleTime: Infinity,
+    queryKey: [`friendRequest${profileData.id}${id}`],
+  });
+
+  // add friend function
+  const addFriend = async () => {
+    try {
+      const data: any = await addFriendAPI({ friendId: id });
+
+      return data;
+    } catch (err: any) {
+      handleAxiosError(err, themeColor);
+      throw err;
+    }
+  };
+
+  // add friend react query mutation
+  const { isLoading: addFriendLoadingStatus, mutate: addFriendMutation } =
+    useMutation({
+      mutationFn: addFriend,
+      mutationKey: "addFriendKey",
+      onSuccess: (_data: any) => {
+        success({ message: "Sent Friend Request successfully", themeColor });
+      },
+    });
+
+  // delete friend api
+  const deleteFriend = async () => {
+    return true;
+  };
+
+  // delete friend react query mutaion
+  const { isLoading: deleteFriendLoadingStatus, mutate: deleteFriendMutation } =
+    useMutation({
+      mutationFn: deleteFriend,
+      mutationKey: "deleteFriendKey",
+      onSuccess: (_data: any) => {
+        success({ message: "Deleted friend successfully", themeColor });
+      }
+    });
+
+  const cancelRequest = () => {};
 
   // show this message when profile not found
   if (id && !videos && !friends && !photos && !normalUserData) {
@@ -240,10 +293,6 @@ const Profile: React.FC<ProfileProps> = () => {
       </div>
     );
   }
-
-  const addFriend = () => {};
-
-  console.log("friendRequests", friendRequest);
 
   return (
     <div className="w-full h-[100%] scrollHidden overflow-y-auto">
@@ -367,14 +416,41 @@ const Profile: React.FC<ProfileProps> = () => {
           </>
         ) : (
           <>
-            {!friendRequest && (
+            {!friendRequest ? (
+              <>
+                {checkFriendStatus ? (
+                  <div className="w-[48%]">
+                    <Button
+                      loader={addFriendLoadingStatus}
+                      loaderMessage="Sending..."
+                      onClick={addFriendMutation}
+                      fill={true}
+                      className="!w-full"
+                    >
+                      Add Friend
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="w-[48%]">
+                    <Button
+                      loader={deleteFriendLoadingStatus}
+                      loaderMessage="Deleting..."
+                      onClick={deleteFriendMutation}
+                      fill={true}
+                      className="!w-full"
+                    >
+                      UnFriend
+                    </Button>
+                  </div>
+                )}
+              </>
+            ) : (
               <div className="w-[48%]">
-                <Button onClick={addFriend} fill={true} className="!w-full">
-                  Add Friend
+                <Button onClick={cancelRequest} fill={true} className="!w-full">
+                  Cancel Request
                 </Button>
               </div>
             )}
-
             <div className="w-[48%]">
               <Button fill={false} className="!w-full">
                 Message

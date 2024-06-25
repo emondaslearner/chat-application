@@ -32,10 +32,16 @@ const getFriendList = ({
   });
 };
 
-const addFriend = () => {
+interface addFriendStates {
+  friendId?: string;
+}
+
+const addFriendAPI = ({ friendId }: addFriendStates) => {
   return new Promise((resolve, reject) => {
     axios
-      .post("")
+      .post("/user/friends", {
+        friendId,
+      })
       .then((response) => {
         resolve(response?.data);
       })
@@ -45,4 +51,21 @@ const addFriend = () => {
   });
 };
 
-export { getFriendList, addFriend };
+interface deleteFriendAPIState {
+  id?: string;
+}
+
+const deleteFriendAPI = ({ id }: deleteFriendAPIState) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .delete(`/user/friend/${id}`)
+      .then((response) => {
+        resolve(response?.data);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+};
+
+export { getFriendList, addFriendAPI, deleteFriendAPI };
