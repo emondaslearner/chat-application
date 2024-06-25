@@ -18,6 +18,7 @@ import { getFriendList } from "@src/apis/friend";
 import Spinner from "@src/components/shared/Spinner";
 import { getAllPhoto } from "@src/apis/photo";
 import { getAllVideo } from "@src/apis/video";
+import { getSingleFriendRequest } from "@src/apis/friend-request";
 
 interface ProfileProps {}
 
@@ -215,6 +216,20 @@ const Profile: React.FC<ProfileProps> = () => {
 
   const videos: any = videoData;
 
+  // check already given request or not
+  interface friendRequestProps {
+    data: any;
+  }
+
+  const { data: friendRequest }: friendRequestProps = useQuery({
+    queryFn: () =>
+      getSingleFriendRequest({ sent_by: profileData.id, sent_to: id }),
+    staleTime: Infinity,
+    queryKey: [`friendRequest${profileData.id}${id}`],
+  });
+
+  // check already friend or not
+
   // show this message when profile not found
   if (id && !videos && !friends && !photos && !normalUserData) {
     return (
@@ -226,9 +241,9 @@ const Profile: React.FC<ProfileProps> = () => {
     );
   }
 
-  const addFriend = () => {
-    
-  }
+  const addFriend = () => {};
+
+  console.log("friendRequests", friendRequest);
 
   return (
     <div className="w-full h-[100%] scrollHidden overflow-y-auto">
@@ -352,11 +367,13 @@ const Profile: React.FC<ProfileProps> = () => {
           </>
         ) : (
           <>
-            <div className="w-[48%]">
-              <Button onClick={addFriend} fill={true} className="!w-full">
-                Add Friend
-              </Button>
-            </div>
+            {!friendRequest && (
+              <div className="w-[48%]">
+                <Button onClick={addFriend} fill={true} className="!w-full">
+                  Add Friend
+                </Button>
+              </div>
+            )}
 
             <div className="w-[48%]">
               <Button fill={false} className="!w-full">
