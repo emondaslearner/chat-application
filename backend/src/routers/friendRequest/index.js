@@ -1,7 +1,8 @@
 const {
   acceptRequest,
   deleteRequest,
-  findAllRequest
+  findAllRequest,
+  getSingleRequest,
 } = require("@controller/v1/friendRequest");
 
 const friendRequestRoutes = (router, authenticate) => {
@@ -9,7 +10,10 @@ const friendRequestRoutes = (router, authenticate) => {
     .route("/user/friend-request")
     .post(authenticate, acceptRequest)
     .get(authenticate, findAllRequest);
-  router.delete("/user/friend-request/:id", authenticate, deleteRequest);
+  router
+    .route("/user/friend-request/:id")
+    .delete(authenticate, deleteRequest)
+    .get(authenticate, getSingleRequest);
 };
 
 module.exports = friendRequestRoutes;
