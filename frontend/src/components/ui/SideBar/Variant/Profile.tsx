@@ -368,6 +368,7 @@ const Profile: React.FC<ProfileProps> = () => {
         profileData={profileData}
         isLoading={isLoading}
         friends={friends}
+        paramId={id}
       />
 
       {/* Photos */}
@@ -391,7 +392,7 @@ const Profile: React.FC<ProfileProps> = () => {
           </div>
         ) : videos.data.length ? (
           <div
-            className={`w-full mt-4 gap-3 max-h-[220px] h-full overflow-hidden`}
+            className={`w-full grid grid-cols-4 mt-4 gap-3 max-h-[220px] h-full overflow-hidden`}
           >
             {videos.data.map((data: any, i: number) => {
               return (
@@ -516,9 +517,15 @@ interface FriendsProps {
   isLoading: boolean;
   profileData: any;
   friends: any;
+  paramId?: string;
 }
 
-const Friends = ({ isLoading, profileData, friends }: FriendsProps) => {
+const Friends = ({
+  isLoading,
+  profileData,
+  friends,
+  paramId,
+}: FriendsProps) => {
   return (
     <div className="w-[95%] mx-auto mt-4">
       <p className="text-[20px] text-dark_ dark:text-white_ font-semibold">
@@ -551,17 +558,15 @@ const Friends = ({ isLoading, profileData, friends }: FriendsProps) => {
           </div>
         ) : (
           friends.data.map((data: any) => {
-            console.log("data", data);
-            console.log("profileData", profileData.id);
-            console.log("data?.second_user._id", data?.second_user._id);
+            const profileId = paramId || profileData.id;
             return (
               <div key={data?.id} className="cursor-pointer">
                 <img
                   className="rounded-[10px] h-[100px]"
                   src={
-                    (profileData.id === data?.second_user._id
-                      ? data?.second_user?.profile_picture
-                      : data?.first_user?.profile_picture) ||
+                    (profileId === data?.second_user._id
+                      ? data?.first_user?.profile_picture
+                      : data?.second_user?.profile_picture) ||
                     "https://pipilikasoft.com/wp-content/uploads/2018/08/demo.jpg"
                   }
                   alt="Profile"
