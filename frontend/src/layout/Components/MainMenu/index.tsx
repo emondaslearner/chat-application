@@ -51,7 +51,7 @@ const MainMenu: React.FC<MainMenuProps> = () => {
       })
     );
 
-    await queryClient.invalidateQueries();
+    queryClient.clear();
 
     navigate("/login");
   };
