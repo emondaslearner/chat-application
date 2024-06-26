@@ -1,4 +1,5 @@
 const Comment = require("@models/Comment");
+const Post = require('@models/Post')
 const { error } = require("@utils");
 const { deleteKeysWithPrefix } = require("@third-party/redis");
 

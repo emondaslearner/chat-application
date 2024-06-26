@@ -1,48 +1,46 @@
-const Post = require("@models/Post");
-const Video = require("@models/Video");
-const Photo = require("@models/Photo");
 const { error } = require("@utils");
+const Posts = require("@models/Posts");
+const Friend = require("@models/Friend");
 const { getDataFromRedis } = require("@third-party/redis");
-const { functions } = require("@utils");
 
-const getMyPosts = async ({ id, userId, filterData }) => {
+const getPosts = async ({ userId, filterData }) => {
   if (!userId) {
-    throw error.badRequest("userId:userId not provided");
+    throw error.badRequest("userId:userId is missing");
   }
+
+  const friendFilter = {
+    $and: [
+      { $or: [{ first_user: userId }, { second_user: userId }] },
+      { blocked: false },
+    ],
+  };
+
+  const friends = await Friend.find(friendFilter);
+
+  const friendsIds = friends.map((friend) =>
+    friend.first_user._id === userId
+      ? friend.second_user._id
+      : friend.first_user._id
+  );
+
+  const allFriendsStringify = await getDataFromRedis(
+    `userFriends:${userId}`,
+    () => friendsIds,
+    86400
+  );
 
   const sortStr = `${filterData.sortType === "dsc" ? "-" : ""}${
     filterData.sortBy
   }`;
-  const filter = {
-    title: { $regex: filterData.search, $options: "i" },
-    user: id ? id : userId,
-  };
 
-  const getPosts = async () => {
-    return await Post.find(filter)
-      .populate({
-        path: "photos",
-        select: "photo",
-      })
-      .populate({
-        path: "videos",
-        select: "video",
-      })
-      .sort(sortStr)
-      .skip(filterData.page * filterData.limit - filterData.limit)
-      .limit(filterData.limit);
-  };
+  const allFriends = JSON.parse(allFriendsStringify);
 
-  // check in redis
-  const serializedFilterData = JSON.stringify(filterData);
-  const keyPrefix = "posts:";
-  const key = `${keyPrefix}${serializedFilterData}${userId}`;
+  const posts = Posts.find({ user: { $in: allFriends } })
+    .sort(sortStr)
+    .skip(filterData.page * filterData.limit - filterData.limit)
+    .limit(filterData.limit);
 
-  const posts = await getDataFromRedis(key, getPosts);
-
-  const counts = await functions.countEntities(Post, filter);
-
-  return { posts, counts };
+  return posts;
 };
 
-module.exports = getMyPosts;
+module.exports = getPosts;

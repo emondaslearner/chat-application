@@ -2,6 +2,7 @@ const FriendRequest = require("@models/FriendRequest");
 const { error } = require("@utils");
 const { deleteKeysWithPrefix } = require("@third-party/redis");
 const { sentMessageToTopic } = require("@third-party/firebase");
+const { addFriendToRedisCache } = require("./utils");
 
 const addFriend = async ({ friendId, userId }) => {
   if (!friendId) {
@@ -27,6 +28,8 @@ const addFriend = async ({ friendId, userId }) => {
   });
 
   await friendData.save();
+
+  addFriendToRedisCache(userId, friendId);
 
   sentMessageToTopic({
     topic: userId,

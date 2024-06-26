@@ -2,7 +2,7 @@ const {
   addPost,
   deletePost,
   updatePost,
-  getPosts,
+  getMyPosts,
 } = require("@controller/v1/post");
 const { addOrCancelReaction } = require("@controller/v1/reaction");
 const multer = require("multer");
@@ -29,7 +29,7 @@ const postRoutes = async (router, authenticate) => {
   router
     .route("/user/posts")
     .post([authenticate, uploadFields], addPost)
-    .get(authenticate, getPosts);
+    .get(authenticate, getMyPosts);
 
   router
     .route("/user/post/:id")

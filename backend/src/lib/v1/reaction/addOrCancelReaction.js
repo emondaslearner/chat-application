@@ -30,6 +30,9 @@ const addOrCancelReaction = async ({ userId, postId, reaction }) => {
     given_by: userId,
   });
 
+  // reaction count
+  let reactionCount = post.reactionCount;
+
   deleteKeysWithPrefix("posts:");
 
   if (reactionOb?.reaction === reaction && reactionOb) {
@@ -47,6 +50,8 @@ const addOrCancelReaction = async ({ userId, postId, reaction }) => {
       given_by: userId,
     });
 
+    reactionCount--;
+
     return "deleted";
   } else if (reactionOb?.reaction !== reaction && reactionOb) {
     reactionOb.reaction = reaction;
@@ -61,6 +66,8 @@ const addOrCancelReaction = async ({ userId, postId, reaction }) => {
     body: `A friend reacted to your post. post title is ${post.title}`,
   });
 
+  reactionCount++;
+
   const reactionData = await Reaction({
     reaction,
     post: postId,
@@ -70,6 +77,7 @@ const addOrCancelReaction = async ({ userId, postId, reaction }) => {
   await reactionData.save();
 
   post.reactions = [...post.reactions, reactionData._id];
+  post.reactionCount = reactionCount;
 
   await post.save();
 

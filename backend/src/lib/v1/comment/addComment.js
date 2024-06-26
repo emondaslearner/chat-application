@@ -19,6 +19,9 @@ const addComment = async ({ body, userId, postId }) => {
     throw error.notFound();
   }
 
+  const reactionCount = post.reactionCount + 1;
+  post.reactionCount = reactionCount;
+
   const comment = new Comment({
     body,
     post: postId,
@@ -27,6 +30,8 @@ const addComment = async ({ body, userId, postId }) => {
 
   await comment.save();
 
+  await post.save();
+
   sentMessageToTopic({
     topic: post.user,
     title: `Got new comment on a post`,
@@ -34,6 +39,7 @@ const addComment = async ({ body, userId, postId }) => {
   });
 
   deleteKeysWithPrefix("comments:");
+
   return comment;
 };
 
