@@ -10,9 +10,7 @@ const friendRequestRoutes = (router, authenticate) => {
     .route("/user/friend-requests")
     .post(authenticate, acceptRequest)
     .get(authenticate, findAllRequest);
-  router.route("/user/:id/friend-request").delete(authenticate, deleteRequest);
-
-  router.route("/user/friend-request").get(authenticate, getSingleRequest);
+  router.route("/user/:id/friend-request").delete(authenticate, deleteRequest).get(authenticate, getSingleRequest);
 };
 
 module.exports = friendRequestRoutes;
