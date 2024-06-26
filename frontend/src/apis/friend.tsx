@@ -58,7 +58,7 @@ interface deleteFriendAPIState {
 const deleteFriendAPI = ({ id }: deleteFriendAPIState) => {
   return new Promise((resolve, reject) => {
     axios
-      .delete(`/user/friend/${id}`)
+      .delete(`/user/${id}/friend`)
       .then((response) => {
         resolve(response?.data);
       })
@@ -68,4 +68,21 @@ const deleteFriendAPI = ({ id }: deleteFriendAPIState) => {
   });
 };
 
-export { getFriendList, addFriendAPI, deleteFriendAPI };
+interface getSingleFriendAPIStates {
+  id? : string
+}
+
+const getSingleFriendAPI = async ({id}:getSingleFriendAPIStates) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .get(`/user/${id}/friend`)
+      .then((response) => {
+        resolve(response?.data);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  })
+};
+
+export { getFriendList, addFriendAPI, deleteFriendAPI, getSingleFriendAPI };

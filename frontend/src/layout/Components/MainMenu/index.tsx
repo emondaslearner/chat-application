@@ -19,6 +19,7 @@ import { changeMode } from "@src/store/actions/themeConfig";
 import MobileMenu from "../MobileMenu";
 import { AppDispatch } from "@src/store/store";
 import { IoMdLogOut } from "react-icons/io";
+import { queryClient } from "@src/App";
 // import nav from '../../../configs/nav.config.ts'
 
 interface MainMenuProps {}
@@ -36,6 +37,7 @@ const MainMenu: React.FC<MainMenuProps> = () => {
   const logout = () => {
     localStorage.removeItem("token");
     navigate("/login");
+    queryClient.invalidateQueries(["userData"]);
   };
 
   return (

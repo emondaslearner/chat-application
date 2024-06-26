@@ -1,5 +1,5 @@
 import AvatarSingle from "@src/components/shared/Avatar";
-import React, { ReactNode, useRef, useState } from "react";
+import React, { ReactNode, useEffect, useRef, useState } from "react";
 import { FaCamera } from "react-icons/fa";
 import { Link, useParams } from "react-router-dom";
 import Dropdown from "../../Dropdown";
@@ -14,12 +14,22 @@ import { handleAxiosError } from "@src/utils/error";
 import { getUserData, updateUserData } from "@src/apis/user";
 import { error, success } from "@src/utils/alert";
 import { useMutation, useQuery } from "react-query";
-import { addFriendAPI, deleteFriendAPI, getFriendList } from "@src/apis/friend";
+import {
+  addFriendAPI,
+  deleteFriendAPI,
+  getFriendList,
+  getSingleFriendAPI,
+} from "@src/apis/friend";
 import Spinner from "@src/components/shared/Spinner";
 import { getAllPhoto } from "@src/apis/photo";
 import { getAllVideo } from "@src/apis/video";
-import { cancelFriendRequestAPI, getSingleFriendRequest } from "@src/apis/friend-request";
+import {
+  acceptFriendRequestAPI,
+  cancelFriendRequestAPI,
+  getSingleFriendRequest,
+} from "@src/apis/friend-request";
 import { queryClient } from "@src/App";
+import { TbRubberStampOff } from "react-icons/tb";
 
 interface ProfileProps {}
 
@@ -230,20 +240,43 @@ const Profile: React.FC<ProfileProps> = () => {
 
   // check already given request or not
 
+  const [friendRequestStatus, setFriendRequestStatus] = useState<
+    boolean | "sent"
+  >(false);
+
   const { data: friendRequest }: friendProps = useQuery({
-    queryFn: () =>
-      getSingleFriendRequest({ sent_by: profileData.id, sent_to: id }),
+    queryFn: () => getSingleFriendRequest({ id }),
     staleTime: Infinity,
     queryKey: [`friendRequest${profileData.id}${id}`],
   });
 
+  useEffect(() => {
+    if (friendRequest?.data?.sent_by === profileData.id) {
+      setFriendRequestStatus("sent");
+    } else if (friendRequest?.data?.sent_to === profileData.id) {
+      setFriendRequestStatus(true);
+    } else {
+      setFriendRequestStatus(false);
+    }
+  }, [friendRequest, profileData.id]);
+
   // check already friend or not
-  const { data: checkFriendStatus }: friendProps = useQuery({
-    queryFn: () =>
-      getSingleFriendRequest({ sent_by: profileData.id, sent_to: id }),
+  const [checkFriendStatus, setCheckFriendStatus] = useState<boolean>(false);
+
+  const { data: checkFriend }: friendProps = useQuery({
+    queryFn: () => getSingleFriendAPI({ id }),
     staleTime: Infinity,
-    queryKey: [`friendRequest${profileData.id}${id}`],
+    queryKey: [`userSingleFriend`],
+    retry: 2,
   });
+
+  useEffect(() => {
+    if (checkFriend) {
+      setCheckFriendStatus(true);
+    } else {
+      setCheckFriendStatus(false);
+    }
+  }, [checkFriend]);
 
   // add friend function
   const addFriend = async () => {
@@ -264,10 +297,10 @@ const Profile: React.FC<ProfileProps> = () => {
       mutationKey: ["addFriendKey"],
       onSuccess: (_data: any) => {
         success({ message: "Sent Friend Request successfully", themeColor });
-        queryClient.invalidateQueries([
-          "friendRequest",
-          `friendRequest${profileData.id}${id}`,
-        ]);
+        queryClient.invalidateQueries(["friendRequest"]);
+        queryClient.invalidateQueries([`friendRequest${profileData.id}${id}`]);
+        setFriendRequestStatus("sent");
+        setCheckFriendStatus(false);
       },
     });
 
@@ -291,15 +324,21 @@ const Profile: React.FC<ProfileProps> = () => {
       onSuccess: (_data: any) => {
         success({ message: "Deleted friend successfully", themeColor });
         queryClient.invalidateQueries(["userFriend"]);
+        queryClient.invalidateQueries(["userSingleFriend"]);
+        setFriendRequestStatus(false);
+        setCheckFriendStatus(false);
       },
     });
 
   // cancel friend request api
   const cancelRequest = async () => {
     try {
-      const data = await cancelFriendRequestAPI({id});
-    } catch(err) {
-      
+      const data = await cancelFriendRequestAPI({ id });
+
+      return data;
+    } catch (err) {
+      handleAxiosError(err, themeColor);
+      throw err;
     }
   };
 
@@ -310,14 +349,42 @@ const Profile: React.FC<ProfileProps> = () => {
       mutationKey: ["cancelRequestKey"],
       onSuccess: (_data: any) => {
         success({ message: "Cancel Request successfully", themeColor });
-        queryClient.invalidateQueries([
-          "friendRequest",
-          `friendRequest${profileData.id}${id}`,
-        ]);
+        queryClient.invalidateQueries(["friendRequest"]);
+        queryClient.invalidateQueries([`friendRequest${profileData.id}${id}`]);
+
+        setFriendRequestStatus(false);
       },
     });
 
-  console.log("checkFriendStatus", checkFriendStatus);
+  // accept friend request function
+  const acceptFriendRequest = async () => {
+    try {
+      const data = await acceptFriendRequestAPI({ friendId: id });
+
+      return data;
+    } catch (err) {
+      handleAxiosError(err, themeColor);
+      throw err;
+    }
+  };
+
+  const {
+    isLoading: acceptFriendRequestLoadingStatus,
+    mutate: acceptFriendRequestMutation,
+  } = useMutation({
+    mutationFn: acceptFriendRequest,
+    mutationKey: ["acceptFriendRequestKey"],
+    onSuccess: (_data: any) => {
+      success({ message: "Accepted Request successfully", themeColor });
+      queryClient.invalidateQueries(["userFriend"]);
+      queryClient.invalidateQueries(["userSingleFriend"]);
+      queryClient.invalidateQueries(["friendRequest"]);
+      queryClient.invalidateQueries([`friendRequest${profileData.id}${id}`]);
+
+      setCheckFriendStatus(true);
+      setFriendRequestStatus(true);
+    },
+  });
 
   // show this message when profile not found
   if (id && !videos && !friends && !photos && !normalUserData) {
@@ -329,6 +396,9 @@ const Profile: React.FC<ProfileProps> = () => {
       </div>
     );
   }
+
+  console.log(friendRequestStatus, checkFriendStatus);
+  console.log(friendRequest, checkFriend);
 
   return (
     <div className="w-full h-[100%] scrollHidden overflow-y-auto">
@@ -452,39 +522,59 @@ const Profile: React.FC<ProfileProps> = () => {
           </>
         ) : (
           <>
-            {!friendRequest ? (
-              <>
-                {!checkFriendStatus ? (
-                  <div className="w-[48%]">
-                    <Button
-                      loader={addFriendLoadingStatus}
-                      loaderMessage="Sending..."
-                      onClick={addFriendMutation}
-                      fill={true}
-                      className="!w-full"
-                    >
-                      Add Friend
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="w-[48%]">
-                    <Button
-                      loader={deleteFriendLoadingStatus}
-                      loaderMessage="Deleting..."
-                      onClick={deleteFriendMutation}
-                      fill={true}
-                      className="!w-full"
-                    >
-                      UnFriend
-                    </Button>
-                  </div>
-                )}
-              </>
-            ) : (
+            {!friendRequestStatus && !checkFriendStatus && (
               <div className="w-[48%]">
-                <Button onClick={cancelRequest} fill={true} className="!w-full">
-                  Cancel Request
+                <Button
+                  loader={addFriendLoadingStatus}
+                  loaderMessage="Sending..."
+                  onClick={addFriendMutation}
+                  fill={true}
+                  className="!w-full"
+                >
+                  Add Friend
                 </Button>
+              </div>
+            )}
+
+            {((!friendRequestStatus && checkFriendStatus) ||
+              (friendRequestStatus && checkFriendStatus)) && (
+              <div className="w-[48%]">
+                <Button
+                  loader={deleteFriendLoadingStatus}
+                  loaderMessage="Deleting..."
+                  onClick={deleteFriendMutation}
+                  fill={true}
+                  className="!w-full"
+                >
+                  UnFriend
+                </Button>
+              </div>
+            )}
+
+            {friendRequestStatus && !checkFriendStatus && (
+              <div className="w-[48%]">
+                {friendRequestStatus === "sent" && (
+                  <Button
+                    loader={cancelFriendLoadingStatus}
+                    loaderMessage={"Processing..."}
+                    onClick={cancelFriendMutation}
+                    fill={true}
+                    className="!w-full"
+                  >
+                    Cancel Request
+                  </Button>
+                )}
+                {friendRequestStatus === true && (
+                  <Button
+                    loaderMessage={"Processing..."}
+                    fill={true}
+                    className="!w-full"
+                    loader={acceptFriendRequestLoadingStatus}
+                    onClick={acceptFriendRequestMutation}
+                  >
+                    Accept Request
+                  </Button>
+                )}
               </div>
             )}
             <div className="w-[48%]">
