@@ -5,8 +5,8 @@ const {
 const getSingleRequest = async (req, res, next) => {
   try {
     const data = await getSingleRequestLib({
-      sent_to: req.query?.sent_to,
-      sent_by: req.query?.sent_by,
+      userId: req.user.id,
+      friendId: req.params.id,
     });
 
     const response = {
