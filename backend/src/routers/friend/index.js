@@ -13,8 +13,8 @@ const friendRoutes = (router, authenticate) => {
     .patch(authenticate, blockFriend)
     .get(authenticate, getAllFriend);
 
-  router.delete("/user/friend/:id", authenticate, deleteFriend);
-  router.get("/user/friend/:id", authenticate, getSingleFriend);
+  router.delete("/user/:id/friend", authenticate, deleteFriend);
+  router.get("/user/:id/friend", authenticate, getSingleFriend);
 };
 
 module.exports = friendRoutes;
