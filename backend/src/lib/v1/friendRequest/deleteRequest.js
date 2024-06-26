@@ -12,8 +12,10 @@ const deleteRequest = async ({ userId, friendId }) => {
   }
 
   const gotData = await FriendRequest.findOne({
-    sent_by: friendId,
-    sent_to: userId,
+    $and: [
+      { $or: [{ sent_by: userId }, { sent_by: friendId }] },
+      { $or: [{ sent_to: userId }, { sent_to: friendId }] },
+    ],
   });
 
   if (!gotData) {
@@ -21,11 +23,13 @@ const deleteRequest = async ({ userId, friendId }) => {
   }
 
   const data = await FriendRequest.findOneAndDelete({
-    sent_by: friendId,
-    sent_to: userId,
+    $and: [
+      { $or: [{ sent_by: userId }, { sent_by: friendId }] },
+      { $or: [{ sent_to: userId }, { sent_to: friendId }] },
+    ],
   });
 
-  deleteKeysWithPrefix('friendRequest:')
+  deleteKeysWithPrefix("friendRequest:");
 
   return data;
 };
