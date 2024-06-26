@@ -16,7 +16,7 @@ interface EditProfileProps {
     country: string;
   }) => void;
   saveProfileInformationToDb: (e: any) => void;
-  buttonLoader: boolean
+  buttonLoader: boolean;
 }
 
 interface InputEditStatus {
@@ -38,11 +38,10 @@ interface InputStates {
 const EditProfile: React.FC<EditProfileProps> = ({
   changeInformation,
   saveProfileInformationToDb,
-  buttonLoader
+  buttonLoader,
 }) => {
-
   // profile data
-  const profileData = useSelector((state: RootState) => state.auth)
+  const profileData = useSelector((state: RootState) => state.auth);
 
   // input status
   const [inputsEditStatus, setInputEditStatus] = useState<InputEditStatus>({
@@ -124,7 +123,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
           </div>
           {!inputsEditStatus?.name ? (
             <p className="text-[20px] text-dark_ dark:text-dark_text_ ml-2">
-              Emon Das
+              {profileData.name}
             </p>
           ) : (
             <Input
@@ -162,7 +161,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
           </div>
           {!inputsEditStatus?.bio ? (
             <p className="text-[20px] text-dark_ dark:text-dark_text_ ml-2">
-              This is emon
+              {profileData.bio}
             </p>
           ) : (
             <Input
@@ -204,7 +203,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
           </div>
           {!inputsEditStatus?.dateOfBirth ? (
             <p className="text-[20px] text-dark_ dark:text-dark_text_ ml-2">
-              06 - 03 - 2023
+              {`${profileDate.getDay()}-${profileDate.getMonth()}-${profileDate.getFullYear()}`}
             </p>
           ) : (
             <DatePicker
@@ -240,7 +239,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
           </div>
           {!inputsEditStatus?.city ? (
             <p className="text-[20px] text-dark_ dark:text-dark_text_ ml-2">
-              Chittagong
+              {profileData.city ? profileData.city : "Choose City"}
             </p>
           ) : (
             <Input
@@ -277,7 +276,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
           </div>
           {!inputsEditStatus?.country ? (
             <p className="text-[20px] text-dark_ dark:text-dark_text_ ml-2">
-              Bangladesh
+              {profileData.country ? profileData.country : "Choose Country"}
             </p>
           ) : (
             <Input
@@ -292,7 +291,12 @@ const EditProfile: React.FC<EditProfileProps> = ({
             />
           )}
         </div>
-        <Button loader={buttonLoader} loaderMessage="Processing..." fill={true} className="mt-4 py-[12px] w-full">
+        <Button
+          loader={buttonLoader}
+          loaderMessage="Processing..."
+          fill={true}
+          className="mt-4 py-[12px] w-full"
+        >
           Save
         </Button>
       </form>

@@ -29,7 +29,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
   return (
     <div id={id} className="DatePicker">
       <ThemeProvider theme={darkTheme}>
-        <DatePickers className={`w-full ${className}`} onChange={onChange} defaultValue={dayjs(value)} />
+        <DatePickers maxDate={dayjs(new Date())} className={`w-full ${className}`} onChange={onChange} defaultValue={dayjs(value)} />
       </ThemeProvider>
     </div>
   );
