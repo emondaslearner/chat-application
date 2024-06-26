@@ -29,9 +29,9 @@ const acceptRequest = async ({ userId, friendId }) => {
 
   await friendData.save();
 
-  await Friend.findOneAndDelete({
-    send_by: friendId,
-    send_to: userId,
+  await FriendRequest.findOneAndDelete({
+    sent_by: friendId,
+    sent_to: userId,
   });
 
   sentMessageToTopic({
