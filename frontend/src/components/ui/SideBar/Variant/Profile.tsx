@@ -14,11 +14,12 @@ import { handleAxiosError } from "@src/utils/error";
 import { getUserData, updateUserData } from "@src/apis/user";
 import { error, success } from "@src/utils/alert";
 import { useMutation, useQuery } from "react-query";
-import { addFriendAPI, getFriendList } from "@src/apis/friend";
+import { addFriendAPI, deleteFriendAPI, getFriendList } from "@src/apis/friend";
 import Spinner from "@src/components/shared/Spinner";
 import { getAllPhoto } from "@src/apis/photo";
 import { getAllVideo } from "@src/apis/video";
-import { getSingleFriendRequest } from "@src/apis/friend-request";
+import { cancelFriendRequestAPI, getSingleFriendRequest } from "@src/apis/friend-request";
+import { queryClient } from "@src/App";
 
 interface ProfileProps {}
 
@@ -260,28 +261,63 @@ const Profile: React.FC<ProfileProps> = () => {
   const { isLoading: addFriendLoadingStatus, mutate: addFriendMutation } =
     useMutation({
       mutationFn: addFriend,
-      mutationKey: "addFriendKey",
+      mutationKey: ["addFriendKey"],
       onSuccess: (_data: any) => {
         success({ message: "Sent Friend Request successfully", themeColor });
+        queryClient.invalidateQueries([
+          "friendRequest",
+          `friendRequest${profileData.id}${id}`,
+        ]);
       },
     });
 
   // delete friend api
   const deleteFriend = async () => {
-    return true;
+    try {
+      const data: any = await deleteFriendAPI({ id });
+
+      return data;
+    } catch (err) {
+      handleAxiosError(err, themeColor);
+      throw err;
+    }
   };
 
-  // delete friend react query mutaion
+  // delete friend react query mutation
   const { isLoading: deleteFriendLoadingStatus, mutate: deleteFriendMutation } =
     useMutation({
       mutationFn: deleteFriend,
-      mutationKey: "deleteFriendKey",
+      mutationKey: ["deleteFriendKey"],
       onSuccess: (_data: any) => {
         success({ message: "Deleted friend successfully", themeColor });
-      }
+        queryClient.invalidateQueries(["userFriend"]);
+      },
     });
 
-  const cancelRequest = () => {};
+  // cancel friend request api
+  const cancelRequest = async () => {
+    try {
+      const data = await cancelFriendRequestAPI({id});
+    } catch(err) {
+      
+    }
+  };
+
+  // cancel friend request react query mutation
+  const { isLoading: cancelFriendLoadingStatus, mutate: cancelFriendMutation } =
+    useMutation({
+      mutationFn: cancelRequest,
+      mutationKey: ["cancelRequestKey"],
+      onSuccess: (_data: any) => {
+        success({ message: "Cancel Request successfully", themeColor });
+        queryClient.invalidateQueries([
+          "friendRequest",
+          `friendRequest${profileData.id}${id}`,
+        ]);
+      },
+    });
+
+  console.log("checkFriendStatus", checkFriendStatus);
 
   // show this message when profile not found
   if (id && !videos && !friends && !photos && !normalUserData) {
@@ -418,7 +454,7 @@ const Profile: React.FC<ProfileProps> = () => {
           <>
             {!friendRequest ? (
               <>
-                {checkFriendStatus ? (
+                {!checkFriendStatus ? (
                   <div className="w-[48%]">
                     <Button
                       loader={addFriendLoadingStatus}

@@ -21,4 +21,21 @@ const getSingleFriendRequest = ({
   });
 };
 
-export { getSingleFriendRequest };
+interface cancelFriendRequestAPIStates {
+  id?: string;
+}
+
+const cancelFriendRequestAPI = async ({ id }: cancelFriendRequestAPIStates) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .delete(`/user/friend-request/${id}`)
+      .then((response) => {
+        resolve(response?.data);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+};
+
+export { getSingleFriendRequest, cancelFriendRequestAPI };
