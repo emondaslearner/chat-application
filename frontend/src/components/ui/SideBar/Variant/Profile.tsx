@@ -12,7 +12,7 @@ import { AuthStoreInitialState, setUserData } from "@src/store/actions/auth";
 import UploadPicture from "@src/pages/MyProfile/Popups/UploadPicture";
 import { handleAxiosError } from "@src/utils/error";
 import { getUserData, updateUserData } from "@src/apis/user";
-import { error, success } from "@src/utils/alert";
+import { success } from "@src/utils/alert";
 import { useMutation, useQuery } from "react-query";
 import {
   addFriendAPI,
@@ -29,7 +29,6 @@ import {
   getSingleFriendRequest,
 } from "@src/apis/friend-request";
 import { queryClient } from "@src/App";
-import { TbRubberStampOff } from "react-icons/tb";
 
 interface ProfileProps {}
 
@@ -46,13 +45,6 @@ interface ProfileInformation {
   city: string;
   country: string;
   dateOfBirth: Date;
-}
-
-interface FriendData {
-  // Define the structure of data returned upon successful mutation
-  id: string;
-  name: string;
-  // Add more fields as per your actual data structure
 }
 
 interface friendProps {

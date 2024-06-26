@@ -13,7 +13,6 @@ const useAuth = () => {
 
   const { data, isLoading, isError } = useQuery({
     queryFn: () => getUserData({}),
-    staleTime: Infinity,
     queryKey: ["userData"],
     retry: 0,
   });

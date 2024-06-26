@@ -20,6 +20,7 @@ import MobileMenu from "../MobileMenu";
 import { AppDispatch } from "@src/store/store";
 import { IoMdLogOut } from "react-icons/io";
 import { queryClient } from "@src/App";
+import { setUserData } from "@src/store/actions/auth";
 // import nav from '../../../configs/nav.config.ts'
 
 interface MainMenuProps {}
@@ -34,10 +35,25 @@ const MainMenu: React.FC<MainMenuProps> = () => {
   // mode status
   const mode: string = useSelector((state: any) => state?.themeConfig.mode);
 
-  const logout = () => {
+  const logout = async () => {
     localStorage.removeItem("token");
+    dispatch(
+      setUserData({
+        name: "",
+        email: "",
+        profile_picture: "",
+        date_of_birth: "",
+        bio: "",
+        cover_picture: "",
+        city: "",
+        country: "",
+        id: "",
+      })
+    );
+
+    await queryClient.invalidateQueries();
+
     navigate("/login");
-    queryClient.invalidateQueries(["userData"]);
   };
 
   return (

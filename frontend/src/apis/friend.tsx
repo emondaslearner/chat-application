@@ -38,16 +38,18 @@ interface addFriendStates {
 
 const addFriendAPI = ({ friendId }: addFriendStates) => {
   return new Promise((resolve, reject) => {
-    axios
-      .post("/user/friends", {
-        friendId,
-      })
-      .then((response) => {
-        resolve(response?.data);
-      })
-      .catch((error) => {
-        reject(error);
-      });
+    friendId
+      ? axios
+          .post("/user/friends", {
+            friendId,
+          })
+          .then((response) => {
+            resolve(response?.data);
+          })
+          .catch((error) => {
+            reject(error);
+          })
+      : reject();
   });
 };
 
@@ -57,32 +59,36 @@ interface deleteFriendAPIState {
 
 const deleteFriendAPI = ({ id }: deleteFriendAPIState) => {
   return new Promise((resolve, reject) => {
-    axios
-      .delete(`/user/${id}/friend`)
-      .then((response) => {
-        resolve(response?.data);
-      })
-      .catch((error) => {
-        reject(error);
-      });
+    id
+      ? axios
+          .delete(`/user/${id}/friend`)
+          .then((response) => {
+            resolve(response?.data);
+          })
+          .catch((error) => {
+            reject(error);
+          })
+      : reject();
   });
 };
 
 interface getSingleFriendAPIStates {
-  id? : string
+  id?: string;
 }
 
-const getSingleFriendAPI = async ({id}:getSingleFriendAPIStates) => {
+const getSingleFriendAPI = async ({ id }: getSingleFriendAPIStates) => {
   return new Promise((resolve, reject) => {
-    axios
-      .get(`/user/${id}/friend`)
-      .then((response) => {
-        resolve(response?.data);
-      })
-      .catch((error) => {
-        reject(error);
-      });
-  })
+    id
+      ? axios
+          .get(`/user/${id}/friend`)
+          .then((response) => {
+            resolve(response?.data);
+          })
+          .catch((error) => {
+            reject(error);
+          })
+      : reject();
+  });
 };
 
 export { getFriendList, addFriendAPI, deleteFriendAPI, getSingleFriendAPI };

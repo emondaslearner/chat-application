@@ -6,14 +6,16 @@ interface getSingleFriendRequestProps {
 
 const getSingleFriendRequest = ({ id }: getSingleFriendRequestProps) => {
   return new Promise((resolve, reject) => {
-    axios
-      .get(`/user/${id}/friend-request`)
-      .then((response) => {
-        resolve(response?.data);
-      })
-      .catch((error) => {
-        reject(error);
-      });
+    id
+      ? axios
+          .get(`/user/${id}/friend-request`)
+          .then((response) => {
+            resolve(response?.data);
+          })
+          .catch((error) => {
+            reject(error);
+          })
+      : reject();
   });
 };
 
@@ -23,14 +25,16 @@ interface cancelFriendRequestAPIStates {
 
 const cancelFriendRequestAPI = async ({ id }: cancelFriendRequestAPIStates) => {
   return new Promise((resolve, reject) => {
-    axios
-      .delete(`/user/${id}/friend-request`)
-      .then((response) => {
-        resolve(response?.data);
-      })
-      .catch((error) => {
-        reject(error);
-      });
+    id
+      ? axios
+          .delete(`/user/${id}/friend-request`)
+          .then((response) => {
+            resolve(response?.data);
+          })
+          .catch((error) => {
+            reject(error);
+          })
+      : reject();
   });
 };
 
@@ -40,16 +44,18 @@ interface acceptFriendRequestStates {
 
 const acceptFriendRequestAPI = ({ friendId }: acceptFriendRequestStates) => {
   return new Promise((resolve, reject) => {
-    axios
-      .post(`/user/friend-requests`, {
-        friendId,
-      })
-      .then((response) => {
-        resolve(response?.data);
-      })
-      .catch((error) => {
-        reject(error);
-      });
+    friendId
+      ? axios
+          .post(`/user/friend-requests`, {
+            friendId,
+          })
+          .then((response) => {
+            resolve(response?.data);
+          })
+          .catch((error) => {
+            reject(error);
+          })
+      : reject();
   });
 };
 
