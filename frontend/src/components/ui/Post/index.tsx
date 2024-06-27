@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { IoMdMore } from "react-icons/io";
 import AvatarSingle from "@src/components/shared/Avatar";
 import { AiFillLike } from "react-icons/ai";
@@ -51,6 +51,11 @@ interface PostProps {
 
 const Post: React.FC<PostProps> = ({ border = "", data }) => {
   const profileData = useSelector((state: RootState) => state.auth);
+
+  // reactions
+  const [activeReaction, setActiveReaction] = useState<string>("");
+
+  console.log("activeReaction", );
 
   return (
     <div
@@ -177,7 +182,7 @@ const Post: React.FC<PostProps> = ({ border = "", data }) => {
       <>
         <div className="px-5 flex items-center justify-between py-3 border-b-[2px] border-t-[2px] border-light_border_ dark:border-dark_border_ mt-2">
           {/* Add reactions on post */}
-          <Like reactionStatus="post" postId={data?._id} />
+          <Like reactionStatus="post" data={data} postId={data?._id} setActiveReaction={setActiveReaction} />
 
           {/* Comments */}
           <div>

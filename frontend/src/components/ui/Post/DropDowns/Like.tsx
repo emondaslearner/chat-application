@@ -32,6 +32,7 @@ interface LikeProps {
   reactionStatus: string;
   setActiveReaction?: (e: string) => void;
   postId?: string;
+  data?: any;
 }
 
 interface Items {
@@ -86,16 +87,22 @@ const Like: React.FC<LikeProps> = ({
   reactionStatus,
   setActiveReaction,
   postId,
+  data,
 }) => {
   const [isOpen, setOpen] = useState<boolean>(false);
 
   const [givenReaction, setReaction] = useState<string>("");
+
+  const [apiCallStatus, setApiCallStatus] = useState(false);
 
   // prv state of given reaction
   const [prvState, setPrvState] = useState<string>("");
 
   // theme color
   const themeColor = useSelector((state: RootState) => state.themeConfig.mode);
+
+  // profile data
+  const profileData = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
     if (setActiveReaction !== undefined) {
@@ -128,17 +135,34 @@ const Like: React.FC<LikeProps> = ({
   });
 
   useEffect(() => {
-    if (givenReaction) {
+    if (givenReaction && apiCallStatus) {
       mutate();
-    } else {
+    }
+    if (!givenReaction) {
       if (prvState) {
-        console.log("prvState", prvState);
         mutate();
       }
     }
   }, [givenReaction]);
 
-  console.log("prvState", prvState);
+  // check given reaction or not
+
+  useEffect(() => {
+    if (data?.reactions.length > 0) {
+      const findReaction = data.reactions.find(
+        (data: any) => data.given_by === profileData.id
+      );
+
+      if (findReaction) {
+        const reactionToCap =
+          findReaction.reaction.charAt(0).toUpperCase() +
+          findReaction.reaction.slice(1);
+
+        setReaction(reactionToCap);
+        setPrvState(reactionToCap);
+      }
+    }
+  }, [data, profileData.id]);
 
   return (
     <DropDowns size="sm" isOpen={isOpen} onOpenChange={(open) => setOpen(open)}>
@@ -155,6 +179,7 @@ const Like: React.FC<LikeProps> = ({
               if (givenReaction) {
                 setPrvState(givenReaction);
               }
+              setApiCallStatus(true);
             }}
           >
             {givenReaction === "" && (
@@ -307,6 +332,7 @@ const Like: React.FC<LikeProps> = ({
             className={`!hover:bg-transparent !p-0 !w-auto !rounded-full`}
             onClick={() => {
               setReaction(item.key === givenReaction ? "" : item.key);
+              setApiCallStatus(true);
               if (item.key) {
                 setPrvState(item.key);
               }
