@@ -32,20 +32,20 @@ interface SingleCommentProps {
   expandReply: any;
 }
 
-function getVerticalDistance(elementOne: any, elementTwo: any) {
-  let distance = -1;
+// function getVerticalDistance(elementOne: any, elementTwo: any) {
+//   let distance = -1;
 
-  const rect1 = elementOne.getBoundingClientRect();
-  const rect2 = elementTwo.getBoundingClientRect();
+//   const rect1 = elementOne.getBoundingClientRect();
+//   const rect2 = elementTwo.getBoundingClientRect();
 
-  const y1 = rect1.top;
-  const y2 = rect2.top;
-  const yDistance = y1 - y2;
+//   const y1 = rect1.top;
+//   const y2 = rect2.top;
+//   const yDistance = y1 - y2;
 
-  distance = Math.abs(yDistance);
+//   distance = Math.abs(yDistance);
 
-  return distance;
-}
+//   return distance;
+// }
 
 const SingleComment: React.FC<SingleCommentProps> = ({
   data,
@@ -208,7 +208,7 @@ const PostView: React.FC<PostViewProps> = ({
       }
     >
       <div className="max-h-[70vh] h-full overflow-y-auto relative border-t-[1px] border-light_border_ dark:border-dark_border_">
-        <Post border="none" viewStatus="list" />
+        <Post border="none" />
 
         <div className="mb-3 px-[30px] gap-y-3 flex flex-col">
           {comments.map((data: any, index: any) => {

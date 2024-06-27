@@ -22,10 +22,16 @@ import wow from "@assets/Emoji/wow.png";
 import angry from "@assets/Emoji/angry.png";
 import sad from "@assets/Emoji/sad.png";
 import haha from "@assets/Emoji/haha.png";
+import { useMutation } from "react-query";
+import { error } from "@src/utils/alert";
+import { useSelector } from "react-redux";
+import { RootState } from "@src/store/store";
+import { addReactionToPostAPI } from "@src/apis/post";
 
 interface LikeProps {
   reactionStatus: string;
   setActiveReaction?: (e: string) => void;
+  postId?: string;
 }
 
 interface Items {
@@ -76,17 +82,48 @@ const items: Items[] = [
   },
 ];
 
-const Like: React.FC<LikeProps> = ({ reactionStatus, setActiveReaction }) => {
+const Like: React.FC<LikeProps> = ({
+  reactionStatus,
+  setActiveReaction,
+  postId,
+}) => {
   const [isOpen, setOpen] = useState<boolean>(false);
 
   const [givenReaction, setReaction] = useState<string>("");
 
+  // theme color
+  const themeColor = useSelector((state: RootState) => state.themeConfig.mode);
 
   useEffect(() => {
-    if(setActiveReaction !== undefined) {
-        setActiveReaction(givenReaction)
+    if (setActiveReaction !== undefined) {
+      setActiveReaction(givenReaction);
     }
-  }, [givenReaction])
+  }, [givenReaction]);
+
+  const addReaction = async () => {
+    try {
+      await addReactionToPostAPI({
+        reaction: givenReaction.toLowerCase(),
+        postId,
+      });
+    } catch (err) {
+      error({ message: "Unable to reaction on post. try later", themeColor });
+      setReaction("");
+      throw err;
+    }
+  };
+
+  // reaction mutation
+  const { mutate } = useMutation({
+    mutationFn: addReaction,
+    mutationKey: ["addReaction"],
+  });
+
+  useEffect(() => {
+    if (givenReaction) {
+      mutate();
+    }
+  }, [givenReaction]);
 
   return (
     <DropDowns size="sm" isOpen={isOpen} onOpenChange={(open) => setOpen(open)}>

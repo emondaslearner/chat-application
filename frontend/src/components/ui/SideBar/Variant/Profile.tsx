@@ -614,7 +614,6 @@ const Profile: React.FC<ProfileProps> = () => {
                 <div key={i}>
                   <VideoThumbnail
                     videoSrc={data.video}
-                    thumbnailSrc="https://img.freepik.com/free-photo/green-park-view_1417-1492.jpg?size=626&ext=jpg&ga=GA1.1.1141335507.1719187200&semt=ais_user"
                   />
                 </div>
               );
@@ -634,10 +633,9 @@ export default Profile;
 
 interface VideoThumbnailProps {
   videoSrc: string;
-  thumbnailSrc: string;
 }
 
-const VideoThumbnail = ({ videoSrc, thumbnailSrc }: VideoThumbnailProps) => {
+const VideoThumbnail = ({ videoSrc }: VideoThumbnailProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
 

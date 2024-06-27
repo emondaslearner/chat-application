@@ -9,7 +9,6 @@ import { Location, useLocation } from "react-router-dom";
 interface DailyFeedsProps {}
 
 const DailyFeeds: React.FC<DailyFeedsProps> = () => {
-  const viewStatus: "list" | "grid" = "list";
   // location
   const location: Location = useLocation();
 
@@ -58,10 +57,10 @@ const DailyFeeds: React.FC<DailyFeedsProps> = () => {
               </div>
             </AddPost>
 
-            <Post viewStatus={viewStatus} />
-            <Post viewStatus={viewStatus} />
-            <Post viewStatus={viewStatus} />
-            <Post viewStatus={viewStatus} />
+            <Post />
+            <Post />
+            <Post />
+            <Post />
           </div>
 
           <div className="md:block hidden w-[40%] lg:w-[23%]">
