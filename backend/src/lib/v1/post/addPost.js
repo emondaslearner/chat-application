@@ -26,6 +26,10 @@ const addPost = async ({ title, color, photo, video, userId }) => {
     );
   }
 
+  if((video.length + photo.length) > 4) {
+    throw error.badRequest("photo&video:You can upload a maximum of 4 videos and photos.")
+  }
+
   const data = {
     title,
     color,
