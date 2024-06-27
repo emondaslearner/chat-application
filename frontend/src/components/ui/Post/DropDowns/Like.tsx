@@ -91,6 +91,9 @@ const Like: React.FC<LikeProps> = ({
 
   const [givenReaction, setReaction] = useState<string>("");
 
+  // prv state of given reaction
+  const [prvState, setPrvState] = useState<string>("");
+
   // theme color
   const themeColor = useSelector((state: RootState) => state.themeConfig.mode);
 
@@ -103,7 +106,9 @@ const Like: React.FC<LikeProps> = ({
   const addReaction = async () => {
     try {
       await addReactionToPostAPI({
-        reaction: givenReaction.toLowerCase(),
+        reaction: givenReaction
+          ? givenReaction.toLowerCase()
+          : prvState.toLowerCase(),
         postId,
       });
     } catch (err) {
@@ -117,13 +122,23 @@ const Like: React.FC<LikeProps> = ({
   const { mutate } = useMutation({
     mutationFn: addReaction,
     mutationKey: ["addReaction"],
+    onSuccess: (_data: any) => {
+      setPrvState("");
+    },
   });
 
   useEffect(() => {
     if (givenReaction) {
       mutate();
+    } else {
+      if (prvState) {
+        console.log("prvState", prvState);
+        mutate();
+      }
     }
   }, [givenReaction]);
+
+  console.log("prvState", prvState);
 
   return (
     <DropDowns size="sm" isOpen={isOpen} onOpenChange={(open) => setOpen(open)}>
@@ -137,6 +152,9 @@ const Like: React.FC<LikeProps> = ({
             onClick={() => {
               setOpen(!isOpen);
               setReaction(givenReaction === "" ? "Like" : "");
+              if (givenReaction) {
+                setPrvState(givenReaction);
+              }
             }}
           >
             {givenReaction === "" && (
@@ -287,9 +305,12 @@ const Like: React.FC<LikeProps> = ({
             key={item.key}
             color={"default"}
             className={`!hover:bg-transparent !p-0 !w-auto !rounded-full`}
-            onClick={() =>
-              setReaction(item.key === givenReaction ? "" : item.key)
-            }
+            onClick={() => {
+              setReaction(item.key === givenReaction ? "" : item.key);
+              if (item.key) {
+                setPrvState(item.key);
+              }
+            }}
           >
             <div className="transition-all duration-300 transform hover:scale-125 relative group">
               {item.label}
