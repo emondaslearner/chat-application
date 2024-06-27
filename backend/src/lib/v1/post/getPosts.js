@@ -1,7 +1,7 @@
-const { error } = require("@utils");
-const Posts = require("@models/Posts");
+const { error, functions } = require("@utils");
+const Posts = require("@models/Post");
 const Friend = require("@models/Friend");
-const { getDataFromRedis } = require("@third-party/redis");
+const lodash = require("lodash");
 
 const getPosts = async ({ userId, filterData }) => {
   if (!userId) {
@@ -17,30 +17,41 @@ const getPosts = async ({ userId, filterData }) => {
 
   const friends = await Friend.find(friendFilter);
 
-  const friendsIds = friends.map((friend) =>
+  let friendsIds = friends.map((friend) =>
     friend.first_user._id === userId
       ? friend.second_user._id
       : friend.first_user._id
   );
 
-  const allFriendsStringify = await getDataFromRedis(
-    `userFriends:${userId}`,
-    () => friendsIds,
-    86400
-  );
+  friendsIds = [...friendsIds, userId];
+
+  // const allFriendsStringify = await getDataFromRedis(
+  //   `userFriends:${userId}`,
+  //   () => friendsIds,
+  //   86400
+  // );
+
+  // const allFriends = allFriendsStringify
 
   const sortStr = `${filterData.sortType === "dsc" ? "-" : ""}${
     filterData.sortBy
   }`;
 
-  const allFriends = JSON.parse(allFriendsStringify);
-
-  const posts = Posts.find({ user: { $in: allFriends } })
+  const posts = await Posts.find({ user: { $in: friendsIds } })
+    .populate("photos", "photo")
+    .populate("videos", "video")
     .sort(sortStr)
     .skip(filterData.page * filterData.limit - filterData.limit)
-    .limit(filterData.limit);
+    .limit(filterData.limit)
+    .exec();
 
-  return posts;
+  const shufflePosts = lodash.shuffle(posts);
+
+  const counts = await functions.countEntities(Posts, {
+    user: { $in: friendsIds },
+  });
+
+  return { posts: shufflePosts, counts };
 };
 
 module.exports = getPosts;

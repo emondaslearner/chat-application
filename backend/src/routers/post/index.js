@@ -3,6 +3,7 @@ const {
   deletePost,
   updatePost,
   getMyPosts,
+  getPosts,
 } = require("@controller/v1/post");
 const { addOrCancelReaction } = require("@controller/v1/reaction");
 const multer = require("multer");
@@ -30,6 +31,8 @@ const postRoutes = async (router, authenticate) => {
     .route("/user/posts")
     .post([authenticate, uploadFields], addPost)
     .get(authenticate, getMyPosts);
+
+  router.get("/user/feeds", authenticate, getPosts);
 
   router
     .route("/user/post/:id")

@@ -36,6 +36,34 @@ const postSchema = new Schema(
       type: Number,
       default: 0,
     },
+    loveCount: {
+      type: Number,
+      default: 0
+    },
+    likeCount: {
+      type: Number,
+      default: 0
+    },
+    careCount: {
+      type: Number,
+      default: 0
+    },
+    hahaCount: {
+      type: Number,
+      default: 0
+    },
+    angryCount: {
+      type: Number,
+      default: 0
+    },
+    sadCount: {
+      type: Number,
+      default: 0
+    },
+    wowCount: {
+      type: Number,
+      default: 0
+    },
     commentCount: {
       type: Number,
       default: 0,

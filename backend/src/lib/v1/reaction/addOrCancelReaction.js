@@ -32,6 +32,10 @@ const addOrCancelReaction = async ({ userId, postId, reaction }) => {
 
   // reaction count
   let reactionCount = post.reactionCount;
+  let reactionTypeCount = post[`${reaction}Count`];
+  let reactionTypeOldCount = reactionOb?.reaction
+    ? post[`${reactionOb.reaction}Count`]
+    : 0;
 
   deleteKeysWithPrefix("posts:");
 
@@ -40,9 +44,15 @@ const addOrCancelReaction = async ({ userId, postId, reaction }) => {
 
     const index = list.indexOf(reactionOb._id);
 
+    reactionCount--;
+    reactionTypeCount--;
+
     list.splice(index, 1);
 
     post.reactions = list;
+    post.reactionCount = reactionCount;
+    post[`${reaction}Count`] = reactionTypeCount;
+
     await post.save();
 
     await Reaction.deleteOne({
@@ -50,11 +60,22 @@ const addOrCancelReaction = async ({ userId, postId, reaction }) => {
       given_by: userId,
     });
 
-    reactionCount--;
-
     return "deleted";
   } else if (reactionOb?.reaction !== reaction && reactionOb) {
+    reactionTypeCount++;
+    reactionTypeOldCount--;
+
+    console.log(reactionTypeCount, `${reaction}Count`);
+    console.log(reactionTypeOldCount, `${reactionOb.reaction}Count`);
+
+    const oldReaction = `${reactionOb.reaction}Count`;
+    const newReaction = `${reaction}Count`
+
     reactionOb.reaction = reaction;
+    post[newReaction] = reactionTypeCount;
+    post[oldReaction] = reactionTypeOldCount;
+
+    await post.save();
 
     await reactionOb.save();
     return "updated";
@@ -67,6 +88,7 @@ const addOrCancelReaction = async ({ userId, postId, reaction }) => {
   });
 
   reactionCount++;
+  reactionTypeCount++;
 
   const reactionData = await Reaction({
     reaction,
@@ -78,6 +100,7 @@ const addOrCancelReaction = async ({ userId, postId, reaction }) => {
 
   post.reactions = [...post.reactions, reactionData._id];
   post.reactionCount = reactionCount;
+  post[`${reaction}Count`] = reactionTypeCount;
 
   await post.save();
 

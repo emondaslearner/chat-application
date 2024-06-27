@@ -1,7 +1,6 @@
 const Friend = require("@models/Friend");
 const { error } = require("@utils");
 const { deleteKeysWithPrefix } = require("@third-party/redis");
-const { deleteFriendFromRedisCache } = require("./utils");
 
 const deleteFriend = async ({ friendId, userId }) => {
   if (!friendId) {
@@ -22,7 +21,7 @@ const deleteFriend = async ({ friendId, userId }) => {
 
   if (deleteData) {
     deleteKeysWithPrefix("friend:");
-    deleteFriendFromRedisCache(userId, friendId);
+    // deleteFriendFromRedisCache(userId, friendId);
     return true;
   }
 
