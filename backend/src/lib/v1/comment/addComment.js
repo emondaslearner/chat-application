@@ -21,8 +21,8 @@ const addComment = async ({ body, userId, postId, path, parent }) => {
     throw error.notFound();
   }
 
-  const reactionCount = post.reactionCount + 1;
-  post.reactionCount = reactionCount;
+  const commentCount = post.commentCount + 1;
+  post.commentCount = commentCount;
 
   const comment = new Comment({
     message: body,
