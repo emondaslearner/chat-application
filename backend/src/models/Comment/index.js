@@ -18,7 +18,6 @@ const commentSchema = new Schema(
     },
     path: {
       type: String,
-      required: true,
     },
     parent: {
       type: String,
