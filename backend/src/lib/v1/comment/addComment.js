@@ -32,13 +32,17 @@ const addComment = async ({ body, userId, postId, path, parent }) => {
     parent,
   });
 
-  await comment.save();
-
   if (parent) {
-    const parentComment = await Post.findById(parent);
-    parentComment.replyCount = parentComment.replyCount + 1;
+    const parentComment = await Comment.findById(parent);
+    if (!parentComment) {
+      throw error.notFound("parent comment not found");
+    }
+    parentComment.replyCount =
+      (parentComment?.replyCount ? parentComment?.replyCount : 0) + 1;
     parentComment.save();
   }
+
+  await comment.save();
 
   await post.save();
 
