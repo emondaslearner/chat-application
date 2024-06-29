@@ -33,6 +33,8 @@ interface LikeProps {
   setActiveReaction?: (e: string) => void;
   postId?: string;
   data?: any;
+  setPostReaction?: any;
+  reactions?: any;
 }
 
 interface Items {
@@ -88,12 +90,16 @@ const Like: React.FC<LikeProps> = ({
   setActiveReaction,
   postId,
   data,
+  setPostReaction,
+  reactions,
 }) => {
   const [isOpen, setOpen] = useState<boolean>(false);
 
   const [givenReaction, setReaction] = useState<string>("");
 
   const [apiCallStatus, setApiCallStatus] = useState(false);
+
+  const [reactionIncrementStatus, setReactionIncrementStatus] = useState<boolean | null>(null);
 
   // prv state of given reaction
   const [prvState, setPrvState] = useState<string>("");
@@ -136,9 +142,11 @@ const Like: React.FC<LikeProps> = ({
 
   useEffect(() => {
     if (givenReaction && apiCallStatus) {
+      setReactionIncrementStatus(true);
       mutate();
     }
     if (!givenReaction) {
+      setReactionIncrementStatus(false);
       if (prvState) {
         mutate();
       }
@@ -159,10 +167,20 @@ const Like: React.FC<LikeProps> = ({
           findReaction.reaction.slice(1);
 
         setReaction(reactionToCap);
-        setPrvState(reactionToCap);
+        setReactionIncrementStatus(true);
       }
     }
   }, [data, profileData.id]);
+
+  useEffect(() => {
+    if (reactionIncrementStatus && apiCallStatus) {
+      setPostReaction(reactions + 1);
+    }
+    if (reactionIncrementStatus === false) {
+      setPostReaction(reactions - 1);
+    }
+  }, [reactionIncrementStatus]);
+
 
   return (
     <DropDowns size="sm" isOpen={isOpen} onOpenChange={(open) => setOpen(open)}>
@@ -331,11 +349,11 @@ const Like: React.FC<LikeProps> = ({
             color={"default"}
             className={`!hover:bg-transparent !p-0 !w-auto !rounded-full`}
             onClick={() => {
+              if (givenReaction) {
+                setPrvState(givenReaction);
+              }
               setReaction(item.key === givenReaction ? "" : item.key);
               setApiCallStatus(true);
-              if (item.key) {
-                setPrvState(item.key);
-              }
             }}
           >
             <div className="transition-all duration-300 transform hover:scale-125 relative group">

@@ -1,8 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IoMdMore } from "react-icons/io";
 import AvatarSingle from "@src/components/shared/Avatar";
-import { AiFillLike } from "react-icons/ai";
-import { FcLike } from "react-icons/fc";
 import { FaRegComments, FaShare } from "react-icons/fa";
 import Input from "@src/components/shared/Input";
 import { IoSend } from "react-icons/io5";
@@ -11,11 +9,6 @@ import PostView from "./Popups/PostView";
 
 // images
 
-import sad from "@assets/Emoji/sad.png";
-import care from "@assets/Emoji/care.png";
-import wow from "@assets/Emoji/wow.png";
-import angry from "@assets/Emoji/angry.png";
-import haha from "@assets/Emoji/haha.png";
 import PostAction from "./DropDowns/PostAction";
 import { useSelector } from "react-redux";
 import { RootState } from "@src/store/store";
@@ -42,6 +35,7 @@ interface DataStates {
   sadCount: number;
   hahaCount: number;
   wowCount: number;
+  reactionCount: number;
 }
 
 interface PostProps {
@@ -49,13 +43,17 @@ interface PostProps {
   data?: DataStates;
 }
 
+
 const Post: React.FC<PostProps> = ({ border = "", data }) => {
   const profileData = useSelector((state: RootState) => state.auth);
 
-  // reactions
-  const [activeReaction, setActiveReaction] = useState<string>("");
+  const [reaction, setReaction] = useState<number>(0);
 
-  console.log("activeReaction", );
+  useEffect(() => {
+    if (data) {
+      setReaction(data?.reactionCount);
+    }
+  }, [data]);
 
   return (
     <div
@@ -139,31 +137,9 @@ const Post: React.FC<PostProps> = ({ border = "", data }) => {
 
       <div className="flex items-center justify-between px-3 pt-3">
         <div className="min-w-[60%] flex items-center gap-x-2 flex-wrap">
-          <p className="text-[14px] text-dark_ dark:text-dark_text_ flex items-center">
-            {data?.likeCount} <AiFillLike className="text-blue-500" size={25} />
-          </p>
-          <p className="text-[14px] text-dark_ dark:text-dark_text_ flex items-center gap-x-1">
-            {data?.loveCount} <FcLike className="" size={25} />
-          </p>
-          <p className="text-[14px] text-dark_ dark:text-dark_text_ flex items-center">
-            {data?.careCount}{" "}
-            <img className="w-[30px] h-[30px]" src={care} alt="" />
-          </p>
-          <p className="text-[14px] text-dark_ dark:text-dark_text_ flex items-center gap-x-1">
-            {data?.sadCount}{" "}
-            <img className="w-[20px] h-[20px]" src={sad} alt="" />
-          </p>
-          <p className="text-[14px] text-dark_ dark:text-dark_text_ flex items-center">
-            {data?.wowCount}{" "}
-            <img className="w-[30px] h-[30px]" src={wow} alt="" />
-          </p>
-          <p className="text-[14px] text-dark_ dark:text-dark_text_ flex items-center">
-            {data?.hahaCount}{" "}
-            <img className="w-[20px] ml-1 h-[20px]" src={haha} alt="" />
-          </p>
-          <p className="text-[14px] text-dark_ dark:text-dark_text_ flex items-center">
-            {data?.angryCount}{" "}
-            <img className="w-[30px] h-[30px]" src={angry} alt="" />
+          <p className="hover:!underline text-dark_ dark:text-dark_text_ font-semibold text-[15px]">
+            {reaction}{" "}
+            Reactions
           </p>
         </div>
 
@@ -182,7 +158,7 @@ const Post: React.FC<PostProps> = ({ border = "", data }) => {
       <>
         <div className="px-5 flex items-center justify-between py-3 border-b-[2px] border-t-[2px] border-light_border_ dark:border-dark_border_ mt-2">
           {/* Add reactions on post */}
-          <Like reactionStatus="post" data={data} postId={data?._id} setActiveReaction={setActiveReaction} />
+          <Like reactionStatus="post" data={data} postId={data?._id} setPostReaction={setReaction} reactions={reaction} />
 
           {/* Comments */}
           <div>
