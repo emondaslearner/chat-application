@@ -4,12 +4,14 @@ const { error } = require("@utils");
 const { deleteKeysWithPrefix } = require("@third-party/redis");
 const { sentMessageToTopic } = require("@third-party/firebase");
 
-const addComment = async ({ body, userId, postId }) => {
+const addComment = async ({ body, userId, postId, path, parent }) => {
   if (!body || !userId || !postId) {
     throw error.badRequest(
       `${!body && "body:body is missing"}|${
         !userId && "userId:userId not provided"
-      }|${postId && "postId:postId is missing"}`
+      }|${postId && "postId:postId is missing"}|${
+        !path && "path:path is missing"
+      }`
     );
   }
 
@@ -23,12 +25,20 @@ const addComment = async ({ body, userId, postId }) => {
   post.reactionCount = reactionCount;
 
   const comment = new Comment({
-    body,
+    message: body,
     post: postId,
     send_by: userId,
+    path,
+    parent,
   });
 
   await comment.save();
+
+  if (parent) {
+    const parentComment = await Post.findById(parent);
+    parentComment.replyCount = parentComment.replyCount + 1;
+    parentComment.save();
+  }
 
   await post.save();
 

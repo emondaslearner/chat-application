@@ -2,7 +2,7 @@ const { Schema, model } = require("mongoose");
 
 const commentSchema = new Schema(
   {
-    body: {
+    message: {
       type: String,
       required: true,
     },
@@ -15,6 +15,17 @@ const commentSchema = new Schema(
       type: Schema.ObjectId,
       ref: "post",
       required: true,
+    },
+    path: {
+      type: String,
+      required: true,
+    },
+    parent: {
+      type: String,
+    },
+    replyCount: {
+      type: Number,
+      default: 0,
     },
   },
   {
