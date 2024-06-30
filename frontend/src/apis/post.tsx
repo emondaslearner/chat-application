@@ -41,17 +41,18 @@ const addReactionToPostAPI = ({
   return new Promise((resolve, reject) => {
     postId
       ? axios
-          .post(`/user/post/${postId}/reaction`, {
-            reaction,
-          })
-          .then((response) => {
-            resolve(response?.data);
-          })
-          .catch((error) => {
-            reject(error);
-          })
+        .post(`/user/post/${postId}/reaction`, {
+          reaction,
+        })
+        .then((response) => {
+          resolve(response?.data);
+        })
+        .catch((error) => {
+          reject(error);
+        })
       : reject();
   });
 };
+
 
 export { getPostsAPI, addReactionToPostAPI };

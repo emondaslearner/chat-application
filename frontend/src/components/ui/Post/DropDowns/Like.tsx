@@ -27,6 +27,7 @@ import { error } from "@src/utils/alert";
 import { useSelector } from "react-redux";
 import { RootState } from "@src/store/store";
 import { addReactionToPostAPI } from "@src/apis/post";
+import { addReactionToCommentAPI } from "@src/apis/comment";
 
 interface LikeProps {
   reactionStatus: string;
@@ -35,6 +36,7 @@ interface LikeProps {
   data?: any;
   setPostReaction?: any;
   reactions?: any;
+  commentId?: string;
 }
 
 interface Items {
@@ -92,6 +94,7 @@ const Like: React.FC<LikeProps> = ({
   data,
   setPostReaction,
   reactions,
+  commentId
 }) => {
   const [isOpen, setOpen] = useState<boolean>(false);
 
@@ -118,12 +121,23 @@ const Like: React.FC<LikeProps> = ({
 
   const addReaction = async () => {
     try {
-      await addReactionToPostAPI({
-        reaction: givenReaction
-          ? givenReaction.toLowerCase()
-          : prvState.toLowerCase(),
-        postId,
-      });
+      if (postId) {
+        await addReactionToPostAPI({
+          reaction: givenReaction
+            ? givenReaction.toLowerCase()
+            : prvState.toLowerCase(),
+          postId,
+        });
+      }
+
+      if (commentId) {
+        await addReactionToCommentAPI({
+          reaction: givenReaction
+            ? givenReaction.toLowerCase()
+            : prvState.toLowerCase(),
+          commentId,
+        });
+      }
     } catch (err) {
       error({ message: "Unable to reaction on post. try later", themeColor });
       setReaction("");
@@ -156,6 +170,9 @@ const Like: React.FC<LikeProps> = ({
   // check given reaction or not
 
   useEffect(() => {
+    if (reactionStatus === 'comment') {
+      console.log('comments comments', data)
+    }
     if (data?.reactions.length > 0) {
       const findReaction = data.reactions.find(
         (data: any) => data.given_by === profileData.id
@@ -176,7 +193,7 @@ const Like: React.FC<LikeProps> = ({
     if (reactionIncrementStatus && apiCallStatus) {
       setPostReaction(reactions + 1);
     }
-    if (reactionIncrementStatus === false) {
+    if (reactionIncrementStatus === false && apiCallStatus) {
       setPostReaction(reactions - 1);
     }
   }, [reactionIncrementStatus]);
@@ -271,6 +288,10 @@ const Like: React.FC<LikeProps> = ({
             onClick={() => {
               setOpen(!isOpen);
               setReaction(givenReaction === "" ? "Like" : "");
+              if (givenReaction) {
+                setPrvState(givenReaction);
+              }
+              setApiCallStatus(true);
             }}
           >
             {givenReaction === "" && (

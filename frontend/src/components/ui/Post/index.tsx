@@ -12,6 +12,8 @@ import PostView from "./Popups/PostView";
 import PostAction from "./DropDowns/PostAction";
 import { useSelector } from "react-redux";
 import { RootState } from "@src/store/store";
+import TimeAgo from 'react-time-ago';
+import "@components/shared/TimeAgo"
 
 interface PhotosStates {
   photo?: string;
@@ -36,6 +38,7 @@ interface DataStates {
   hahaCount: number;
   wowCount: number;
   reactionCount: number;
+  updatedAt: string;
 }
 
 interface PostProps {
@@ -55,11 +58,12 @@ const Post: React.FC<PostProps> = ({ border = "", data }) => {
     }
   }, [data]);
 
+  const timeAgo = data?.updatedAt ? new Date(data?.updatedAt) : new Date();
+
   return (
     <div
-      className={`w-full py-3 relative ${
-        border !== "none" && "border-[2px] bg-white_ dark:bg-dark_bg_"
-      } border-light_border_ dark:border-dark_border_ rounded-[5px]`}
+      className={`w-full py-3 relative ${border !== "none" && "border-[2px] bg-white_ dark:bg-dark_bg_"
+        } border-light_border_ dark:border-dark_border_ rounded-[5px]`}
     >
       {/* post header  */}
       <div className="px-3 flex items-center justify-between w-full">
@@ -75,7 +79,7 @@ const Post: React.FC<PostProps> = ({ border = "", data }) => {
                 {profileData.name}
               </p>
             </div>
-            <p className="text-dark_ dark:text-dark_text_">2h</p>
+            <p className="text-dark_ dark:text-dark_text_"><TimeAgo date={timeAgo} /></p>
           </div>
         </div>
 
@@ -108,9 +112,8 @@ const Post: React.FC<PostProps> = ({ border = "", data }) => {
         </div>
       ) : (
         <div
-          className={`grid ${
-            data?.photos.length > 1 ? "grid-cols-2" : "grid-cols-1"
-          }`}
+          className={`grid ${data?.photos.length > 1 ? "grid-cols-2" : "grid-cols-1"
+            }`}
         >
           {data?.photos.map((photo: any, i: number) => {
             if (i > 3) {
@@ -120,10 +123,9 @@ const Post: React.FC<PostProps> = ({ border = "", data }) => {
             return (
               <>
                 <img
-                  className={`w-full h-full my-2 max-h-[400px] ${
-                    data.photos.length > 1 &&
+                  className={`w-full h-full my-2 max-h-[400px] ${data.photos.length > 1 &&
                     "border-[2px] border-light_border_ dark:border-dark_border_"
-                  }`}
+                    }`}
                   src={photo.photo}
                   alt="Post"
                 />
@@ -152,6 +154,8 @@ const Post: React.FC<PostProps> = ({ border = "", data }) => {
               </p>
             </div>
           }
+          postId={data?._id}
+          data={data}
         />
       </div>
 
@@ -174,6 +178,8 @@ const Post: React.FC<PostProps> = ({ border = "", data }) => {
                   </p>
                 </div>
               }
+              postId={data?._id}
+              data={data}
             />
           </div>
 
@@ -186,9 +192,8 @@ const Post: React.FC<PostProps> = ({ border = "", data }) => {
         </div>
 
         <div
-          className={`relative w-[90%] mx-auto mt-3 ${
-            border === "none" && "hidden"
-          }`}
+          className={`relative w-[90%] mx-auto mt-3 ${border === "none" && "hidden"
+            }`}
         >
           <Input
             type="text"

@@ -25,8 +25,6 @@ const Content: React.FC<ContentProps> = ({ setStatus }) => {
     queryKey: ["personalPostData"],
   });
 
-  console.log("all post data", data);
-
   return (
     <div className="w-full h-[100vh] overflow-hidden bg-light_bg_ dark:bg-dark_light_bg_">
       <div

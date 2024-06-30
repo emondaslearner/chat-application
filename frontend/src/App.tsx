@@ -12,7 +12,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { useSystemTheme } from "./hooks";
 import { AppDispatch } from "./store/store";
 import { changeMode } from "./store/actions/themeConfig";
-
 export const queryClient = new QueryClient();
 
 function App() {

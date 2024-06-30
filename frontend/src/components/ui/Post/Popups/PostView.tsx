@@ -8,6 +8,14 @@ import { IoSend } from "react-icons/io5";
 import Like from "../DropDowns/Like";
 import { AiFillLike } from "react-icons/ai";
 import { FcLike } from "react-icons/fc";
+import { createRandomNumber } from "@src/utils";
+import { useSelector } from "react-redux";
+import { RootState } from "@src/store/store";
+import { useQuery } from "react-query";
+import { getPostComment } from "@src/apis/comment";
+import Spinner from "@src/components/shared/Spinner";
+import TimeAgo from 'react-time-ago';
+import "@components/shared/TimeAgo"
 
 // images
 import sad from "@assets/Emoji/sad.png";
@@ -16,12 +24,11 @@ import wow from "@assets/Emoji/wow.png";
 import angry from "@assets/Emoji/angry.png";
 import haha from "@assets/Emoji/haha.png";
 
-//mock data
-import CommentData from "@src/mockData/comments/MOCK_DATA.json";
-import { createRandomNumber } from "@src/utils";
 
 interface PostViewProps {
-  openButton: ReactNode
+  openButton: ReactNode;
+  postId?: string;
+  data?: any
 }
 
 interface SingleCommentProps {
@@ -29,7 +36,11 @@ interface SingleCommentProps {
   index: number;
   setComments: any;
   comment: any;
-  expandReply: any;
+}
+
+interface CommentApiStates {
+  data: any;
+  isLoading: boolean;
 }
 
 // function getVerticalDistance(elementOne: any, elementTwo: any) {
@@ -51,13 +62,20 @@ const SingleComment: React.FC<SingleCommentProps> = ({
   data,
   index,
   setComments,
-  comment,
-  expandReply
+  comment
 }) => {
   const [activeReaction, setActiveReaction] = useState<string>("");
 
   const [reply, setReply] = useState<boolean>(false);
   const [replyMessage, setReplyMessage] = useState<string>("");
+
+  const [reactions, setCommentReactions] = useState(0);
+
+  useEffect(() => {
+    if (data?.reactionCount) {
+      setCommentReactions(data?.reactionCount)
+    }
+  }, [data])
 
   // reply in a comment
   const Reply = () => {
@@ -91,15 +109,18 @@ const SingleComment: React.FC<SingleCommentProps> = ({
     setReply(false);
   };
 
+
+  const timeAgo = data?.updatedAt ? new Date(data?.updatedAt) : new Date();
+
   return (
     <>
       <div className="flex">
-        <AvatarSingle src="" alt="Profile Picture" className="!z-50" />
+        <AvatarSingle src={data?.send_by?.profile_picture} alt="Profile Picture" className="!z-50" />
 
-        <div className="ml-2 max-w-[500px] min-w-[200px]">
-          <div className="bg-light_gray_ px-5 py-1 rounded-[15px] dark:bg-dark_light_bg_ leading-5">
+        <div className="ml-2 max-w-[500px] min-w-[330px]">
+          <div className="bg-light_gray_ px-6 py-2 rounded-[15px] dark:bg-dark_light_bg_ leading-5">
             <p className="font-bold text-[16px] text-dark_ dark:text-white_">
-              Emon Das
+              {data?.send_by.name}
             </p>
             <p className="text-[16px] text-dark_ dark:text-dark_text_">
               {data?.message}
@@ -107,19 +128,42 @@ const SingleComment: React.FC<SingleCommentProps> = ({
           </div>
 
           <div className="w-full flex items-center justify-between h-[30px]">
-            <div className="w-[130px] flex items-center justify-between">
-              <p className="text-[14px] text-dark_ dark:text-dark_text_">3h</p>
+            <div className="max-w-[230px] w-full flex items-center justify-between">
+              <p className="text-[14px] text-dark_ dark:text-dark_text_"><TimeAgo date={timeAgo} /></p>
 
-              <div>
+              <div className="flex items-center gap-x-[3px]">
                 <Like
                   setActiveReaction={setActiveReaction}
                   reactionStatus="comment"
+                  commentId={data._id}
+                  reactions={reactions}
+                  setPostReaction={setCommentReactions}
+                  data={data}
                 />
+
+                {activeReaction === "Like" && (
+                  <AiFillLike size={25} className="text-blue-500" />
+                )}
+                {activeReaction === "Love" && <FcLike size={25} />}
+                {activeReaction === "Care" && (
+                  <img src={care} className="w-[30px] h-[30px]" alt="Care" />
+                )}
+                {activeReaction === "Sad" && (
+                  <img src={sad} className="w-[20px] h-[20px]" alt="Sad" />
+                )}
+                {activeReaction === "Angry" && (
+                  <img src={angry} className="w-[30px] h-[30px]" alt="Angry" />
+                )}
+                {activeReaction === "Wow" && (
+                  <img src={wow} className="w-[30px] h-[30px]" alt="Wow" />
+                )}
+                {activeReaction === "Haha" && (
+                  <img src={haha} className="w-[20px] h-[20px]" alt="Haha" />
+                )}
               </div>
 
               <p
                 onClick={() => {
-                  expandReply();
                   setReply(true);
                 }}
                 className="text-[14px] text-dark_ dark:text-dark_text_ font-bold cursor-pointer"
@@ -128,26 +172,8 @@ const SingleComment: React.FC<SingleCommentProps> = ({
               </p>
             </div>
 
-            <div className="">
-              {activeReaction === "Like" && (
-                <AiFillLike size={25} className="text-blue-500" />
-              )}
-              {activeReaction === "Love" && <FcLike size={25} />}
-              {activeReaction === "Care" && (
-                <img src={care} className="w-[30px] h-[30px]" alt="Care" />
-              )}
-              {activeReaction === "Sad" && (
-                <img src={sad} className="w-[20px] h-[20px]" alt="Sad" />
-              )}
-              {activeReaction === "Angry" && (
-                <img src={angry} className="w-[30px] h-[30px]" alt="Angry" />
-              )}
-              {activeReaction === "Wow" && (
-                <img src={wow} className="w-[30px] h-[30px]" alt="Wow" />
-              )}
-              {activeReaction === "Haha" && (
-                <img src={haha} className="w-[20px] h-[20px]" alt="Haha" />
-              )}
+            <div className="ml-3 flex items-center gap-x-[2px] ">
+              <p className="text-dark_ dark:text-dark_text_ text-[16px]">{reactions} Reactions</p>
             </div>
           </div>
         </div>
@@ -179,14 +205,46 @@ const SingleComment: React.FC<SingleCommentProps> = ({
 };
 
 const PostView: React.FC<PostViewProps> = ({
-  openButton
+  openButton,
+  postId,
+  data
 }) => {
   const [comments, setComments] = useState<any>([]);
+  const [allReplies, setReplies] = useState<any>([]);
+
+  // profileData
+  const profileData = useSelector((state: RootState) => state.auth)
+
+  // useEffect(() => {
+  //   const baseComments = CommentData.filter((data: any) => !data?.parent);
+  //   setComments(baseComments);
+  // }, []);
+
+  // comments
+
+  const { data: allComments, isLoading }: CommentApiStates = useQuery({
+    queryFn: () => getPostComment({ postId }),
+    queryKey: [`getComments${postId}`],
+    staleTime: Infinity
+  });
 
   useEffect(() => {
-    const baseComments = CommentData.filter((data: any) => !data?.parent);
-    setComments(baseComments);
-  }, []);
+    if (allComments?.data.length) {
+      let allReplyComments = [];
+      let allMainComments = [];
+      for (let i = 0; i < allComments?.data.length; i++) {
+        if (allComments?.data[i]?.parent) {
+          allReplyComments.push(allComments?.data[i])
+        } else {
+          allMainComments.push(allComments?.data[i])
+        }
+      }
+
+      setComments(allMainComments);
+      setReplies(allReplyComments)
+    }
+  }, [allComments]);
+
 
   return (
     <Modal
@@ -196,7 +254,7 @@ const PostView: React.FC<PostViewProps> = ({
       status="custom"
       title={
         <p className="text-[20px] text-dark_ dark:text-white_ font-bold text-center w-full">
-          Emon post
+          {profileData.name} post
         </p>
       }
       dismissable={false}
@@ -208,61 +266,74 @@ const PostView: React.FC<PostViewProps> = ({
       }
     >
       <div className="max-h-[70vh] h-full overflow-y-auto relative border-t-[1px] border-light_border_ dark:border-dark_border_">
-        <Post border="none" />
+        <Post data={data} border="none" />
 
         <div className="mb-3 px-[30px] gap-y-3 flex flex-col">
-          {comments.map((data: any, index: any) => {
-            const checkDepth = data?.path
-              .split("/")
-              .filter((data: string) => data?.length);
-
-            // expand Reply
-            const expandReply = () => {
-              const replies = CommentData.filter(
-                (da: any) => da?.parent === data?.id
-              );
-
-              let newArray = [...comments];
-              newArray.splice(index + 1, 0, ...replies);
-
-              setComments(newArray);
-              newArray = [];
-            }
-
-            return (
-              <div
-                key={index}
-                style={{ marginLeft: `${checkDepth.length * 50}px` }}
-                className={`relative rela`}
-              >
-                {/* {checkDepth.length > 0 && (
-                  <div
-                    style={{
-                      height: `${getHeight}px`,
-                    }}
-                    className={`w-[30px] rounded-bl-[10px] border-l-[2px] border-b-[2px] border-light_border_ dark:border-dark_border_ absolute right-[101%] bottom-[85%] z-10`}
-                  ></div>
-                )} */}
-                <SingleComment
-                  data={data}
-                  index={index}
-                  setComments={setComments}
-                  comment={comments}
-                  expandReply={expandReply}
-                />
-
-                {data?.replyCount > 0 &&
-                  comments[index + 1].parent !== data?.id && (
-                    <p
-                      onClick={expandReply}
-                      className="ml-12 table text-[16px] text-dark_ dark:text-dark_text_ cursor-pointer hover:underline"
-                    >
-                      {data?.replyCount} replied
-                    </p>
-                  )}
+          {
+            isLoading ? (
+              <div className="w-full h-full flex justify-center items-center">
+                <Spinner loaderStatus={"elementLoader"} />
               </div>
-            );
-          })}
+            ) : (
+              comments.length ? (
+                comments.map((data: any, index: any) => {
+                  const checkDepth = data?.path
+                    .split("/")
+                    .filter((data: string) => data?.length);
+
+                  // expand Reply
+                  const expandReply = () => {
+                    const replies = allReplies.filter(
+                      (da: any) => da?.parent === data?._id
+                    );
+
+                    let newArray = [...comments];
+                    newArray.splice(index + 1, 0, ...replies);
+
+                    setComments(newArray);
+                    newArray = [];
+                  }
+
+                  return (
+                    <div
+                      key={index}
+                      style={{ marginLeft: `${checkDepth.length * 50}px` }}
+                      className={`relative rela`}
+                    >
+                      {/* {checkDepth.length > 0 && (
+                        <div
+                          style={{
+                            height: `${getHeight}px`,
+                          }}
+                          className={`w-[30px] rounded-bl-[10px] border-l-[2px] border-b-[2px] border-light_border_ dark:border-dark_border_ absolute right-[101%] bottom-[85%] z-10`}
+                        ></div>
+                      )} */}
+                      <SingleComment
+                        data={data}
+                        index={index}
+                        setComments={setComments}
+                        comment={comments}
+                      />
+
+                      {data?.replyCount > 0 &&
+                        comments[index + 1]?.parent !== data?._id && (
+                          <p
+                            onClick={expandReply}
+                            className="ml-12 table text-[16px] text-dark_ dark:text-dark_text_ cursor-pointer hover:underline"
+                          >
+                            {data?.replyCount} replied
+                          </p>
+                        )}
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="w-full h-full flex justify-center items-center">
+                  <p className="text-dark_ dark:text-dark_text_ font-semibold text-[18px]">There is no comments in this post</p>
+                </div>
+              )
+            )
+          }
         </div>
 
         {/* Comment field  */}
