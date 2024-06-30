@@ -4,16 +4,27 @@ const {
 
 const addOrCancelReaction = async (req, res, next) => {
   try {
+    const url = req.url;
+    const isInclude = url.includes("comment");
 
-    const post = await addOrCancelReactionLib({
-      postId: req.params.id,
-      userId: req.user.id,
-      reaction: req.body?.reaction,
-    });
+    let data = null;
+    if (isInclude) {
+      data = await addOrCancelReactionLib({
+        commentId: req.params.id,
+        userId: req.user.id,
+        reaction: req.body?.reaction,
+      });
+    } else {
+      data = await addOrCancelReactionLib({
+        postId: req.params.id,
+        userId: req.user.id,
+        reaction: req.body?.reaction,
+      });
+    }
 
     const response = {
-      code: post === 'added' ? 201 : 200,
-      message: `${post} reaction successfully`,
+      code: data === "added" ? 201 : 200,
+      message: `${data} reaction successfully`,
       self: req.url,
     };
 

@@ -26,6 +26,16 @@ const commentSchema = new Schema(
       type: Number,
       default: 0,
     },
+    reactionCount: {
+      type: Number,
+      default: 0,
+    },
+    reactions: [
+      {
+        type: Schema.ObjectId,
+        ref: "reaction",
+      },
+    ],
   },
   {
     timestamps: true,

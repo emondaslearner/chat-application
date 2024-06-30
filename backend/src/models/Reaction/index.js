@@ -8,8 +8,11 @@ const reactionSchema = new Schema(
     },
     post: {
       type: Schema.ObjectId,
-      ref: "post",
-      required: true,
+      ref: "post"
+    },
+    comment: {
+      type: Schema.ObjectId,
+      ref: "comment"
     },
     given_by: {
       type: Schema.ObjectId,

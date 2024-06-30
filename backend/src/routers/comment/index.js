@@ -4,6 +4,7 @@ const {
   updateComment,
   getAllComment,
 } = require("@controller/v1/comment");
+const { addOrCancelReaction } = require("@controller/v1/reaction");
 
 const commentRoutes = (router, authenticate) => {
   router.post("/user/comments", authenticate, addComment);
@@ -13,6 +14,8 @@ const commentRoutes = (router, authenticate) => {
     .patch(authenticate, updateComment);
 
   router.get("/user/post/:id/comments", authenticate, getAllComment);
+
+  router.post("/user/comment/:id/reaction", authenticate, addOrCancelReaction);
 };
 
 module.exports = commentRoutes;
