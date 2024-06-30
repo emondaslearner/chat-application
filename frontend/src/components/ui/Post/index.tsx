@@ -14,6 +14,12 @@ import { useSelector } from "react-redux";
 import { RootState } from "@src/store/store";
 import TimeAgo from 'react-time-ago';
 import "@components/shared/TimeAgo"
+import { useMutation } from "react-query";
+import { addCommentAPI } from "@src/apis/comment";
+import Spinner from "@src/components/shared/Spinner";
+import { handleAxiosError } from "@src/utils/error";
+import { success } from "@src/utils/alert";
+import { queryClient } from "@src/App";
 
 interface PhotosStates {
   photo?: string;
@@ -38,7 +44,7 @@ interface DataStates {
   hahaCount: number;
   wowCount: number;
   reactionCount: number;
-  updatedAt: string;
+  createdAt: string;
 }
 
 interface PostProps {
@@ -48,17 +54,53 @@ interface PostProps {
 
 
 const Post: React.FC<PostProps> = ({ border = "", data }) => {
+
+  // theme mode
+  const themeColor: 'light' | 'dark' = useSelector((state: RootState) => state.themeConfig.mode)
+
   const profileData = useSelector((state: RootState) => state.auth);
 
   const [reaction, setReaction] = useState<number>(0);
+  const [commentCount, setCommentCount] = useState<number>(0);
+
+  const [comment, setComment] = useState<string>("");
 
   useEffect(() => {
-    if (data) {
+    if (data?.reactionCount) {
       setReaction(data?.reactionCount);
+    }
+    if (data?.commentCount) {
+      setCommentCount(data?.commentCount)
     }
   }, [data]);
 
-  const timeAgo = data?.updatedAt ? new Date(data?.updatedAt) : new Date();
+  const timeAgo = data?.createdAt ? new Date(data?.createdAt) : new Date();
+
+  const addComment = async () => {
+    try {
+      await addCommentAPI({
+        postId: data?._id,
+        message: comment,
+        path: "",
+        parent: ""
+      })
+    } catch (err) {
+      handleAxiosError(err, themeColor);
+      throw err;
+    }
+  }
+
+  // add comment mutation
+  const { mutate: addCommentMutation, isLoading } = useMutation({
+    mutationFn: addComment,
+    mutationKey: ['addCommentKey'],
+    onSuccess: () => {
+      success({ message: "Comment added successfully", themeColor })
+      setCommentCount(commentCount + 1);
+      queryClient.invalidateQueries([`getComments${data?._id}`]);
+      setComment("");
+    }
+  })
 
   return (
     <div
@@ -150,12 +192,13 @@ const Post: React.FC<PostProps> = ({ border = "", data }) => {
           openButton={
             <div className="w-full flex justify-end">
               <p className="hover:!underline text-dark_ dark:text-dark_text_ font-semibold text-[15px] cursor-pointer ">
-                {data?.commentCount} Comments
+                {commentCount} Comments
               </p>
             </div>
           }
           postId={data?._id}
           data={data}
+          setCommentCount={setCommentCount}
         />
       </div>
 
@@ -180,6 +223,7 @@ const Post: React.FC<PostProps> = ({ border = "", data }) => {
               }
               postId={data?._id}
               data={data}
+              setCommentCount={setCommentCount}
             />
           </div>
 
@@ -191,21 +235,38 @@ const Post: React.FC<PostProps> = ({ border = "", data }) => {
           </div>
         </div>
 
-        <div
+        <form
           className={`relative w-[90%] mx-auto mt-3 ${border === "none" && "hidden"
             }`}
+          onSubmit={(e) => {
+            e.preventDefault();
+            addCommentMutation();
+          }}
         >
           <Input
             type="text"
             placeholder="Write a comment"
             className="w-full px-2 py-3 rounded-[10px]"
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            required
           />
 
-          <IoSend
-            className="text-primary_ absolute right-2 top-3 cursor-pointer"
-            size={25}
-          />
-        </div>
+          {
+            isLoading ? (
+              <div className="absolute right-2 top-3">
+                <Spinner loaderStatus="elementLoader" loaderSize="md" />
+              </div>
+            ) : (
+              <button type="submit" className="m-0 p-0 bg-transparent border-0">
+                <IoSend
+                  className="text-primary_ absolute right-2 top-3 cursor-pointer"
+                  size={25}
+                />
+              </button>
+            )
+          }
+        </form>
       </>
     </div>
   );

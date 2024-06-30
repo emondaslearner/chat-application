@@ -6,7 +6,7 @@ interface getPostCommentProps {
 
 const getPostComment = ({ postId }: getPostCommentProps) => {
     return new Promise((resolve, reject) => {
-        postId ? axios.get(`/user/post/${postId}/comments`)
+        postId ? axios.get(`/user/post/${postId}/comments?sortBy=createdAt&limit=1000`)
             .then((response) => {
                 resolve(response?.data);
             })
@@ -41,5 +41,29 @@ const addReactionToCommentAPI = ({
     });
 };
 
+interface addCommentAPIProps {
+    message: string;
+    parent?: string;
+    path?: string;
+    postId?: string
+}
 
-export { getPostComment, addReactionToCommentAPI }
+const addCommentAPI = ({ message, parent, path, postId }: addCommentAPIProps) => {
+    return new Promise((resolve, reject) => {
+        postId ? axios.post('/user/comments', {
+            postId,
+            message,
+            path,
+            parent
+        })
+            .then((response) => {
+                resolve(response?.data);
+            })
+            .catch((error) => {
+                reject(error);
+            }) : reject();
+    })
+}
+
+
+export { getPostComment, addReactionToCommentAPI, addCommentAPI }

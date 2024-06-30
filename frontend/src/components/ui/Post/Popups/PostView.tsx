@@ -1,6 +1,6 @@
 import AvatarSingle from "@src/components/shared/Avatar";
 import Modal from "@src/components/ui/Model";
-import React, { useState, useEffect, ReactNode } from "react";
+import React, { useState, useEffect, ReactNode, useRef } from "react";
 import { IoMdClose } from "react-icons/io";
 import Post from "..";
 import Input from "@src/components/shared/Input";
@@ -11,8 +11,8 @@ import { FcLike } from "react-icons/fc";
 import { createRandomNumber } from "@src/utils";
 import { useSelector } from "react-redux";
 import { RootState } from "@src/store/store";
-import { useQuery } from "react-query";
-import { getPostComment } from "@src/apis/comment";
+import { useMutation, useQuery } from "react-query";
+import { addCommentAPI, getPostComment } from "@src/apis/comment";
 import Spinner from "@src/components/shared/Spinner";
 import TimeAgo from 'react-time-ago';
 import "@components/shared/TimeAgo"
@@ -23,12 +23,16 @@ import care from "@assets/Emoji/care.png";
 import wow from "@assets/Emoji/wow.png";
 import angry from "@assets/Emoji/angry.png";
 import haha from "@assets/Emoji/haha.png";
+import { handleAxiosError } from "@src/utils/error";
+import { success } from "@src/utils/alert";
+import { queryClient } from "@src/App";
 
 
 interface PostViewProps {
   openButton: ReactNode;
   postId?: string;
-  data?: any
+  data?: any;
+  setCommentCount?: any;
 }
 
 interface SingleCommentProps {
@@ -36,6 +40,8 @@ interface SingleCommentProps {
   index: number;
   setComments: any;
   comment: any;
+  addCommentMutation: any;
+  commentLoader: boolean
 }
 
 interface CommentApiStates {
@@ -62,7 +68,9 @@ const SingleComment: React.FC<SingleCommentProps> = ({
   data,
   index,
   setComments,
-  comment
+  comment,
+  addCommentMutation,
+  commentLoader
 }) => {
   const [activeReaction, setActiveReaction] = useState<string>("");
 
@@ -79,29 +87,11 @@ const SingleComment: React.FC<SingleCommentProps> = ({
 
   // reply in a comment
   const Reply = () => {
-    const randomNum = createRandomNumber();
 
     // prev comment list
     const list = [...comment];
 
-    // reply content
-    const createReply = {
-      id: randomNum,
-      path: data?.path.length ? `${data?.path}/${data?.id}` : data?.id,
-      parent: data?.id,
-      updatedAt: "7/2/2023",
-      createdAt: "8/24/2023",
-      message: replyMessage,
-      replyCount: 0,
-    };
-
-    const currentData = {
-      ...data,
-      replyCount: data?.replyCount + 1,
-    };
-
-    list[index] = currentData;
-    list.splice(index + 1, 0, createReply);
+    addCommentMutation({ path: data?.path ? `${data?.path}/${data?._id}` : data._id, parent: data?._id, body: replyMessage });
 
     setComments(list);
     setReplyMessage('')
@@ -110,7 +100,7 @@ const SingleComment: React.FC<SingleCommentProps> = ({
   };
 
 
-  const timeAgo = data?.updatedAt ? new Date(data?.updatedAt) : new Date();
+  const timeAgo = data?.createdAt ? new Date(data?.createdAt) : new Date();
 
   return (
     <>
@@ -182,22 +172,34 @@ const SingleComment: React.FC<SingleCommentProps> = ({
       {/* Reply inputs */}
       {reply && (
         <div className="w-full justify-end flex py-2">
-          <div className="w-[93%] relative">
+          <form onSubmit={(e) => {
+            e.preventDefault();
+            Reply();
+          }} className="w-[93%] relative">
             <Input
               value={replyMessage}
               onChange={(e) => setReplyMessage(e.target.value)}
               type="text"
               className="!w-full rounded-[10px]"
+              required
             />
 
-            <div className="absolute bottom-3 right-3 flex items-center">
-              <IoSend
-                className="text-primary_ cursor-pointer"
-                size={20}
-                onClick={Reply}
-              />
-            </div>
-          </div>
+
+            {
+              commentLoader ? (
+                <div className="absolute right-2 top-2">
+                  <Spinner loaderStatus="elementLoader" loaderSize="md" />
+                </div>
+              ) : (
+                <button type="submit" className="m-0 p-0 bg-transparent border-0">
+                  <IoSend
+                    className="text-primary_ absolute right-2 top-2 cursor-pointer"
+                    size={25}
+                  />
+                </button>
+              )
+            }
+          </form>
         </div>
       )}
     </>
@@ -207,13 +209,21 @@ const SingleComment: React.FC<SingleCommentProps> = ({
 const PostView: React.FC<PostViewProps> = ({
   openButton,
   postId,
-  data
+  data,
+  setCommentCount
 }) => {
+  const closeButton = useRef<HTMLDivElement>(null);
+
   const [comments, setComments] = useState<any>([]);
   const [allReplies, setReplies] = useState<any>([]);
 
+  const [message, setMessage] = useState<string>("");
+
   // profileData
-  const profileData = useSelector((state: RootState) => state.auth)
+  const profileData = useSelector((state: RootState) => state.auth);
+
+  // theme mode
+  const themeColor: 'light' | 'dark' = useSelector((state: RootState) => state.themeConfig.mode)
 
   // useEffect(() => {
   //   const baseComments = CommentData.filter((data: any) => !data?.parent);
@@ -246,6 +256,54 @@ const PostView: React.FC<PostViewProps> = ({
   }, [allComments]);
 
 
+  interface addCommentStates {
+    path?: string;
+    parent?: string;
+    body?: string
+  }
+
+  const addComment = async ({ path, parent, body }: addCommentStates) => {
+    try {
+      console.log('add comment data', {
+        path: path || "",
+        parent: parent || "",
+        message: body ? body : message,
+        postId
+      });
+
+      const data = await addCommentAPI({
+        path: path || "",
+        parent: parent || "",
+        message: body ? body : message,
+        postId
+      });
+
+      return data;
+    } catch (err) {
+      handleAxiosError(err, themeColor);
+      throw err;
+    }
+  }
+
+  // add comment mutation
+  const { mutate: addCommentMutation, isLoading: commentLoader } = useMutation({
+    mutationFn: addComment,
+    mutationKey: ['addCommentKey'],
+    onSuccess: (data: any) => {
+      success({ message: "Comment added successfully", themeColor })
+      setCommentCount((prvState: number) => prvState + 1);
+      setMessage('');
+
+      if (!data?.data?.parent) {
+        setComments([{ ...data?.data, send_by: { profile_picture: profileData.profile_picture, name: profileData.name } }, ...comments])
+      } else {
+        queryClient.invalidateQueries([`getComments${postId}`])
+        closeButton.current?.click();
+      }
+    }
+  })
+
+
   return (
     <Modal
       openButton={openButton}
@@ -260,7 +318,7 @@ const PostView: React.FC<PostViewProps> = ({
       dismissable={false}
       closeButton={true}
       customCloseButton={
-        <div className="p-[10px] !bg-dark_gray_ dark:bg-light_gray_">
+        <div ref={closeButton} className="p-[10px] !bg-dark_gray_ dark:bg-light_gray_">
           <IoMdClose size={30} className="text-dark_" />
         </div>
       }
@@ -313,6 +371,8 @@ const PostView: React.FC<PostViewProps> = ({
                         index={index}
                         setComments={setComments}
                         comment={comments}
+                        addCommentMutation={addCommentMutation}
+                        commentLoader={commentLoader}
                       />
 
                       {data?.replyCount > 0 &&
@@ -341,18 +401,34 @@ const PostView: React.FC<PostViewProps> = ({
           className={`left-0 sticky bottom-0 w-full bg-white_ dark:bg-dark_bg_ z-[50] py-[20px] flex gap-x-1 items-center justify-center`}
         >
           <AvatarSingle src="" alt="Profile picture" className="ml-3" />
-          <div className="w-[90%] mx-auto relative">
+          <form onSubmit={(e) => {
+            e.preventDefault();
+            addCommentMutation({})
+          }} className="w-[90%] mx-auto relative">
             <Input
               type="text"
               placeholder="Write a comment"
               className="w-full px-2 py-3 rounded-[10px]"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              required
             />
 
-            <IoSend
-              className="text-primary_ absolute right-2 top-3 cursor-pointer"
-              size={25}
-            />
-          </div>
+            {
+              commentLoader && message ? (
+                <div className="absolute right-2 top-3">
+                  <Spinner loaderStatus="elementLoader" loaderSize="md" />
+                </div>
+              ) : (
+                <button type="submit" className="m-0 p-0 bg-transparent border-0">
+                  <IoSend
+                    className="text-primary_ absolute right-2 top-3 cursor-pointer"
+                    size={25}
+                  />
+                </button>
+              )
+            }
+          </form>
         </div>
       </div>
     </Modal>
