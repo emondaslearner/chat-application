@@ -17,6 +17,10 @@ const getAllComment = async ({ post, filterData }) => {
   const getComments = async () => {
     return await Comment.find(filter)
       .populate("send_by", "name profile_picture")
+      .populate({
+        path: "reactions",
+        select: "reaction given_by"
+      })
       .sort(sortStr)
       .skip(filterData.page * filterData.limit - filterData.limit)
       .limit(filterData.limit);
