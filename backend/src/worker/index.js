@@ -20,9 +20,6 @@ parentPort.on("message", async (allData) => {
         "photo"
       );
       if (savedData) {
-        deleteKeysWithPrefix("photos:");
-        deleteKeysWithPrefix("videos:");
-        
         await sentMessageToTopic({
           topic: data.userId,
           title: "Post added",
@@ -32,7 +29,7 @@ parentPort.on("message", async (allData) => {
         parentPort.postMessage({
           userId: data.userId,
           savedData: JSON.stringify(postData),
-          status: "addPostData",
+          status: "postAdded",
         });
       }
     } catch (err) {
