@@ -20,6 +20,9 @@ parentPort.on("message", async (allData) => {
         "photo"
       );
       if (savedData) {
+        deleteKeysWithPrefix("photos:");
+        deleteKeysWithPrefix("videos:");
+        
         await sentMessageToTopic({
           topic: data.userId,
           title: "Post added",

@@ -45,16 +45,15 @@ const addPost = async ({ title, color, photo, video, userId }) => {
     data: JSON.stringify(data),
   });
 
-  deleteKeysWithPrefix("posts:");
-  deleteKeysWithPrefix("photos:");
-  deleteKeysWithPrefix("videos:");
-
   return true;
 };
 
 // send update to user via socket
 worker_threads.on("message", (message) => {
   if (message.userId && message.status === "addPost") {
+    deleteKeysWithPrefix("posts:");
+    deleteKeysWithPrefix("photos:");
+    deleteKeysWithPrefix("videos:");
     global.io.to(message.userId).emit("postUploaded", message);
   }
 
