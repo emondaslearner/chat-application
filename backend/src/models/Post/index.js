@@ -14,8 +14,7 @@ const postSchema = new Schema(
       },
     ],
     title: {
-      type: String,
-      required: true,
+      type: String
     },
     color: {
       type: String,

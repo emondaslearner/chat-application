@@ -2,7 +2,12 @@ const { Server } = require("socket.io");
 const { authentication } = require("./middleware");
 
 const socketConnection = (server) => {
-  const io = new Server(server);
+  const io = new Server(server, {
+    cors: {
+      origin: 'http://localhost:3000',
+      methods: ['GET', 'POST']
+  }
+  });
 
   io.use(authentication);
 
@@ -12,6 +17,8 @@ const socketConnection = (server) => {
     if (socket?.user?.id) {
       socket.join(socket?.user?.id);
     }
+
+    io.to(socket?.user?.id).emit("connection", "connected");
 
     // sent message to user
     socket.on("sentMessage", (message) => {

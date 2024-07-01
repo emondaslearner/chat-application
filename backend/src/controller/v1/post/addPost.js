@@ -13,6 +13,9 @@ const addPost = async (req, res, next) => {
       userId: req.user.id,
     };
 
+    console.log("payloadData", payloadData);
+    console.log("files", req.files);
+
     const isSuccess = await addPostLib(payloadData);
 
     let response = {};

@@ -19,7 +19,7 @@ const getAllComment = async ({ post, filterData }) => {
       .populate("send_by", "name profile_picture")
       .populate({
         path: "reactions",
-        select: "reaction given_by"
+        select: "reaction given_by",
       })
       .sort(sortStr)
       .skip(filterData.page * filterData.limit - filterData.limit)

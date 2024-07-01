@@ -26,8 +26,10 @@ const addPost = async ({ title, color, photo, video, userId }) => {
     );
   }
 
-  if((video.length + photo.length) > 4) {
-    throw error.badRequest("photo&video:You can upload a maximum of 4 videos and photos.")
+  if (video.length + photo.length > 4) {
+    throw error.badRequest(
+      "photo&video:You can upload a maximum of 4 videos and photos."
+    );
   }
 
   const data = {
@@ -52,6 +54,11 @@ const addPost = async ({ title, color, photo, video, userId }) => {
 worker_threads.on("message", (message) => {
   if (message.userId && message.status === "addPost") {
     global.io.to(message.userId).emit("postUploaded", message);
+  }
+
+  if (message.userId && message.status === "addPostData") {
+    console.log("message.savedData", message.savedData);
+    global.io.to(message.userId).emit("postAdded", message.savedData);
   }
 });
 

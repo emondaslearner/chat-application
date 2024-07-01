@@ -13,6 +13,7 @@ parentPort.on("message", async (allData) => {
   if (allData.status === "addPost") {
     try {
       const data = JSON.parse(allData.data);
+      console.log('datadata', data);
       const savedData = await addPost(data);
       if (savedData) {
         await sentMessageToTopic({
@@ -20,13 +21,15 @@ parentPort.on("message", async (allData) => {
           title: "Post added",
           body: `"Post uploaded successfully"`,
         });
+
+        parentPort.postMessage({
+          userId: data.userId,
+          savedData: JSON.stringify(savedData),
+          status: "addPostData",
+        });
       }
     } catch (err) {
-      await sentMessageToTopic({
-        topic: data.userId,
-        title: "Post not added",
-        body: "Something was wrong. please try again",
-      });
+      console.log(err);
     }
   }
 

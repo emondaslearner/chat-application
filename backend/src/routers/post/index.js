@@ -7,6 +7,7 @@ const {
 } = require("@controller/v1/post");
 const { addOrCancelReaction } = require("@controller/v1/reaction");
 const multer = require("multer");
+const path = require("path");
 
 // multer upload
 const storage = multer.diskStorage({

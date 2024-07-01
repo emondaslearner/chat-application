@@ -47,12 +47,12 @@ const addPost = async ({ title, color, photo, video, userId }) => {
     user: userId,
   });
 
-  await data.save();
+  const savedData = await data.save();
 
   // socket.to(userId).emit("postUploaded", 100);
   parentPort.postMessage({ userId, percentage: 100, status: "addPost" });
 
-  return true;
+  return savedData;
 };
 
 module.exports = {
