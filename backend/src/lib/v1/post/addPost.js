@@ -46,6 +46,8 @@ const addPost = async ({ title, color, photo, video, userId }) => {
   });
 
   deleteKeysWithPrefix("posts:");
+  deleteKeysWithPrefix("photos:");
+  deleteKeysWithPrefix("videos:");
 
   return true;
 };

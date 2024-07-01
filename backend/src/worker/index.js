@@ -4,6 +4,7 @@ const { updatePost } = require("./uploadFile/updatePostFileHandler");
 const { connectDb } = require("../db");
 const { sentMessageToTopic } = require("../third-party/firebase");
 const addMessageFiles = require("./uploadFile/addMessageFile");
+const Post = require("../models/Post");
 
 (async () => {
   await connectDb("worker");
@@ -13,8 +14,11 @@ parentPort.on("message", async (allData) => {
   if (allData.status === "addPost") {
     try {
       const data = JSON.parse(allData.data);
-      console.log('datadata', data);
       const savedData = await addPost(data);
+      const postData = await Post.findById(savedData?._id).populate(
+        "photos",
+        "photo"
+      );
       if (savedData) {
         await sentMessageToTopic({
           topic: data.userId,
@@ -24,7 +28,7 @@ parentPort.on("message", async (allData) => {
 
         parentPort.postMessage({
           userId: data.userId,
-          savedData: JSON.stringify(savedData),
+          savedData: JSON.stringify(postData),
           status: "addPostData",
         });
       }
