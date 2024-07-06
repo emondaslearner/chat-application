@@ -29,7 +29,7 @@ parentPort.on("message", async (allData) => {
         parentPort.postMessage({
           userId: data.userId,
           savedData: JSON.stringify(postData),
-          status: "postAdded",
+          status: "addPostData",
         });
       }
     } catch (err) {

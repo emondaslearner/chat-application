@@ -53,6 +53,7 @@ const addComment = async ({ body, userId, postId, path, parent }) => {
   });
 
   deleteKeysWithPrefix("comments:");
+  deleteKeysWithPrefix("posts:");
 
   return comment;
 };

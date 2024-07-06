@@ -31,7 +31,9 @@ function checkFileType(file, cb) {
   if (mimetype && extname) {
     return cb(null, true);
   } else {
-    cb("Error: Images Only!");
+    const error = new Error("Image not support at this version");
+    error.status = 400;
+    return cb(error, false);
   }
 }
 
