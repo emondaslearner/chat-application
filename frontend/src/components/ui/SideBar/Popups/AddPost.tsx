@@ -1,13 +1,20 @@
 import Button from "@src/components/shared/Button";
 import DragFile from "@src/components/shared/DragFile";
 import Modal from "@src/components/ui/Model";
-import React, { useState, useEffect, useRef, ReactNode } from "react";
+import React, { useState, useRef, ReactNode } from "react";
 import { IoMdClose } from "react-icons/io";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
 import Input from "@src/components/shared/Input";
 import { MdOutlineEmojiEmotions } from "react-icons/md";
 import Colors from "../DropDowns/Colors";
+import { useMutation } from "react-query";
+import { handleAxiosError } from "@src/utils/error";
+import { useSelector } from "react-redux";
+import { RootState } from "@src/store/store";
+import { error } from "@src/utils/alert";
+import { addPostAPI } from "@src/apis/post";
+import { queryClient } from "@src/App";
 
 interface FileUploadComProps {
   setFileStatus: (e: any) => void;
@@ -30,7 +37,7 @@ const FileUploadCom: React.FC<FileUploadComProps> = ({
           <FaCloudUploadAlt size={20} />
         </div>
         <p className="font-bold text-[20px] text-dark_ dark:text-white_ text-center">
-          Add photos/videos
+          Add photos
         </p>
         <p className="text-center text-[14px] text-dark_ dark:text-dark_text_">
           or drag and drop
@@ -56,8 +63,13 @@ interface AddPostProps {
 }
 
 const AddPost: React.FC<AddPostProps> = ({ children }) => {
+  const closeButton = useRef<HTMLDivElement>(null);
+
   const [uploadStatus, setUploadStatus] = useState<string>("file");
-  const [color, setColor] = useState<string>();
+  const [color, setColor] = useState<string>("");
+
+  // theme color
+  const themeColor = useSelector((state: RootState) => state.themeConfig.mode)
 
   // files
   const [files, setFile] = useState<object[]>([]);
@@ -68,6 +80,9 @@ const AddPost: React.FC<AddPostProps> = ({ children }) => {
   //file ref
   const FileUpload = useRef<HTMLInputElement | null>(null);
 
+  // whats in your mind
+  const [text, setText] = useState<string>("");
+
   // on file change
   const handleFileChange = (file: any) => {
     setFile((prev) => [...prev, file[0]]);
@@ -76,9 +91,51 @@ const AddPost: React.FC<AddPostProps> = ({ children }) => {
     setFilesUrls((prev) => [...prev, url]);
   };
 
-  useEffect(() => {
-    console.log(files);
-  }, [files]);
+  // check error
+  const addPostHandler = async () => {
+    try {
+      if (!color && !files.length) {
+        error({ message: "Please add file or color", themeColor });
+        return "error";
+      }
+
+      if (color && !text) {
+        error({ message: "Please add whats in your mind", themeColor });
+        return "error";
+      }
+
+      if (text && !color && !files.length) {
+        error({ message: "Please add picture or background color", themeColor });
+        return "error";
+      }
+
+      const data = await addPostAPI({
+        color,
+        files,
+        text
+      });
+
+      return data;
+    } catch (err) {
+      handleAxiosError(err, themeColor);
+      throw err;
+    }
+  }
+
+  // add post mutation
+  const { mutate, isLoading } = useMutation({
+    mutationFn: addPostHandler,
+    mutationKey: ['addPostKey'],
+    onSuccess: (data: any) => {
+      queryClient.invalidateQueries(["userPhotos"]);
+      if (data !== "error") {
+        setColor("");
+        setText("");
+        setFile([]);
+        closeButton.current?.click();
+      }
+    }
+  });
 
   return (
     <Modal
@@ -93,19 +150,21 @@ const AddPost: React.FC<AddPostProps> = ({ children }) => {
       size="2xl"
       closeButton={true}
       customCloseButton={
-        <div className="p-[10px] !bg-dark_gray_ dark:bg-light_gray_">
+        <div ref={closeButton} className="p-[10px] !bg-dark_gray_ dark:bg-light_gray_">
           <IoMdClose size={30} className="text-dark_" />
         </div>
       }
       dismissable={false}
     >
-      <div className="max-h-[80vh] p-5 relative">
+      <div className=" p-5 relative">
         {/* status */}
         {uploadStatus === "file" && (
           <Input
             type="text"
             className="!border-0 !p-0 mb-3 dark:!bg-dark_bg_"
             placeholder="What's in your mind"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
           />
         )}
 
@@ -114,20 +173,21 @@ const AddPost: React.FC<AddPostProps> = ({ children }) => {
             style={
               color?.charAt(0) === "l" || color?.charAt(0) === "h"
                 ? {
-                    backgroundImage:
-                      color?.charAt(0) === "h" ? `url(${color})` : `${color}`,
-                    backgroundSize: "100% 100%",
-                  }
+                  backgroundImage:
+                    color?.charAt(0) === "h" ? `url(${color})` : `${color}`,
+                  backgroundSize: "100% 100%",
+                }
                 : {
-                    background: `${color}`,
-                  }
+                  background: `${color}`,
+                }
             }
-            className={` w-full flex justify-center !border-0 mb-3 text-[25px] font-semibold outline-none !px-[20px] h-[150px] py-[30px] ${
-              color === "white"
-                ? "text-dark_"
-                : "text-white_ placeholder:text-white_"
-            }`}
+            className={` w-full flex justify-center !border-0 mb-3 text-[25px] font-semibold outline-none !px-[20px] h-[150px] py-[30px] ${color === "white"
+              ? "text-dark_"
+              : "text-white_ placeholder:text-white_"
+              }`}
             placeholder="What's in your mind"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
           />
         )}
 
@@ -156,7 +216,7 @@ const AddPost: React.FC<AddPostProps> = ({ children }) => {
                 }}
                 className="px-[20px] py-[10px] table bg-white_ dark:bg-dark_light_bg_ absolute top-[20px] z-[99999] left-[20px] rounded-[5px]  cursor-pointer"
               >
-                <p className="font-bold text-dark_">Add photos/videos</p>
+                <p className="font-bold text-dark_ dark:text-white_">Add photos</p>
                 <input
                   onChange={(e: any) => {
                     handleFileChange(e.target.files);
@@ -170,11 +230,10 @@ const AddPost: React.FC<AddPostProps> = ({ children }) => {
                 return (
                   <div
                     key={index}
-                    className={`relative ${
-                      index > 0 && "mt-[10px]"
-                    } border-[1px] border-light_border_ dark:border-dark_border_`}
+                    className={`relative ${index > 0 && "mt-[10px]"
+                      } border-[1px] border-light_border_ dark:border-dark_border_`}
                   >
-                    <img className="rounded-[5px]" src={data} alt="" />
+                    <img className="rounded-[5px] w-full h-auto" src={data} alt="" />
 
                     <div
                       onClick={() => {
@@ -233,7 +292,10 @@ const AddPost: React.FC<AddPostProps> = ({ children }) => {
         </div>
 
         {/* button */}
-        <Button className="w-full mt-5" fill={true}>
+        <Button onClick={(e: any) => {
+          e.preventDefault();
+          mutate();
+        }} loader={isLoading} loaderMessage="Processing..." className="w-full mt-5" fill={true}>
           Post
         </Button>
       </div>

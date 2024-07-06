@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { IoMdMore } from "react-icons/io";
 import AvatarSingle from "@src/components/shared/Avatar";
 import { FaRegComments, FaShare } from "react-icons/fa";
@@ -10,8 +10,8 @@ import PostView from "./Popups/PostView";
 // images
 
 import PostAction from "./DropDowns/PostAction";
-import { useSelector } from "react-redux";
-import { RootState } from "@src/store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@src/store/store";
 import TimeAgo from 'react-time-ago';
 import "@components/shared/TimeAgo"
 import { useMutation } from "react-query";
@@ -20,6 +20,7 @@ import Spinner from "@src/components/shared/Spinner";
 import { handleAxiosError } from "@src/utils/error";
 import { success } from "@src/utils/alert";
 import { queryClient } from "@src/App";
+import { setCommentCount } from "@src/store/actions/post";
 
 interface PhotosStates {
   photo?: string;
@@ -50,31 +51,28 @@ interface DataStates {
 interface PostProps {
   border?: "none";
   data?: DataStates;
+  postIndex: number
 }
 
 
-const Post: React.FC<PostProps> = ({ border = "", data }) => {
+const Post: React.FC<PostProps> = ({ border = "", data, postIndex }) => {
 
   // theme mode
   const themeColor: 'light' | 'dark' = useSelector((state: RootState) => state.themeConfig.mode)
 
   const profileData = useSelector((state: RootState) => state.auth);
 
-  const [reaction, setReaction] = useState<number>(0);
-  const [commentCount, setCommentCount] = useState<number>(0);
+  // const [commentCount, setCommentCount] = useState<number>(0);
+  const commentCount: number = useSelector((state: RootState) => state.posts.posts[postIndex].commentCount)
+
+  console.log('commentCount', commentCount);
 
   const [comment, setComment] = useState<string>("");
 
-  useEffect(() => {
-    if (data?.reactionCount) {
-      setReaction(data?.reactionCount);
-    }
-    if (data?.commentCount) {
-      setCommentCount(data?.commentCount)
-    }
-  }, [data]);
-
   const timeAgo = data?.createdAt ? new Date(data?.createdAt) : new Date();
+
+  // dispatch
+  const dispatch: AppDispatch = useDispatch();
 
   const addComment = async () => {
     try {
@@ -95,8 +93,9 @@ const Post: React.FC<PostProps> = ({ border = "", data }) => {
     mutationFn: addComment,
     mutationKey: ['addCommentKey'],
     onSuccess: () => {
-      success({ message: "Comment added successfully", themeColor })
-      setCommentCount(commentCount + 1);
+      success({ message: "Comment added successfully", themeColor });
+      setComment("");
+      dispatch(setCommentCount({ index: postIndex, commentCount: commentCount + 1 }));
       queryClient.invalidateQueries([`getComments${data?._id}`]);
       setComment("");
     }
@@ -146,9 +145,9 @@ const Post: React.FC<PostProps> = ({ border = "", data }) => {
       {!data?.photos?.length ? (
         <div
           style={{ background: `${data?.color ? data?.color : "bg-white_"}` }}
-          className="w-full flex justify-center items-center py-[25px]"
+          className="w-full flex justify-center items-center py-[25px] min-h-[180px]"
         >
-          <p className="max-w-[80%] mx-auto text-[25px] font-semibold">
+          <p className={`max-w-[80%] mx-auto text-[25px] font-semibold ${data?.color === 'white' ? 'text-black' : 'text-white_'}`}>
             {data?.title}
           </p>
         </div>
@@ -182,7 +181,7 @@ const Post: React.FC<PostProps> = ({ border = "", data }) => {
       <div className="flex items-center justify-between px-3 pt-3">
         <div className="min-w-[60%] flex items-center gap-x-2 flex-wrap">
           <p className="hover:!underline text-dark_ dark:text-dark_text_ font-semibold text-[15px]">
-            {reaction}{" "}
+            {data?.reactionCount ? (data?.reactionCount >= 0 ? data?.reactionCount : 0) : 0}{" "}
             Reactions
           </p>
         </div>
@@ -199,13 +198,14 @@ const Post: React.FC<PostProps> = ({ border = "", data }) => {
           postId={data?._id}
           data={data}
           setCommentCount={setCommentCount}
+          postIndex={postIndex}
         />
       </div>
 
       <>
         <div className="px-5 flex items-center justify-between py-3 border-b-[2px] border-t-[2px] border-light_border_ dark:border-dark_border_ mt-2">
           {/* Add reactions on post */}
-          <Like reactionStatus="post" data={data} postId={data?._id} setPostReaction={setReaction} reactions={reaction} />
+          <Like index={postIndex} reactionStatus="post" data={data} postId={data?._id} />
 
           {/* Comments */}
           <div>
@@ -224,6 +224,7 @@ const Post: React.FC<PostProps> = ({ border = "", data }) => {
               postId={data?._id}
               data={data}
               setCommentCount={setCommentCount}
+              postIndex={postIndex}
             />
           </div>
 

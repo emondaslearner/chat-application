@@ -12,8 +12,12 @@ interface Items {
 
 const items: Items[] = [
   {
-    key: "white",
-    label: 'Hello world',
+    key: "editPost",
+    label: 'Edit Post',
+  },
+  {
+    key: "delete",
+    label: 'Delete Post',
   }
 ];
 

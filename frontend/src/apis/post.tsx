@@ -54,5 +54,38 @@ const addReactionToPostAPI = ({
   });
 };
 
+interface addPostAPIStates {
+  color?: string;
+  files?: object[];
+  text?: string;
+}
 
-export { getPostsAPI, addReactionToPostAPI };
+const addPostAPI = ({ color, files, text }: addPostAPIStates) => {
+  return new Promise((resolve, reject) => {
+    const formData: any = new FormData();
+    formData.append('title', text);
+    formData.append('color', color);
+  
+
+    if(files?.length) {
+      files.forEach((file, index) => {
+        formData.append('photo', file);
+      });
+    }
+
+    axios.post("/user/posts", formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+      .then((response) => {
+        resolve(response?.data);
+      })
+      .catch((error) => {
+        reject(error);
+      })
+  })
+}
+
+
+export { getPostsAPI, addReactionToPostAPI, addPostAPI };

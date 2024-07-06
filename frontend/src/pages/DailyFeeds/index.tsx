@@ -57,10 +57,10 @@ const DailyFeeds: React.FC<DailyFeedsProps> = () => {
               </div>
             </AddPost>
 
+            {/* <Post />
             <Post />
             <Post />
-            <Post />
-            <Post />
+            <Post /> */}
           </div>
 
           <div className="md:block hidden w-[40%] lg:w-[23%]">

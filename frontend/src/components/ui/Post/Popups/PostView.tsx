@@ -8,9 +8,8 @@ import { IoSend } from "react-icons/io5";
 import Like from "../DropDowns/Like";
 import { AiFillLike } from "react-icons/ai";
 import { FcLike } from "react-icons/fc";
-import { createRandomNumber } from "@src/utils";
-import { useSelector } from "react-redux";
-import { RootState } from "@src/store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@src/store/store";
 import { useMutation, useQuery } from "react-query";
 import { addCommentAPI, getPostComment } from "@src/apis/comment";
 import Spinner from "@src/components/shared/Spinner";
@@ -26,6 +25,7 @@ import haha from "@assets/Emoji/haha.png";
 import { handleAxiosError } from "@src/utils/error";
 import { success } from "@src/utils/alert";
 import { queryClient } from "@src/App";
+import { setCommentCount } from "@src/store/actions/post";
 
 
 interface PostViewProps {
@@ -33,6 +33,7 @@ interface PostViewProps {
   postId?: string;
   data?: any;
   setCommentCount?: any;
+  postIndex: number;
 }
 
 interface SingleCommentProps {
@@ -41,7 +42,8 @@ interface SingleCommentProps {
   setComments: any;
   comment: any;
   addCommentMutation: any;
-  commentLoader: boolean
+  commentLoader: boolean;
+  postIndex: number
 }
 
 interface CommentApiStates {
@@ -70,7 +72,8 @@ const SingleComment: React.FC<SingleCommentProps> = ({
   setComments,
   comment,
   addCommentMutation,
-  commentLoader
+  commentLoader,
+  postIndex
 }) => {
   const [activeReaction, setActiveReaction] = useState<string>("");
 
@@ -104,7 +107,7 @@ const SingleComment: React.FC<SingleCommentProps> = ({
 
   return (
     <>
-      <div className="flex">
+      <div key={index} className="flex">
         <AvatarSingle src={data?.send_by?.profile_picture} alt="Profile Picture" className="!z-50" />
 
         <div className="ml-2 max-w-[500px] min-w-[330px]">
@@ -126,9 +129,8 @@ const SingleComment: React.FC<SingleCommentProps> = ({
                   setActiveReaction={setActiveReaction}
                   reactionStatus="comment"
                   commentId={data._id}
-                  reactions={reactions}
-                  setPostReaction={setCommentReactions}
                   data={data}
+                  index={postIndex}
                 />
 
                 {activeReaction === "Like" && (
@@ -210,7 +212,7 @@ const PostView: React.FC<PostViewProps> = ({
   openButton,
   postId,
   data,
-  setCommentCount
+  postIndex
 }) => {
   const closeButton = useRef<HTMLDivElement>(null);
 
@@ -225,13 +227,15 @@ const PostView: React.FC<PostViewProps> = ({
   // theme mode
   const themeColor: 'light' | 'dark' = useSelector((state: RootState) => state.themeConfig.mode)
 
+  // dispatch
+  const dispatch: AppDispatch = useDispatch();
+
   // useEffect(() => {
   //   const baseComments = CommentData.filter((data: any) => !data?.parent);
   //   setComments(baseComments);
   // }, []);
 
   // comments
-
   const { data: allComments, isLoading }: CommentApiStates = useQuery({
     queryFn: () => getPostComment({ postId }),
     queryKey: [`getComments${postId}`],
@@ -264,13 +268,6 @@ const PostView: React.FC<PostViewProps> = ({
 
   const addComment = async ({ path, parent, body }: addCommentStates) => {
     try {
-      console.log('add comment data', {
-        path: path || "",
-        parent: parent || "",
-        message: body ? body : message,
-        postId
-      });
-
       const data = await addCommentAPI({
         path: path || "",
         parent: parent || "",
@@ -291,7 +288,7 @@ const PostView: React.FC<PostViewProps> = ({
     mutationKey: ['addCommentKey'],
     onSuccess: (data: any) => {
       success({ message: "Comment added successfully", themeColor })
-      setCommentCount((prvState: number) => prvState + 1);
+      postId && dispatch(setCommentCount({ index: postIndex, commentCount: 0 }));
       setMessage('');
 
       if (!data?.data?.parent) {
@@ -324,7 +321,7 @@ const PostView: React.FC<PostViewProps> = ({
       }
     >
       <div className="max-h-[70vh] h-full overflow-y-auto relative border-t-[1px] border-light_border_ dark:border-dark_border_">
-        <Post data={data} border="none" />
+        <Post postIndex={postIndex} data={data} border="none" />
 
         <div className="mb-3 px-[30px] gap-y-3 flex flex-col">
           {
@@ -358,14 +355,6 @@ const PostView: React.FC<PostViewProps> = ({
                       style={{ marginLeft: `${checkDepth.length * 50}px` }}
                       className={`relative rela`}
                     >
-                      {/* {checkDepth.length > 0 && (
-                        <div
-                          style={{
-                            height: `${getHeight}px`,
-                          }}
-                          className={`w-[30px] rounded-bl-[10px] border-l-[2px] border-b-[2px] border-light_border_ dark:border-dark_border_ absolute right-[101%] bottom-[85%] z-10`}
-                        ></div>
-                      )} */}
                       <SingleComment
                         data={data}
                         index={index}
@@ -373,6 +362,7 @@ const PostView: React.FC<PostViewProps> = ({
                         comment={comments}
                         addCommentMutation={addCommentMutation}
                         commentLoader={commentLoader}
+                        postIndex={postIndex}
                       />
 
                       {data?.replyCount > 0 &&
@@ -400,7 +390,7 @@ const PostView: React.FC<PostViewProps> = ({
         <div
           className={`left-0 sticky bottom-0 w-full bg-white_ dark:bg-dark_bg_ z-[50] py-[20px] flex gap-x-1 items-center justify-center`}
         >
-          <AvatarSingle src="" alt="Profile picture" className="ml-3" />
+          <AvatarSingle src={profileData?.profile_picture} alt="Profile picture" className="ml-3" />
           <form onSubmit={(e) => {
             e.preventDefault();
             addCommentMutation({})

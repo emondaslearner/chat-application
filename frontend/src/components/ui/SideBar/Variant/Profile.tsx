@@ -30,7 +30,7 @@ import {
 } from "@src/apis/friend-request";
 import { queryClient } from "@src/App";
 
-interface ProfileProps {}
+interface ProfileProps { }
 
 interface Items {
   key: string;
@@ -389,9 +389,6 @@ const Profile: React.FC<ProfileProps> = () => {
     );
   }
 
-  console.log(friendRequestStatus, checkFriendStatus);
-  console.log(friendRequest, checkFriend);
-
   return (
     <div className="w-full h-[100%] scrollHidden overflow-y-auto">
       <div className="w-[95%] mx-auto rounded-[15px] border-[1px] border-light_border_ dark:border-dark_border_ mt-4 lg:mt-8 h-[200px] relative overflow-hidden">
@@ -499,7 +496,7 @@ const Profile: React.FC<ProfileProps> = () => {
             <div className="w-[48%]">
               <AddPost>
                 <Button fill={true} className="!w-full">
-                  Add photos & videos
+                  Add photos
                 </Button>
               </AddPost>
             </div>
@@ -530,18 +527,18 @@ const Profile: React.FC<ProfileProps> = () => {
 
             {((!friendRequestStatus && checkFriendStatus) ||
               (friendRequestStatus && checkFriendStatus)) && (
-              <div className="w-[48%]">
-                <Button
-                  loader={deleteFriendLoadingStatus}
-                  loaderMessage="Deleting..."
-                  onClick={deleteFriendMutation}
-                  fill={true}
-                  className="!w-full"
-                >
-                  UnFriend
-                </Button>
-              </div>
-            )}
+                <div className="w-[48%]">
+                  <Button
+                    loader={deleteFriendLoadingStatus}
+                    loaderMessage="Deleting..."
+                    onClick={deleteFriendMutation}
+                    fill={true}
+                    className="!w-full"
+                  >
+                    UnFriend
+                  </Button>
+                </div>
+              )}
 
             {friendRequestStatus && !checkFriendStatus && (
               <div className="w-[48%]">
@@ -761,9 +758,8 @@ const Friends = ({
       </div>
 
       <div
-        className={`w-full ${
-          isLoading ? "flex" : "grid grid-cols-4"
-        } mt-4 gap-3 max-h-[260px] h-full overflow-hidden`}
+        className={`w-full ${isLoading ? "flex" : "grid grid-cols-4"
+          } mt-4 gap-3 max-h-[260px] h-full overflow-hidden`}
       >
         {isLoading ? (
           <div className="w-full h-full flex justify-center items-center">

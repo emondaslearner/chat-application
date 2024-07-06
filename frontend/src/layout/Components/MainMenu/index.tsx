@@ -23,7 +23,7 @@ import { queryClient } from "@src/App";
 import { setUserData } from "@src/store/actions/auth";
 // import nav from '../../../configs/nav.config.ts'
 
-interface MainMenuProps {}
+interface MainMenuProps { }
 
 const MainMenu: React.FC<MainMenuProps> = () => {
   const location: Location = useLocation();
@@ -36,7 +36,10 @@ const MainMenu: React.FC<MainMenuProps> = () => {
   const mode: string = useSelector((state: any) => state?.themeConfig.mode);
 
   const logout = async () => {
+    // Remove token from local storage
     localStorage.removeItem("token");
+
+    // Reset user data in your state management
     dispatch(
       setUserData({
         name: "",
@@ -51,16 +54,18 @@ const MainMenu: React.FC<MainMenuProps> = () => {
       })
     );
 
-    queryClient.clear();
+    // Clear and invalidate queries
+    await queryClient.clear(); // Clear cache
+    await queryClient.invalidateQueries(); // Invalidate queries
 
+    // Navigate to login page
     navigate("/login");
   };
 
   return (
     <div
-      className={`${
-        location.pathname === "/" ? "bg-light_bg_" : "bg-white_"
-      } lg:bg-transparent dark:bg-dark_light_bg_`}
+      className={`${location.pathname === "/" ? "bg-light_bg_" : "bg-white_"
+        } lg:bg-transparent dark:bg-dark_light_bg_`}
     >
       {/* large screen menu */}
       <div className="lg:flex hidden bg-primary_ fixed top-0 left-0 w-[70px] h-[100vh] flex-col items-center justify-center">
@@ -74,37 +79,33 @@ const MainMenu: React.FC<MainMenuProps> = () => {
           <FontAwesomeIcon
             onClick={() => navigate("/")}
             icon={faHouse}
-            className={`text-[25px] cursor-pointer ${
-              location.pathname === "/" ? "text-white_" : "text-dark_gray_"
-            }`}
+            className={`text-[25px] cursor-pointer ${location.pathname === "/" ? "text-white_" : "text-dark_gray_"
+              }`}
             title="Home"
           />
           <FontAwesomeIcon
             onClick={() => navigate("/chat")}
             icon={faMessage}
-            className={`text-[25px] cursor-pointer ${
-              location.pathname === "/chat" ? "text-white_" : "text-dark_gray_"
-            }`}
+            className={`text-[25px] cursor-pointer ${location.pathname === "/chat" ? "text-white_" : "text-dark_gray_"
+              }`}
             title="Chats"
           />
           <FontAwesomeIcon
             onClick={() => navigate("/friends")}
             icon={faUserGroup}
-            className={`text-[25px] cursor-pointer ${
-              location.pathname === "/friends"
-                ? "text-white_"
-                : "text-dark_gray_"
-            }`}
+            className={`text-[25px] cursor-pointer ${location.pathname === "/friends"
+              ? "text-white_"
+              : "text-dark_gray_"
+              }`}
             title="Friends"
           />
           <FontAwesomeIcon
             onClick={() => navigate("/profile")}
             icon={faCircleUser}
-            className={`text-[25px] cursor-pointer ${
-              location.pathname === "/profile"
-                ? "text-white_"
-                : "text-dark_gray_"
-            }`}
+            className={`text-[25px] cursor-pointer ${location.pathname === "/profile"
+              ? "text-white_"
+              : "text-dark_gray_"
+              }`}
             title="Profile"
           />
 

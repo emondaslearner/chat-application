@@ -24,19 +24,19 @@ import sad from "@assets/Emoji/sad.png";
 import haha from "@assets/Emoji/haha.png";
 import { useMutation } from "react-query";
 import { error } from "@src/utils/alert";
-import { useSelector } from "react-redux";
-import { RootState } from "@src/store/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@src/store/store";
 import { addReactionToPostAPI } from "@src/apis/post";
 import { addReactionToCommentAPI } from "@src/apis/comment";
+import { decreaseReactionCount, increaseReactionCount, setGivenReaction } from "@src/store/actions/post";
 
 interface LikeProps {
   reactionStatus: string;
   setActiveReaction?: (e: string) => void;
   postId?: string;
   data?: any;
-  setPostReaction?: any;
-  reactions?: any;
   commentId?: string;
+  index: number
 }
 
 interface Items {
@@ -92,13 +92,20 @@ const Like: React.FC<LikeProps> = ({
   setActiveReaction,
   postId,
   data,
-  setPostReaction,
-  reactions,
-  commentId
+  commentId,
+  index
 }) => {
   const [isOpen, setOpen] = useState<boolean>(false);
 
+  const reactionState: string | undefined = useSelector((state: RootState) => state.posts.posts[index]?.givenReaction)
+
   const [givenReaction, setReaction] = useState<string>("");
+
+  useEffect(() => {
+    setReaction(reactionState || "");
+  }, [reactionState]);
+
+  console.log('reactionState', reactionState);
 
   const [apiCallStatus, setApiCallStatus] = useState(false);
 
@@ -112,6 +119,9 @@ const Like: React.FC<LikeProps> = ({
 
   // profile data
   const profileData = useSelector((state: RootState) => state.auth);
+
+  // dispatch
+  const dispatch: AppDispatch = useDispatch();
 
   useEffect(() => {
     if (setActiveReaction !== undefined) {
@@ -140,7 +150,7 @@ const Like: React.FC<LikeProps> = ({
       }
     } catch (err) {
       error({ message: "Unable to reaction on post. try later", themeColor });
-      setReaction("");
+      postId && dispatch(setGivenReaction({ _id: postId, reaction: "" }));
       throw err;
     }
   };
@@ -170,9 +180,6 @@ const Like: React.FC<LikeProps> = ({
   // check given reaction or not
 
   useEffect(() => {
-    if (reactionStatus === 'comment') {
-      console.log('comments comments', data)
-    }
     if (data?.reactions.length > 0) {
       const findReaction = data.reactions.find(
         (data: any) => data.given_by === profileData.id
@@ -183,18 +190,18 @@ const Like: React.FC<LikeProps> = ({
           findReaction.reaction.charAt(0).toUpperCase() +
           findReaction.reaction.slice(1);
 
-        setReaction(reactionToCap);
+        postId && dispatch(setGivenReaction({ _id: postId, reaction: reactionToCap }));
         setReactionIncrementStatus(true);
       }
     }
-  }, [data, profileData.id]);
+  }, [profileData.id]);
 
   useEffect(() => {
-    if (reactionIncrementStatus && apiCallStatus) {
-      setPostReaction(reactions + 1);
+    if (reactionIncrementStatus && apiCallStatus && postId) {
+      dispatch(increaseReactionCount(postId));
     }
-    if (reactionIncrementStatus === false && apiCallStatus) {
-      setPostReaction(reactions - 1);
+    if (reactionIncrementStatus === false && apiCallStatus && postId) {
+      dispatch(decreaseReactionCount(postId));
     }
   }, [reactionIncrementStatus]);
 
@@ -210,7 +217,7 @@ const Like: React.FC<LikeProps> = ({
             className="flex items-center gap-x-2 cursor-pointer"
             onClick={() => {
               setOpen(!isOpen);
-              setReaction(givenReaction === "" ? "Like" : "");
+              postId && dispatch(setGivenReaction({ _id: postId, reaction: givenReaction === "" ? "Like" : "" }));
               if (givenReaction) {
                 setPrvState(givenReaction);
               }
@@ -287,7 +294,7 @@ const Like: React.FC<LikeProps> = ({
             className="flex items-center gap-x-2 cursor-pointer"
             onClick={() => {
               setOpen(!isOpen);
-              setReaction(givenReaction === "" ? "Like" : "");
+              postId && dispatch(setGivenReaction({ _id: postId, reaction: givenReaction === "" ? "Like" : "" }));
               if (givenReaction) {
                 setPrvState(givenReaction);
               }
@@ -373,7 +380,7 @@ const Like: React.FC<LikeProps> = ({
               if (givenReaction) {
                 setPrvState(givenReaction);
               }
-              setReaction(item.key === givenReaction ? "" : item.key);
+              postId && dispatch(setGivenReaction({ _id: postId, reaction: item.key === givenReaction ? "" : item.key }));
               setApiCallStatus(true);
             }}
           >
