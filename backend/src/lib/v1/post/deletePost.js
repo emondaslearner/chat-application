@@ -1,4 +1,6 @@
 const Post = require("@models/Post");
+const Comment = require("@models/Comment");
+const Reaction = require("@models/Reaction");
 const { error } = require("@utils");
 const { deleteKeysWithPrefix } = require("@third-party/redis");
 
@@ -18,6 +20,9 @@ const deletePost = async ({ userId, postId }) => {
   }
 
   await Post.findOneAndDelete({ _id: postId });
+  await Comment.deleteMany({ post: postId });
+  await Reaction.deleteMany({ post: postId });
+
   deleteKeysWithPrefix("posts:");
   return true;
 };
