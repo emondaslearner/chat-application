@@ -41,11 +41,21 @@ parentPort.on("message", async (allData) => {
     try {
       const data = JSON.parse(allData.data);
       const savedData = await updatePost(data);
+      const postData = await Post.findById(savedData?._id).populate(
+        "photos",
+        "photo"
+      );
       if (savedData) {
         await sentMessageToTopic({
           topic: data.userId,
           title: "Post status updated",
           body: `"Post updated successfully"`,
+        });
+
+        parentPort.postMessage({
+          userId: data.userId,
+          savedData: JSON.stringify(postData),
+          status: "postUpdated",
         });
       }
     } catch (err) {

@@ -65,6 +65,11 @@ worker_threads.on("message", (message) => {
   if (message.userId && message.status === "updatePost") {
     global.io.to(message.userId).emit("postUploaded", message);
   }
+
+  if (message.userId && message.status === "updatePostData") {
+    console.log("message.savedData", message.savedData);
+    global.io.to(message.userId).emit("postUpdated", message.savedData);
+  }
 });
 
 module.exports = updatePost;
