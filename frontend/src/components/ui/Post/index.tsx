@@ -135,6 +135,7 @@ const Post: React.FC<PostProps> = ({ border = "", data, postIndex }) => {
                   />
                 </div>
               }
+              data={data}
             />
           )
         }

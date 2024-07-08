@@ -15,12 +15,14 @@ const getPostsAPI = ({
   search,
   sortBy,
   sortType,
-  id
+  id,
 }: getPostsStates) => {
   return new Promise((resolve, reject) => {
     axios
       .get(
-        id ? `/user/posts?page=${page}&limit=${limit}&search=${search}&sortBy=${sortBy}&sortType=${sortType}&id=${id}` : `/user/posts?page=${page}&limit=${limit}&search=${search}&sortBy=${sortBy}&sortType=${sortType}`
+        id
+          ? `/user/posts?page=${page}&limit=${limit}&search=${search}&sortBy=${sortBy}&sortType=${sortType}&id=${id}`
+          : `/user/posts?page=${page}&limit=${limit}&search=${search}&sortBy=${sortBy}&sortType=${sortType}`
       )
       .then((response) => {
         resolve(response?.data);
@@ -65,45 +67,105 @@ interface addPostAPIStates {
 const addPostAPI = ({ color, files, text }: addPostAPIStates) => {
   return new Promise((resolve, reject) => {
     const formData: any = new FormData();
-    formData.append('title', text);
-    formData.append('color', color);
-
+    formData.append("title", text);
+    formData.append("color", color);
 
     if (files?.length) {
-      files.forEach((file, index) => {
-        formData.append('photo', file);
+      files.forEach((file) => {
+        formData.append("photo", file);
       });
     }
 
-    axios.post("/user/posts", formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    })
+    axios
+      .post("/user/posts", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
       .then((response) => {
         resolve(response?.data);
       })
       .catch((error) => {
         reject(error);
-      })
-  })
-}
+      });
+  });
+};
 
 interface deletePostAPIStates {
-  postId: string
+  postId: string;
 }
 
 const deletePostAPI = ({ postId }: deletePostAPIStates) => {
   new Promise((resolve, reject) => {
-    axios.delete(`/user/post/${postId}`)
+    axios
+      .delete(`/user/post/${postId}`)
       .then((response) => {
         resolve(response?.data);
       })
       .catch((error) => {
         reject(error);
-      })
-  })
+      });
+  });
+};
+
+interface getSinglePostAPIStates {
+  postId: string;
 }
 
+const getSinglePostAPI = ({ postId }: getSinglePostAPIStates) => {
+  new Promise((resolve, reject) => {
+    axios
+      .get(`/user/post/${postId}`)
+      .then((response) => {
+        resolve(response?.data);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+};
 
-export { getPostsAPI, addReactionToPostAPI, addPostAPI, deletePostAPI };
+interface editPostAPIStates {
+  postId?: string;
+  files?: any;
+  existingFilesIds?: string[];
+  text: string;
+  color?: string;
+}
+
+const editPostAPI = ({ postId, files, existingFilesIds, text, color }: editPostAPIStates) => {
+  new Promise((resolve, reject) => {
+    const formData: any = new FormData();
+    formData.append("title", text);
+    formData.append("color", color);
+    formData.append("existingFilesIds", existingFilesIds);
+
+    if (files?.length) {
+      files.forEach((file: any) => {
+        formData.append("photo", file);
+      });
+    }
+
+    postId ? axios
+      .patch(`/user/post/${postId}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((response) => {
+        resolve(response?.data);
+      })
+      .catch((error) => {
+        reject(error);
+      }) : reject()
+  });
+};
+
+export {
+  getPostsAPI,
+  addReactionToPostAPI,
+  addPostAPI,
+  deletePostAPI,
+  getSinglePostAPI,
+  editPostAPI,
+};

@@ -1,11 +1,17 @@
 import Dropdown from "@src/components/ui/Dropdown";
-import React, { ReactNode, useRef } from "react";
+import React, { ReactNode, useEffect, useRef } from "react";
 import Confirmation from "../Popups/Confirmation";
+import AddPost from "../../SideBar/Popups/AddPost";
+import { getSocket } from "@src/App";
+import { updatePostInStore } from "@src/store/actions/post";
+import { AppDispatch } from "@src/store/store";
+import { useDispatch } from "react-redux";
 
 interface PostActionProps {
   openButton: ReactNode;
   postId: string;
   postIndex: number;
+  data?: any;
 }
 
 interface Items {
@@ -15,14 +21,25 @@ interface Items {
 
 
 // post action
-const PostAction: React.FC<PostActionProps> = ({ openButton, postId, postIndex }) => {
+const PostAction: React.FC<PostActionProps> = ({ openButton, postId, postIndex, data }) => {
 
-  const deletePopupRef = useRef<HTMLElement | null>()
+  const deletePopupRef = useRef<HTMLElement | null>();
+  const editPopupRef = useRef<any>();
+
+  // dispatch
+  const dispatch: AppDispatch = useDispatch();
 
   const items: Items[] = [
     {
       key: "editPost",
-      label: 'Edit Post',
+      label: (
+        <div onClick={(e) => {
+          e.stopPropagation();
+          editPopupRef.current?.click();
+        }} className="w-full h-full">
+          Edit Post
+        </div>
+      ),
     },
     {
       key: "delete",
@@ -38,11 +55,28 @@ const PostAction: React.FC<PostActionProps> = ({ openButton, postId, postIndex }
   ];
 
 
+  useEffect(() => {
+    const socket = getSocket();
+
+    socket.on("postUpdated", (data: any) => {
+      const newData: any = JSON.parse(data);
+      if (newData) {
+        dispatch(updatePostInStore(newData))
+      }
+    })
+
+    return () => {
+      socket.off('chat message');
+    };
+  }, [dispatch])
 
   return (
     <div>
       <Dropdown size="md" items={items}>{openButton}</Dropdown>
       <Confirmation postId={postId} deletePopupRef={deletePopupRef} postIndex={postIndex} />
+      <AddPost edit={true} data={data}>
+        <p ref={editPopupRef} className="hidden"></p>
+      </AddPost>
     </div>
   );
 };

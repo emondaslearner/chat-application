@@ -98,6 +98,9 @@ const posts = createSlice({
 
       state.posts = list;
     },
+    updatePostInStore: (state, action: PayloadAction<{ index: number, data: any }>) => {
+      state.posts[action.payload.index] = action.payload.data
+    }
   },
 });
 
@@ -112,6 +115,7 @@ export const {
   addComments,
   setReplies,
   deletePostFromStore,
+  updatePostInStore
 } = posts.actions;
 
 export default posts.reducer;
