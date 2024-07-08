@@ -19,23 +19,23 @@ interface DropdownProps {
   children: ReactNode;
   items: Items[];
   size?: "sm" | "md" | "lg";
+  isOpen?: boolean;
 }
 
-const Dropdown: React.FC<DropdownProps> = ({ children, items, size }) => {
+const Dropdown: React.FC<DropdownProps> = ({ children, items, size, isOpen }) => {
   return (
     <div className="relative">
-      <DropDowns size={size}>
+      <DropDowns isOpen={isOpen || undefined} size={size}>
         <DropdownTrigger>{children}</DropdownTrigger>
         <DropdownMenu aria-label="Dynamic Actions" items={items}>
           {(item: Items) => (
             <DropdownItem
               key={item.key}
               color={item.key === "delete" ? "danger" : "default"}
-              className={`${
-                item.key === "delete"
-                  ? "text-danger"
-                  : "!text-dark_ dark:!text-dark_text_ hover:!text-white_  dark:hover:!text-white_ transition-all duration-300 hover:!bg-primary_"
-              }`}
+              className={`${item.key === "delete"
+                ? "text-danger"
+                : "!text-dark_ dark:!text-dark_text_ hover:!text-white_  dark:hover:!text-white_ transition-all duration-300 hover:!bg-primary_"
+                }`}
               startContent={item?.icon}
               onClick={item?.onClick}
               onMouseOver={item?.onMouseOver}

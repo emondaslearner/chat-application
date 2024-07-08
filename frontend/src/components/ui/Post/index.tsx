@@ -46,6 +46,7 @@ interface DataStates {
   wowCount: number;
   reactionCount: number;
   createdAt: string;
+  user: any;
 }
 
 interface PostProps {
@@ -64,8 +65,6 @@ const Post: React.FC<PostProps> = ({ border = "", data, postIndex }) => {
 
   // const [commentCount, setCommentCount] = useState<number>(0);
   const commentCount: number = useSelector((state: RootState) => state.posts.posts[postIndex].commentCount)
-
-  console.log('commentCount', commentCount);
 
   const [comment, setComment] = useState<string>("");
 
@@ -97,7 +96,6 @@ const Post: React.FC<PostProps> = ({ border = "", data, postIndex }) => {
       setComment("");
       dispatch(setCommentCount({ index: postIndex, commentCount: commentCount + 1 }));
       queryClient.invalidateQueries([`getComments${data?._id}`]);
-      setComment("");
     }
   })
 
@@ -110,30 +108,37 @@ const Post: React.FC<PostProps> = ({ border = "", data, postIndex }) => {
       <div className="px-3 flex items-center justify-between w-full">
         <div className="flex items-center">
           <AvatarSingle
-            src={profileData.profile_picture}
+            src={data?.user?.profile_picture}
             alt="Profile picture"
           />
 
           <div className="ml-3">
             <div className="flex items-center">
               <p className="text-[18px] text-dark_ dark:text-white_ font-bold">
-                {profileData.name}
+                {data?.user?.name}
               </p>
             </div>
             <p className="text-dark_ dark:text-dark_text_"><TimeAgo date={timeAgo} /></p>
           </div>
         </div>
 
-        <PostAction
-          openButton={
-            <div>
-              <IoMdMore
-                size={25}
-                className="text-dark_ dark:text-dark_text_ cursor-pointer"
-              />
-            </div>
-          }
-        />
+        {
+          profileData.id === data?.user?._id && (
+            <PostAction
+              postId={data?._id}
+              postIndex={postIndex}
+              openButton={
+                <div>
+                  <IoMdMore
+                    size={25}
+                    className="text-dark_ dark:text-dark_text_ cursor-pointer"
+                  />
+                </div>
+              }
+            />
+          )
+        }
+
       </div>
 
       {data?.photos.length && (
@@ -162,15 +167,14 @@ const Post: React.FC<PostProps> = ({ border = "", data, postIndex }) => {
             }
 
             return (
-              <>
-                <img
-                  className={`w-full h-full my-2 max-h-[400px] ${data.photos.length > 1 &&
-                    "border-[2px] border-light_border_ dark:border-dark_border_"
-                    }`}
-                  src={photo.photo}
-                  alt="Post"
-                />
-              </>
+              <img
+                key={i}
+                className={`w-full h-full my-2 max-h-[400px] ${data.photos.length > 1 &&
+                  "border-[2px] border-light_border_ dark:border-dark_border_"
+                  }`}
+                src={photo.photo}
+                alt="Post"
+              />
             );
           })}
         </div>

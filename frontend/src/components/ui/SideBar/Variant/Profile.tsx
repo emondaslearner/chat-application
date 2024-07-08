@@ -29,6 +29,7 @@ import {
   getSingleFriendRequest,
 } from "@src/apis/friend-request";
 import { queryClient } from "@src/App";
+import PhotosModel from '../Popups/Photos'
 
 interface ProfileProps { }
 
@@ -689,9 +690,9 @@ const Photos = ({ photoLoadingStatus, photos }: PhotosProps) => {
           Photos
         </p>
 
-        <Link to="/friends" className="text-primary_">
-          See all
-        </Link>
+        <div className="w-[10%]">
+        <PhotosModel />
+        </div>
       </div>
 
       {photoLoadingStatus ? (
@@ -766,10 +767,10 @@ const Friends = ({
             <Spinner loaderStatus={"elementLoader"} />
           </div>
         ) : (
-          friends.data.map((data: any) => {
+          friends.data.map((data: any, i: number) => {
             const profileId = paramId || profileData.id;
             return (
-              <div key={data?.id} className="cursor-pointer">
+              <div key={i} className="cursor-pointer">
                 <img
                   className="rounded-[10px] h-[100px]"
                   src={

@@ -8,6 +8,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@src/store/store";
 import { addPostToState, setPosts } from "@src/store/actions/post";
 import { getSocket } from "@src/utils/socke";
+import { NavigateFunction, useNavigate, useParams } from "react-router-dom";
+import { queryClient } from "@src/App";
 
 interface ContentProps {
   setStatus?: (value: "sidebar" | "content") => void;
@@ -27,10 +29,28 @@ const Content: React.FC<ContentProps> = ({ setStatus }) => {
   // dispatch
   const dispatch: AppDispatch = useDispatch();
 
+  // navigation
+  const navigate: NavigateFunction = useNavigate();
+
+  // get params id
+  const { id } = useParams();
+
+  // profile data
+  const profileData = useSelector((state: RootState) => state.auth)
+
+  // check id and profile data 
+  useEffect(() => {
+    if (id === profileData.id) {
+      navigate('/profile')
+    } else {
+      queryClient.invalidateQueries(["personalPostData"]);
+    }
+  }, [id, profileData, navigate])
+
   const posts = useSelector((state: RootState) => state.posts.posts)
 
   const { data, isLoading }: PostsQueryStates = useQuery({
-    queryFn: () => getPostsAPI({ page, limit, sortBy, sortType, search: "" }),
+    queryFn: () => getPostsAPI({ page, limit, sortBy, sortType, search: "", id }),
     queryKey: ["personalPostData"],
     staleTime: Infinity
   });

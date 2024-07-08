@@ -5,9 +5,6 @@ import { IoMdClose } from "react-icons/io";
 import Post from "..";
 import Input from "@src/components/shared/Input";
 import { IoSend } from "react-icons/io5";
-import Like from "../DropDowns/Like";
-import { AiFillLike } from "react-icons/ai";
-import { FcLike } from "react-icons/fc";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@src/store/store";
 import { useMutation, useQuery } from "react-query";
@@ -17,15 +14,10 @@ import TimeAgo from 'react-time-ago';
 import "@components/shared/TimeAgo"
 
 // images
-import sad from "@assets/Emoji/sad.png";
-import care from "@assets/Emoji/care.png";
-import wow from "@assets/Emoji/wow.png";
-import angry from "@assets/Emoji/angry.png";
-import haha from "@assets/Emoji/haha.png";
 import { handleAxiosError } from "@src/utils/error";
 import { success } from "@src/utils/alert";
 import { queryClient } from "@src/App";
-import { setCommentCount } from "@src/store/actions/post";
+import { addComments, setCommentCount, setComments, setReplies } from "@src/store/actions/post";
 
 
 interface PostViewProps {
@@ -39,7 +31,6 @@ interface PostViewProps {
 interface SingleCommentProps {
   data: any;
   index: number;
-  setComments: any;
   comment: any;
   addCommentMutation: any;
   commentLoader: boolean;
@@ -69,24 +60,18 @@ interface CommentApiStates {
 const SingleComment: React.FC<SingleCommentProps> = ({
   data,
   index,
-  setComments,
   comment,
   addCommentMutation,
   commentLoader,
   postIndex
 }) => {
-  const [activeReaction, setActiveReaction] = useState<string>("");
 
   const [reply, setReply] = useState<boolean>(false);
   const [replyMessage, setReplyMessage] = useState<string>("");
 
-  const [reactions, setCommentReactions] = useState(0);
+  // dispatch
+  const dispatch: AppDispatch = useDispatch();
 
-  useEffect(() => {
-    if (data?.reactionCount) {
-      setCommentReactions(data?.reactionCount)
-    }
-  }, [data])
 
   // reply in a comment
   const Reply = () => {
@@ -96,7 +81,7 @@ const SingleComment: React.FC<SingleCommentProps> = ({
 
     addCommentMutation({ path: data?.path ? `${data?.path}/${data?._id}` : data._id, parent: data?._id, body: replyMessage });
 
-    setComments(list);
+    dispatch(setComments({ index: postIndex, comments: list }))
     setReplyMessage('')
 
     setReply(false);
@@ -110,7 +95,7 @@ const SingleComment: React.FC<SingleCommentProps> = ({
       <div key={index} className="flex">
         <AvatarSingle src={data?.send_by?.profile_picture} alt="Profile Picture" className="!z-50" />
 
-        <div className="ml-2 max-w-[500px] min-w-[330px]">
+        <div className="ml-2 max-w-[500px] min-w-[220px]">
           <div className="bg-light_gray_ px-6 py-2 rounded-[15px] dark:bg-dark_light_bg_ leading-5">
             <p className="font-bold text-[16px] text-dark_ dark:text-white_">
               {data?.send_by.name}
@@ -124,36 +109,6 @@ const SingleComment: React.FC<SingleCommentProps> = ({
             <div className="max-w-[230px] w-full flex items-center justify-between">
               <p className="text-[14px] text-dark_ dark:text-dark_text_"><TimeAgo date={timeAgo} /></p>
 
-              <div className="flex items-center gap-x-[3px]">
-                <Like
-                  setActiveReaction={setActiveReaction}
-                  reactionStatus="comment"
-                  commentId={data._id}
-                  data={data}
-                  index={postIndex}
-                />
-
-                {activeReaction === "Like" && (
-                  <AiFillLike size={25} className="text-blue-500" />
-                )}
-                {activeReaction === "Love" && <FcLike size={25} />}
-                {activeReaction === "Care" && (
-                  <img src={care} className="w-[30px] h-[30px]" alt="Care" />
-                )}
-                {activeReaction === "Sad" && (
-                  <img src={sad} className="w-[20px] h-[20px]" alt="Sad" />
-                )}
-                {activeReaction === "Angry" && (
-                  <img src={angry} className="w-[30px] h-[30px]" alt="Angry" />
-                )}
-                {activeReaction === "Wow" && (
-                  <img src={wow} className="w-[30px] h-[30px]" alt="Wow" />
-                )}
-                {activeReaction === "Haha" && (
-                  <img src={haha} className="w-[20px] h-[20px]" alt="Haha" />
-                )}
-              </div>
-
               <p
                 onClick={() => {
                   setReply(true);
@@ -164,9 +119,6 @@ const SingleComment: React.FC<SingleCommentProps> = ({
               </p>
             </div>
 
-            <div className="ml-3 flex items-center gap-x-[2px] ">
-              <p className="text-dark_ dark:text-dark_text_ text-[16px]">{reactions} Reactions</p>
-            </div>
           </div>
         </div>
       </div>
@@ -216,8 +168,8 @@ const PostView: React.FC<PostViewProps> = ({
 }) => {
   const closeButton = useRef<HTMLDivElement>(null);
 
-  const [comments, setComments] = useState<any>([]);
-  const [allReplies, setReplies] = useState<any>([]);
+  // const [comments, setComments] = useState<any>([]);
+  // const [allReplies, setReplies] = useState<any>([]);
 
   const [message, setMessage] = useState<string>("");
 
@@ -229,6 +181,15 @@ const PostView: React.FC<PostViewProps> = ({
 
   // dispatch
   const dispatch: AppDispatch = useDispatch();
+
+  // comments
+  const allCommentFromState = useSelector((state: RootState) => state.posts.posts[postIndex].comments);
+  const comments = allCommentFromState || [];
+
+  // allReplies
+  const allRepliesFromState = useSelector((state: RootState) => state.posts.posts[postIndex].replies);
+  const allReplies = allRepliesFromState || [];
+
 
   // useEffect(() => {
   //   const baseComments = CommentData.filter((data: any) => !data?.parent);
@@ -254,8 +215,8 @@ const PostView: React.FC<PostViewProps> = ({
         }
       }
 
-      setComments(allMainComments);
-      setReplies(allReplyComments)
+      dispatch(setComments({ index: postIndex, comments: allMainComments }))
+      dispatch(setReplies({ index: postIndex, replies: allReplyComments }))
     }
   }, [allComments]);
 
@@ -292,7 +253,7 @@ const PostView: React.FC<PostViewProps> = ({
       setMessage('');
 
       if (!data?.data?.parent) {
-        setComments([{ ...data?.data, send_by: { profile_picture: profileData.profile_picture, name: profileData.name } }, ...comments])
+        dispatch(addComments({ index: postIndex, comment: { ...data?.data, send_by: { profile_picture: profileData.profile_picture, name: profileData.name } } }))
       } else {
         queryClient.invalidateQueries([`getComments${postId}`])
         closeButton.current?.click();
@@ -345,7 +306,7 @@ const PostView: React.FC<PostViewProps> = ({
                     let newArray = [...comments];
                     newArray.splice(index + 1, 0, ...replies);
 
-                    setComments(newArray);
+                    dispatch(setComments({ index: postIndex, comments: newArray }))
                     newArray = [];
                   }
 
@@ -358,7 +319,6 @@ const PostView: React.FC<PostViewProps> = ({
                       <SingleComment
                         data={data}
                         index={index}
-                        setComments={setComments}
                         comment={comments}
                         addCommentMutation={addCommentMutation}
                         commentLoader={commentLoader}

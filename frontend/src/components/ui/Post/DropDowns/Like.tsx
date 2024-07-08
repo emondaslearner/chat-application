@@ -105,8 +105,6 @@ const Like: React.FC<LikeProps> = ({
     setReaction(reactionState || "");
   }, [reactionState]);
 
-  console.log('reactionState', reactionState);
-
   const [apiCallStatus, setApiCallStatus] = useState(false);
 
   const [reactionIncrementStatus, setReactionIncrementStatus] = useState<boolean | null>(null);

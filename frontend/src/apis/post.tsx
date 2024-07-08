@@ -6,6 +6,7 @@ interface getPostsStates {
   search: string;
   sortBy: string;
   sortType: string;
+  id?: string;
 }
 
 const getPostsAPI = ({
@@ -14,11 +15,12 @@ const getPostsAPI = ({
   search,
   sortBy,
   sortType,
+  id
 }: getPostsStates) => {
   return new Promise((resolve, reject) => {
     axios
       .get(
-        `/user/posts?page=${page}&limit=${limit}&search=${search}&sortBy=${sortBy}&sortType=${sortType}`
+        id ? `/user/posts?page=${page}&limit=${limit}&search=${search}&sortBy=${sortBy}&sortType=${sortType}&id=${id}` : `/user/posts?page=${page}&limit=${limit}&search=${search}&sortBy=${sortBy}&sortType=${sortType}`
       )
       .then((response) => {
         resolve(response?.data);
@@ -65,9 +67,9 @@ const addPostAPI = ({ color, files, text }: addPostAPIStates) => {
     const formData: any = new FormData();
     formData.append('title', text);
     formData.append('color', color);
-  
 
-    if(files?.length) {
+
+    if (files?.length) {
       files.forEach((file, index) => {
         formData.append('photo', file);
       });
@@ -87,5 +89,21 @@ const addPostAPI = ({ color, files, text }: addPostAPIStates) => {
   })
 }
 
+interface deletePostAPIStates {
+  postId: string
+}
 
-export { getPostsAPI, addReactionToPostAPI, addPostAPI };
+const deletePostAPI = ({ postId }: deletePostAPIStates) => {
+  new Promise((resolve, reject) => {
+    axios.delete(`/user/post/${postId}`)
+      .then((response) => {
+        resolve(response?.data);
+      })
+      .catch((error) => {
+        reject(error);
+      })
+  })
+}
+
+
+export { getPostsAPI, addReactionToPostAPI, addPostAPI, deletePostAPI };
