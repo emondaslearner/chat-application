@@ -30,7 +30,7 @@ const getMyPosts = async ({ id, userId, filterData }) => {
       })
       .populate({
         path: "reactions",
-        select: "reaction given_by"
+        select: "reaction given_by",
       })
       .sort(sortStr)
       .skip(filterData.page * filterData.limit - filterData.limit)
@@ -40,7 +40,7 @@ const getMyPosts = async ({ id, userId, filterData }) => {
   // check in redis
   const serializedFilterData = JSON.stringify(filterData);
   const keyPrefix = "posts:";
-  const key = `${keyPrefix}${serializedFilterData}${userId}`;
+  const key = `${keyPrefix}${serializedFilterData}${id || userId}`;
 
   const posts = await getDataFromRedis(key, getPosts);
 
