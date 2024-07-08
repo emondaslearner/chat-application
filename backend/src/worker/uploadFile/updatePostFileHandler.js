@@ -6,7 +6,15 @@ const {
   calculatePercentagePerFile,
 } = require("./commonFunctions");
 
-const updatePost = async ({ title, color, photo, video, userId, postId }) => {
+const updatePost = async ({
+  title,
+  color,
+  photo,
+  video,
+  userId,
+  postId,
+  existingFilesIds,
+}) => {
   let perVideoPercentage;
   let perPhotoPercentage;
   if (photo.length || video.length) {
@@ -15,8 +23,6 @@ const updatePost = async ({ title, color, photo, video, userId, postId }) => {
     perVideoPercentage = videoPercentage;
     perPhotoPercentage = photoPercentage;
   }
-
-  console.log({ title, color, photo, video, userId, postId });
 
   // upload photo
   let photoSchemaIds = [];
@@ -45,7 +51,8 @@ const updatePost = async ({ title, color, photo, video, userId, postId }) => {
 
   if (title) updateFields.title = title;
   if (color) updateFields.color = color;
-  if (photo.length) updateFields.photos = photoSchemaIds;
+  if (photo.length)
+    updateFields.photos = [...existingFilesIds, ...photoSchemaIds];
   if (video.length) updateFields.videos = videoSchemaIds;
 
   await Post.findOneAndUpdate({ _id: postId, user: userId }, updateFields);

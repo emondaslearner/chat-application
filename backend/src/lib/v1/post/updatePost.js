@@ -8,7 +8,7 @@ const worker_threads = new Worker(
   path.join(__dirname, "../../../", "worker", "index.js")
 );
 
-const updatePost = async ({ userId, postId, updateData }) => {
+const updatePost = async ({ userId, postId, existingFilesIds }) => {
   if (!userId || !postId) {
     throw error.badRequest(
       `${!userId && "userId:userId not provided"}|${
@@ -17,7 +17,7 @@ const updatePost = async ({ userId, postId, updateData }) => {
     );
   }
 
-  const { title, color, photo, video } = updateData;
+  const { title, color, photo, video, filesUrls } = updateData;
   if (color && !title) {
     throw error.badRequest(
       "title:When you provide color then you must have to pass title"
@@ -49,6 +49,7 @@ const updatePost = async ({ userId, postId, updateData }) => {
     video,
     userId,
     postId,
+    existingFilesIds
   };
 
   worker_threads.postMessage({
