@@ -32,6 +32,10 @@ const getMyPosts = async ({ id, userId, filterData }) => {
         path: "reactions",
         select: "reaction given_by",
       })
+      .populate({
+        path: "user",
+        select: "name profile_picture"
+      })
       .sort(sortStr)
       .skip(filterData.page * filterData.limit - filterData.limit)
       .limit(filterData.limit);
