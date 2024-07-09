@@ -55,12 +55,18 @@ const updatePost = async ({
     updateFields.photos = [...existingFilesIds, ...photoSchemaIds];
   if (video.length) updateFields.videos = videoSchemaIds;
 
-  await Post.findOneAndUpdate({ _id: postId, user: userId }, updateFields);
+  const data = await Post.findOneAndUpdate(
+    { _id: postId, user: userId },
+    updateFields,
+    {
+      new: true,
+    }
+  );
 
   // socket.to(userId).emit("postUploaded", 100);
   parentPort.postMessage({ userId, percentage: 100, status: "updatePost" });
 
-  return true;
+  return data;
 };
 
 module.exports = {
