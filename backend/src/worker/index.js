@@ -55,15 +55,11 @@ parentPort.on("message", async (allData) => {
         parentPort.postMessage({
           userId: data.userId,
           savedData: JSON.stringify(postData),
-          status: "postUpdated",
+          status: "updatePostData",
         });
       }
     } catch (err) {
-      await sentMessageToTopic({
-        topic: data.userId,
-        title: "Post status not updated",
-        body: "Something was wrong. please try again",
-      });
+      console.log(err);
     }
   }
 
