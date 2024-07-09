@@ -98,8 +98,12 @@ const posts = createSlice({
 
       state.posts = list;
     },
-    updatePostInStore: (state, action: PayloadAction<{ index: number, data: any }>) => {
-      state.posts[action.payload.index] = action.payload.data
+    updatePostInStore: (state, action: PayloadAction<{ postId: string, data: any }>) => {
+      const index = state.posts.findIndex(
+        (obj: any) => obj._id === action.payload.postId
+      );
+
+      state.posts[index] = action.payload.data
     }
   },
 });

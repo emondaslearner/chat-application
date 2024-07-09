@@ -138,7 +138,7 @@ const editPostAPI = ({ postId, files, existingFilesIds, text, color }: editPostA
     const formData: any = new FormData();
     formData.append("title", text);
     formData.append("color", color);
-    formData.append("existingFilesIds", existingFilesIds);
+    formData.append("existingFilesIds", JSON.stringify(existingFilesIds));
 
     if (files?.length) {
       files.forEach((file: any) => {

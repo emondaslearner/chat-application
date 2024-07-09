@@ -12,8 +12,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useSystemTheme } from "./hooks";
 import { AppDispatch } from "./store/store";
 import { changeMode } from "./store/actions/themeConfig";
-import io from 'socket.io-client';
-import { initializeSocket } from "./utils/socke";
+import { initializeSocket } from "./utils/socket";
 
 
 export const queryClient = new QueryClient();
@@ -76,16 +75,3 @@ function App() {
 
 export default App;
 
-
-export const getSocket = () => {
-  let socket;
-  if (!socket) {
-    const token = localStorage.getItem("token") || "";
-    socket = io('ws://localhost:6500', {
-      extraHeaders: {
-        Authorization: token
-      }
-    });
-  }
-  return socket;
-};

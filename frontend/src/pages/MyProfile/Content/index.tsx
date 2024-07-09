@@ -7,7 +7,7 @@ import Spinner from "@src/components/shared/Spinner";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@src/store/store";
 import { addPostToState, setPosts } from "@src/store/actions/post";
-import { getSocket } from "@src/utils/socke";
+import { getSocket } from "@src/utils/socket";
 import { NavigateFunction, useNavigate, useParams } from "react-router-dom";
 import { queryClient } from "@src/App";
 

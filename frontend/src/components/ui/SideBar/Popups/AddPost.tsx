@@ -12,7 +12,7 @@ import { useMutation } from "react-query";
 import { handleAxiosError } from "@src/utils/error";
 import { useSelector } from "react-redux";
 import { RootState } from "@src/store/store";
-import { error } from "@src/utils/alert";
+import { error, success } from "@src/utils/alert";
 import { addPostAPI, editPostAPI } from "@src/apis/post";
 import { queryClient } from "@src/App";
 import Spinner from "@src/components/shared/Spinner";
@@ -160,6 +160,7 @@ const AddPost: React.FC<AddPostProps> = ({ children, data, edit }) => {
     mutationFn: addPostHandler,
     mutationKey: ["addPostKey"],
     onSuccess: (data: any) => {
+      success({ message: "Post will add soon. We will notify you", themeColor });
       if (data !== "error") {
         if (files.length) {
           queryClient.invalidateQueries(["userPhotos"]);
@@ -192,6 +193,8 @@ const AddPost: React.FC<AddPostProps> = ({ children, data, edit }) => {
         return "error";
       }
 
+      console.log('existingFilesIds', existingFilesIds);
+
       const response = await editPostAPI({
         color,
         files,
@@ -213,6 +216,7 @@ const AddPost: React.FC<AddPostProps> = ({ children, data, edit }) => {
     mutationKey: ["editPostKey"],
     onSuccess: (data: any) => {
       if (data !== "error") {
+        success({ message: "Post will update soon. We will notify you", themeColor });
         if (files.length) {
           queryClient.invalidateQueries(["userPhotos"]);
         }

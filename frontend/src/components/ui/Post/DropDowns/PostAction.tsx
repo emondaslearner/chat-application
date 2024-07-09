@@ -2,10 +2,10 @@ import Dropdown from "@src/components/ui/Dropdown";
 import React, { ReactNode, useEffect, useRef } from "react";
 import Confirmation from "../Popups/Confirmation";
 import AddPost from "../../SideBar/Popups/AddPost";
-import { getSocket } from "@src/App";
 import { updatePostInStore } from "@src/store/actions/post";
 import { AppDispatch } from "@src/store/store";
 import { useDispatch } from "react-redux";
+import { getSocket } from "@src/utils/socket";
 
 interface PostActionProps {
   openButton: ReactNode;
@@ -61,14 +61,14 @@ const PostAction: React.FC<PostActionProps> = ({ openButton, postId, postIndex, 
     socket.on("postUpdated", (data: any) => {
       const newData: any = JSON.parse(data);
       if (newData) {
-        dispatch(updatePostInStore(newData))
+        dispatch(updatePostInStore({ postId: newData?._id, data: newData }))
       }
     })
 
     return () => {
       socket.off('chat message');
     };
-  }, [dispatch])
+  }, [dispatch, postIndex])
 
   return (
     <div>
