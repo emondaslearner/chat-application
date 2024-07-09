@@ -10,7 +10,7 @@ const updatePost = async (req, res, next) => {
       title: req.body?.title,
       photo: photo ? photo : [],
       video: video ? video : [],
-      existingFilesIds: req.body?.existingFilesIds,
+      existingFilesIds: JSON.parse(req.body?.existingFilesIds),
     };
 
     await updatePostLib({
