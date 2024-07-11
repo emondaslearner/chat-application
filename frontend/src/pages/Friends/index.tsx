@@ -1,12 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import SideBar from "../../components/ui/SideBar";
 import Content from "./Content";
 
-interface FriendsProps {}
+interface FriendsProps { }
 
 const Friends: React.FC<FriendsProps> = () => {
-  // friend open status
-  const [chatStatus, setChatStatus] = useState<boolean>(false);
 
   return (
     <div className="w-full max-w-[2000px] mx-auto">
@@ -18,16 +16,6 @@ const Friends: React.FC<FriendsProps> = () => {
           <Content />
         </div>
       </div>
-
-      {chatStatus ? (
-        <div className="w-[95%] mx-auto">
-          <Content />
-        </div>
-      ) : (
-        <div className="w-[95%] mx-auto">
-          <SideBar setChat={setChatStatus} />
-        </div>
-      )}
     </div>
   );
 };

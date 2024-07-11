@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import SideBarHeader from "./SideBarHeader";
 import ActiveUsers from "./ActiveUsers";
 import { useLocation } from "react-router-dom";
@@ -17,13 +17,16 @@ const SideBar: React.FC<SideBarProps> = ({ setChat }) => {
 
   const split = location.pathname.split("/");
 
+  // search 
+  const [search, setSearch] = useState<string>("");
+
   return (
     <div className="border-r-[1px] border-light_border_ dark:border-dark_border_ h-[100vh] overflow-hidden dark:bg-dark_bg_">
       {/* if page is not profile */}
       {split?.[1] !== "profile" && (
         <>
           {/* chat header */}
-          <SideBarHeader />
+          <SideBarHeader setSearch={setSearch} search={search} />
 
           {/* Active users */}
           {location.pathname === "/chat" && <ActiveUsers />}
@@ -49,7 +52,7 @@ const SideBar: React.FC<SideBarProps> = ({ setChat }) => {
               {location.pathname === "/friends" && (
                 <>
                   {/* Call list */}
-                  <FriendsList setChat={setChat} />
+                  <FriendsList search={search} setChat={setChat} />
                 </>
               )}
             </ul>

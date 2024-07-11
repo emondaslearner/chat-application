@@ -43,7 +43,7 @@ const Content: React.FC<ContentProps> = ({ setStatus }) => {
     if (id === profileData.id) {
       navigate('/profile')
     } else {
-      queryClient.invalidateQueries(["personalPostData"]);
+      queryClient.invalidateQueries([`personalPostData${id || profileData.id}`]);
     }
   }, [id, profileData, navigate])
 
@@ -51,7 +51,7 @@ const Content: React.FC<ContentProps> = ({ setStatus }) => {
 
   const { data, isLoading }: PostsQueryStates = useQuery({
     queryFn: () => getPostsAPI({ page, limit, sortBy, sortType, search: "", id }),
-    queryKey: ["personalPostData"],
+    queryKey: [`personalPostData${id || profileData.id}`],
     staleTime: Infinity
   });
 

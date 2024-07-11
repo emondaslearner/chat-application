@@ -71,6 +71,9 @@ const AddPost: React.FC<AddPostProps> = ({ children, data, edit }) => {
   const [uploadStatus, setUploadStatus] = useState<string>("file");
   const [color, setColor] = useState<string>("");
 
+  // profile data
+  const profileData = useSelector((state: RootState) => state.auth);
+
   // theme color
   const themeColor = useSelector((state: RootState) => state.themeConfig.mode);
 
@@ -163,7 +166,8 @@ const AddPost: React.FC<AddPostProps> = ({ children, data, edit }) => {
       success({ message: "Post will add soon. We will notify you", themeColor });
       if (data !== "error") {
         if (files.length) {
-          queryClient.invalidateQueries(["userPhotos"]);
+          queryClient.invalidateQueries([`userPhotos${profileData.id}`]);
+          queryClient.invalidateQueries([`userPhotosAllPhotos${profileData.id}`]);
         }
         setColor("");
         setText("");
@@ -218,7 +222,8 @@ const AddPost: React.FC<AddPostProps> = ({ children, data, edit }) => {
       if (data !== "error") {
         success({ message: "Post will update soon. We will notify you", themeColor });
         if (files.length) {
-          queryClient.invalidateQueries(["userPhotos"]);
+          queryClient.invalidateQueries([`userPhotos${profileData.id}`]);
+          queryClient.invalidateQueries([`userPhotosAllPhotos${profileData.id}`]);
         }
         setColor("");
         setText("");

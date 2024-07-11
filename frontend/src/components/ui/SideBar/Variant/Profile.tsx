@@ -22,7 +22,6 @@ import {
 } from "@src/apis/friend";
 import Spinner from "@src/components/shared/Spinner";
 import { getAllPhoto } from "@src/apis/photo";
-import { getAllVideo } from "@src/apis/video";
 import {
   acceptFriendRequestAPI,
   cancelFriendRequestAPI,
@@ -131,15 +130,6 @@ const Profile: React.FC<ProfileProps> = () => {
     (state: RootState) => state.auth
   );
 
-  // normal user data
-  const { data: normalUserDataApiData } = useQuery({
-    queryFn: () => getUserData({ userId: id }),
-    staleTime: Infinity,
-    queryKey: ["normalUserData"],
-  });
-
-  const normalUserData: any = normalUserDataApiData;
-
   const saveProfileInformationToDb = async (e: any) => {
     e.preventDefault();
     try {
@@ -180,6 +170,15 @@ const Profile: React.FC<ProfileProps> = () => {
   // get params id
   const { id } = useParams();
 
+  // normal user data
+  const { data: normalUserDataApiData } = useQuery({
+    queryFn: () => getUserData({ userId: id }),
+    staleTime: Infinity,
+    queryKey: [`normalUserData${id || ""}`],
+  });
+
+  const normalUserData: any = normalUserDataApiData;
+
   // get friends
   const { data, isLoading } = useQuery({
     queryFn: () =>
@@ -192,7 +191,7 @@ const Profile: React.FC<ProfileProps> = () => {
         id,
       }),
     staleTime: Infinity,
-    queryKey: ["userFriend"],
+    queryKey: [`userFriend${id || profileData.id}`]
   });
 
   const friends: any = data;
@@ -208,28 +207,28 @@ const Profile: React.FC<ProfileProps> = () => {
         search: "",
         id,
       }),
+    queryKey: [`userPhotos${id || profileData.id}`],
     staleTime: Infinity,
-    queryKey: ["userPhotos"],
   });
 
   const photos: any = photoData;
 
   // get videos
-  const { data: videoData, isLoading: videoLoadingStatus } = useQuery({
-    queryFn: () =>
-      getAllVideo({
-        limit: 8,
-        page: 1,
-        sortBy: "updatedAt",
-        sortType: "dsc",
-        search: "",
-        id,
-      }),
-    staleTime: Infinity,
-    queryKey: ["userVideos"],
-  });
+  // const { data: videoData, isLoading: videoLoadingStatus } = useQuery({
+  //   queryFn: () =>
+  //     getAllVideo({
+  //       limit: 8,
+  //       page: 1,
+  //       sortBy: "updatedAt",
+  //       sortType: "dsc",
+  //       search: "",
+  //       id,
+  //     }),
+  //   staleTime: Infinity,
+  //   queryKey: ["userVideos"],
+  // });
 
-  const videos: any = videoData;
+  // const videos: any = videoData;
 
   // check already given request or not
 
@@ -259,7 +258,7 @@ const Profile: React.FC<ProfileProps> = () => {
   const { data: checkFriend }: friendProps = useQuery({
     queryFn: () => getSingleFriendAPI({ id }),
     staleTime: Infinity,
-    queryKey: [`userSingleFriend`],
+    queryKey: [`userSingleFriend${id || ""}`],
     retry: 2,
   });
 
@@ -316,8 +315,8 @@ const Profile: React.FC<ProfileProps> = () => {
       mutationKey: ["deleteFriendKey"],
       onSuccess: (_data: any) => {
         success({ message: "Deleted friend successfully", themeColor });
-        queryClient.invalidateQueries(["userFriend"]);
-        queryClient.invalidateQueries(["userSingleFriend"]);
+        queryClient.invalidateQueries([`userFriend${profileData.id}`]);
+        queryClient.invalidateQueries([`userSingleFriend${id || ""}`]);
         setFriendRequestStatus(false);
         setCheckFriendStatus(false);
       },
@@ -369,8 +368,8 @@ const Profile: React.FC<ProfileProps> = () => {
     mutationKey: ["acceptFriendRequestKey"],
     onSuccess: (_data: any) => {
       success({ message: "Accepted Request successfully", themeColor });
-      queryClient.invalidateQueries(["userFriend"]);
-      queryClient.invalidateQueries(["userSingleFriend"]);
+      queryClient.invalidateQueries([`userFriend${profileData.id}`]);
+      queryClient.invalidateQueries([`userSingleFriend${id || ""}`]);
       queryClient.invalidateQueries(["friendRequest"]);
       queryClient.invalidateQueries([`friendRequest${profileData.id}${id}`]);
 
@@ -380,7 +379,7 @@ const Profile: React.FC<ProfileProps> = () => {
   });
 
   // show this message when profile not found
-  if (id && !videos && !friends && !photos && !normalUserData) {
+  if (id && !friends && !photos && !normalUserData) {
     return (
       <div className="w-full h-full flex justify-center items-center">
         <p className="text-dark_ dark:text-dark_text_ text-[20px] font-semibold">
@@ -588,7 +587,7 @@ const Profile: React.FC<ProfileProps> = () => {
       <Photos photoLoadingStatus={photoLoadingStatus} photos={photos} />
 
       {/* Videos */}
-      <div className="w-[95%] mx-auto mt-4 mb-4">
+      {/* <div className="w-[95%] mx-auto mt-4 mb-4">
         <div className="flex items-center justify-between">
           <p className="text-[20px] text-dark_ dark:text-white_ font-semibold">
             Videos
@@ -622,60 +621,13 @@ const Profile: React.FC<ProfileProps> = () => {
             <p>There is no video</p>
           </div>
         )}
-      </div>
+      </div> */}
     </div>
   );
 };
 
 export default Profile;
 
-interface VideoThumbnailProps {
-  videoSrc: string;
-}
-
-const VideoThumbnail = ({ videoSrc }: VideoThumbnailProps) => {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
-
-  const handleMouseEnter = () => {
-    if (videoRef.current && !isPlaying) {
-      videoRef.current
-        .play()
-        .then(() => {
-          setIsPlaying(true);
-        })
-        .catch((error) => {
-          console.error("Error playing video:", error);
-        });
-    }
-  };
-
-  const handleMouseLeave = () => {
-    if (videoRef.current && isPlaying) {
-      setTimeout(() => {
-        videoRef.current?.pause();
-        videoRef.current!.currentTime = 0;
-        setIsPlaying(false);
-      }, 100); // Add a small delay before pausing
-    }
-  };
-
-  return (
-    <div
-      className="relative inline-block h-[100px] overflow-hidden cursor-pointer"
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
-      <video
-        ref={videoRef}
-        src={videoSrc}
-        className={` object-cover rounded-[10px] h-[100px]`}
-        muted
-        loop
-      />
-    </div>
-  );
-};
 
 interface PhotosProps {
   photoLoadingStatus: boolean;
@@ -684,14 +636,14 @@ interface PhotosProps {
 
 const Photos = ({ photoLoadingStatus, photos }: PhotosProps) => {
   return (
-    <div className="w-[95%] mx-auto mt-4">
+    <div className="w-[95%] mx-auto mt-4 mb-5">
       <div className="flex items-center justify-between">
         <p className="text-[20px] text-dark_ dark:text-white_ font-semibold">
           Photos
         </p>
 
         <div className="w-[10%]">
-        <PhotosModel />
+          <PhotosModel />
         </div>
       </div>
 
@@ -716,8 +668,8 @@ const Photos = ({ photoLoadingStatus, photos }: PhotosProps) => {
           })}
         </div>
       ) : (
-        <div className="text-center text-white_ w-full flex justify-center">
-          <p>There is no photo</p>
+        <div className="text-center w-full flex justify-center">
+          <p className="text-[18px] font-semibold text-dark_ dark:text-dark_text_" >There is no photo</p>
         </div>
       )}
     </div>
@@ -782,7 +734,9 @@ const Friends = ({
                   alt="Profile"
                 />
                 <p className="text-[16px] font-semibold dark:text-dark_text_">
-                  {data.second_user.name}
+                  {profileData.id === data?.second_user._id
+                    ? data?.first_user?.name
+                    : data?.second_user?.name}
                 </p>
               </div>
             );
@@ -792,3 +746,51 @@ const Friends = ({
     </div>
   );
 };
+
+// interface VideoThumbnailProps {
+//   videoSrc: string;
+// }
+
+// const VideoThumbnail = ({ videoSrc }: VideoThumbnailProps) => {
+//   const videoRef = useRef<HTMLVideoElement>(null);
+//   const [isPlaying, setIsPlaying] = useState<boolean>(false);
+
+//   const handleMouseEnter = () => {
+//     if (videoRef.current && !isPlaying) {
+//       videoRef.current
+//         .play()
+//         .then(() => {
+//           setIsPlaying(true);
+//         })
+//         .catch((error) => {
+//           console.error("Error playing video:", error);
+//         });
+//     }
+//   };
+
+//   const handleMouseLeave = () => {
+//     if (videoRef.current && isPlaying) {
+//       setTimeout(() => {
+//         videoRef.current?.pause();
+//         videoRef.current!.currentTime = 0;
+//         setIsPlaying(false);
+//       }, 100); // Add a small delay before pausing
+//     }
+//   };
+
+//   return (
+//     <div
+//       className="relative inline-block h-[100px] overflow-hidden cursor-pointer"
+//       onMouseEnter={handleMouseEnter}
+//       onMouseLeave={handleMouseLeave}
+//     >
+//       <video
+//         ref={videoRef}
+//         src={videoSrc}
+//         className={` object-cover rounded-[10px] h-[100px]`}
+//         muted
+//         loop
+//       />
+//     </div>
+//   );
+// };

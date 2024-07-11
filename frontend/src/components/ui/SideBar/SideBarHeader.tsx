@@ -8,8 +8,12 @@ import { Search } from "react-feather";
 import Input from "../../shared/Input";
 import Dropdown from "../Dropdown";
 import Notification from "./Popups/Notification";
+import { Location, useLocation } from "react-router-dom";
 
-interface SideBarHeaderProps {}
+interface SideBarHeaderProps {
+  setSearch: any;
+  search: string;
+}
 
 interface OptionProps {
   label: string;
@@ -47,12 +51,15 @@ const items: Items[] = [
   },
 ];
 
-const SideBarHeader: React.FC<SideBarHeaderProps> = () => {
+const SideBarHeader: React.FC<SideBarHeaderProps> = ({ search, setSearch }) => {
+  // location
+  const location: Location = useLocation();
+
   return (
     <div className="border-b-[1px] border-light_border_ dark:border-dark_border_ pb-3">
       <div className="flex justify-between w-full px-4 pt-6 pb-3">
         <p className="text-[19px] font-semibold text-dark_ mt-[-5px] dark:text-white_">
-          Chats
+          {location.pathname === '/chat' ? 'Chats' : 'Friends'}
         </p>
         <div className="flex">
           {/* Notification */}
@@ -68,12 +75,17 @@ const SideBarHeader: React.FC<SideBarHeaderProps> = () => {
         </div>
       </div>
       <div className="flex px-4 items-center justify-between sidebarHeader">
-        <Selects options={options} />
-        <div className="relative w-[250px]">
+        {
+          location.pathname !== '/friends' &&
+          <Selects options={options} />
+        }
+        <div className={`relative ${location.pathname === '/friends' ? 'w-full' : 'w-[250px]'}`}>
           <Input
             type="text"
             className="w-full outline-none border-[1px] rounded-[5px] border-light_border_ py-[6px] px-2 dark:!bg-dark_bg_"
             placeholder="Search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
           />
           <Search
             size={18}
