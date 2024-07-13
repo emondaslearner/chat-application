@@ -35,7 +35,7 @@ const FriendsList: React.FC<FriendsListProps> = ({ setChat, search }) => {
 
   const { data, isLoading }: { data: any, isLoading: boolean } = useQuery({
     queryFn: () => getFriendList({ page, limit, sortBy, sortType, search }),
-    queryKey: [`userFriend${page}${search}`],
+    queryKey: [`userFriend${page}${search}${profileData.id}`],
     staleTime: Infinity
   });
 

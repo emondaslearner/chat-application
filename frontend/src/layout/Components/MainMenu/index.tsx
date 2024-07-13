@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 // images
 import logo from "../../../assets/logo/logo.svg";
@@ -13,21 +13,24 @@ import {
   faMoon,
   faHouse,
 } from "@fortawesome/free-solid-svg-icons";
-import { Location, useLocation, useNavigate } from "react-router-dom";
+import { Location, NavigateFunction, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { changeMode } from "@src/store/actions/themeConfig";
 import MobileMenu from "../MobileMenu";
 import { AppDispatch } from "@src/store/store";
 import { IoMdLogOut } from "react-icons/io";
-import { queryClient } from "@src/App";
-import { setUserData } from "@src/store/actions/auth";
+// import { queryClient } from "@src/App";
+// import { setUserData } from "@src/store/actions/auth";
+import Spinner from "@src/components/shared/Spinner";
+// import { setPosts } from "@src/store/actions/post";
+// import { setActiveFriendDetails } from "@src/store/actions/friend";
 // import nav from '../../../configs/nav.config.ts'
 
 interface MainMenuProps { }
 
 const MainMenu: React.FC<MainMenuProps> = () => {
   const location: Location = useLocation();
-  const navigate = useNavigate();
+  const navigate: NavigateFunction = useNavigate();
 
   // dispatch
   const dispatch: AppDispatch = useDispatch();
@@ -35,32 +38,53 @@ const MainMenu: React.FC<MainMenuProps> = () => {
   // mode status
   const mode: string = useSelector((state: any) => state?.themeConfig.mode);
 
+  const [loader, setLoader] = useState<boolean>(false);
+
   const logout = async () => {
-    // Remove token from local storage
-    localStorage.removeItem("token");
+    setLoader(true);
 
-    // Reset user data in your state management
-    dispatch(
-      setUserData({
-        name: "",
-        email: "",
-        profile_picture: "",
-        date_of_birth: "",
-        bio: "",
-        cover_picture: "",
-        city: "",
-        country: "",
-        id: "",
-      })
-    );
+    try {
+      // Remove token from local storage
+      localStorage.removeItem("token");
 
-    // Clear and invalidate queries
-    await queryClient.clear(); // Clear cache
-    await queryClient.invalidateQueries(); // Invalidate queries
+      window.location.href = "/login"
 
-    // Navigate to login page
-    navigate("/login");
+      // // Reset user data in your state management
+      // dispatch(
+      //   setUserData({
+      //     name: "",
+      //     email: "",
+      //     profile_picture: "",
+      //     date_of_birth: "",
+      //     bio: "",
+      //     cover_picture: "",
+      //     city: "",
+      //     country: "",
+      //     id: "",
+      //   })
+      // );
+
+      // // Clear store
+      // dispatch(setPosts([]));
+      // dispatch(setActiveFriendDetails({}));
+
+
+      // // Clear and invalidate queries
+      // queryClient.removeQueries();
+      // queryClient.clear();
+
+      // // Navigate to login page
+      // navigate("/login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    } finally {
+      setLoader(false);
+    }
   };
+
+  if (loader) {
+    return <Spinner loaderStatus="pageLoader" />
+  }
 
   return (
     <div

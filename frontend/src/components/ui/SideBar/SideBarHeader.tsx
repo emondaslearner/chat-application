@@ -66,12 +66,15 @@ const SideBarHeader: React.FC<SideBarHeaderProps> = ({ search, setSearch }) => {
           <Notification />
 
           {/* Dropdown */}
-          <Dropdown items={items}>
-            <FontAwesomeIcon
-              icon={faEllipsisVertical}
-              className="text-[19px] text-dark_gray_ !cursor-pointer"
-            />
-          </Dropdown>
+          {
+            location.pathname !== '/friends' &&
+            <Dropdown items={items}>
+              <FontAwesomeIcon
+                icon={faEllipsisVertical}
+                className="text-[19px] text-dark_gray_ !cursor-pointer"
+              />
+            </Dropdown>
+          }
         </div>
       </div>
       <div className="flex px-4 items-center justify-between sidebarHeader">

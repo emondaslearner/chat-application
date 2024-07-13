@@ -396,8 +396,8 @@ const Profile: React.FC<ProfileProps> = () => {
           className="w-full h-full"
           src={
             (!id
-              ? profileData.cover_picture
-              : normalUserData.data.cover_picture) ||
+              ? profileData?.cover_picture
+              : normalUserData?.data?.cover_picture) ||
             "https://img.freepik.com/free-vector/white-abstract-background-design_23-2148825582.jpg?size=626&ext=jpg&ga=GA1.1.2116175301.1719252000&semt=ais_user"
           }
           alt="Cover pic"
@@ -441,8 +441,8 @@ const Profile: React.FC<ProfileProps> = () => {
           className="!w-[150px] !h-[150px] border-[5px] rounded-full border-light_border_ dark:border-dark_border_ "
           src={
             !id
-              ? profileData.profile_picture
-              : normalUserData.data.profile_picture
+              ? profileData?.profile_picture
+              : normalUserData?.data?.profile_picture
           }
           alt="Profile picture"
         />

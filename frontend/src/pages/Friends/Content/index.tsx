@@ -1,10 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import AvatarSingle from "../../../components/shared/Avatar";
 import { TbMessageDots } from "react-icons/tb";
-import { BiTimeFive } from "react-icons/bi";
 import { BsCalendar2Event } from "react-icons/bs";
-import { HiOutlineMail } from "react-icons/hi";
-import { RiGlobalLine } from "react-icons/ri";
 import { AiOutlineHome } from "react-icons/ai";
 import { useSelector } from "react-redux";
 import { RootState } from "@src/store/store";
@@ -20,45 +17,8 @@ interface TestData {
   icon: React.ReactElement<any, any>;
 }
 
-const testData: TestData[] = [
-  {
-    title: "Local Time",
-    value: "10:25 PM",
-    icon: (
-      <BiTimeFive className="dark:text-dark_text_ text-dark_gray_" size={25} />
-    ),
-  },
-  {
-    title: "Birthdate",
-    value: "20/11/1992",
-    icon: (
-      <BsCalendar2Event className="dark:text-dark_text_ text-dark_gray_" size={25} />
-    ),
-  },
-  {
-    title: "Email",
-    value: "dev.emondas@gmail.com",
-    icon: (
-      <HiOutlineMail className="dark:text-dark_text_ text-dark_gray_" size={25} />
-    ),
-  },
-  {
-    title: "Website",
-    value: "www.catherichardson.com",
-    icon: (
-      <RiGlobalLine className="dark:text-dark_text_ text-dark_gray_" size={25} />
-    ),
-  },
-  {
-    title: "Address",
-    value: "1134 Ridder Park Road, San Fransisco, CA 94851",
-    icon: (
-      <AiOutlineHome className="dark:text-dark_text_ text-dark_gray_" size={25} />
-    ),
-  },
-];
-
 const Content: React.FC<ContentProps> = () => {
+
 
   // navigate
   const navigate: NavigateFunction = useNavigate();
@@ -68,6 +28,57 @@ const Content: React.FC<ContentProps> = () => {
 
   // params
   const { id } = useParams();
+
+  const [testData, setTestData] = useState<TestData[]>([]);
+
+  useEffect(() => {
+    const newDataList: any = [];
+
+    if (profileDetails?.date_of_birth) {
+      const date = new Date(profileDetails.date_of_birth); // Use the date of birth instead of the current date
+      newDataList.push({
+        title: "Birth Date",
+        value: `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`,
+        icon: (
+          <BsCalendar2Event className="dark:text-dark_text_ text-dark_gray_" size={25} />
+        ),
+      });
+    }
+
+    if (profileDetails?.bio) {
+      newDataList.push({
+        title: "Bio",
+        value: `${profileDetails.bio}`,
+        icon: (
+          <AiOutlineHome className="dark:text-dark_text_ text-dark_gray_" size={25} />
+        ),
+      });
+    }
+
+    if (profileDetails?.address) {
+      newDataList.push({
+        title: "Address",
+        value: `${`${profileDetails.address?.city},` || ""} ${profileDetails.address?.country || ""}`,
+        icon: (
+          <AiOutlineHome className="dark:text-dark_text_ text-dark_gray_" size={25} />
+        ),
+      });
+    }
+
+    // Add new items to testData if they do not already exist
+    if (newDataList.length > 0) {
+      setTestData((prevState) => {
+        const updatedState = [...prevState];
+        newDataList.forEach((newData: any) => {
+          const checkData = updatedState.find((data) => data.title === newData.title);
+          if (!checkData) {
+            updatedState.push(newData);
+          }
+        });
+        return updatedState;
+      });
+    }
+  }, [profileDetails]);
 
   return (
     <>
@@ -105,6 +116,7 @@ const Content: React.FC<ContentProps> = () => {
               {testData.map((data: TestData, i: number) => {
                 return (
                   <li
+                    key={i}
                     className={`w-full mx-auto py-3 px-5 flex items-center justify-between ${i + 1 !== testData.length && "border-b-[1px]"
                       } border-light_border_ dark:border-dark_border_ transition-all duration-300 relative`}
                   >

@@ -44,7 +44,7 @@ const Spinner: React.FC<SpinnerProps> = ({
           className={`${className}`}
         />
       ) : (
-        <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-white_ dark:bg-dark_bg_">
+        <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-white_ dark:bg-dark_bg_ z-[999999]">
           <Spinners
             color={color}
             size={loaderSize || "lg"}
