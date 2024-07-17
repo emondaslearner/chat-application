@@ -38,9 +38,22 @@ const getPosts = async ({ userId, filterData }) => {
   }`;
 
   const posts = await Posts.find({ user: { $in: friendsIds } })
-    .populate("photos", "photo")
-    .populate("videos", "video")
-    .populate("user", "name profile_picture")
+    .populate({
+      path: "photos",
+      select: "photo",
+    })
+    .populate({
+      path: "videos",
+      select: "video",
+    })
+    .populate({
+      path: "reactions",
+      select: "reaction given_by",
+    })
+    .populate({
+      path: "user",
+      select: "name profile_picture",
+    })
     .sort(sortStr)
     .skip(filterData.page * filterData.limit - filterData.limit)
     .limit(filterData.limit)

@@ -131,6 +131,14 @@ const addOrCancelReaction = async ({ userId, postId, reaction, commentId }) => {
     }
 
     await reactionOb.save();
+
+    // sent update via socket
+    io.to(userId).emit(`reaction$`, {
+      userId,
+      postId,
+      reaction
+    });
+
     return "updated";
   }
 
@@ -176,6 +184,13 @@ const addOrCancelReaction = async ({ userId, postId, reaction, commentId }) => {
 
     await comment.save();
   }
+
+  // sent update via socket
+  io.to(userId).emit(`reaction$`, {
+    userId,
+    postId,
+    reaction
+  });
 
   return "added";
 };
