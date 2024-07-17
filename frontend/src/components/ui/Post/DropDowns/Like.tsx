@@ -30,6 +30,7 @@ import { addReactionToPostAPI } from "@src/apis/post";
 import { addReactionToCommentAPI } from "@src/apis/comment";
 import { decreaseReactionCount, increaseReactionCount, setGivenReaction } from "@src/store/actions/post";
 import { decreaseFeedsReactionCount, increaseFeedsReactionCount, setFeedGivenReaction } from "@src/store/actions/feeds";
+import { useLocation } from "react-router-dom";
 
 interface LikeProps {
   setActiveReaction?: (e: string) => void;
@@ -96,15 +97,21 @@ const Like: React.FC<LikeProps> = ({
   index,
   status
 }) => {
+  const location = useLocation();
+
+  // profile data
+  const profileData = useSelector((state: RootState) => state.auth);
+
   const [isOpen, setOpen] = useState<boolean>(false);
 
-  const reactionState: string | undefined = useSelector((state: RootState) => status === 'feeds' ? state.feeds.feeds[index]?.givenReaction : state.posts.posts[index]?.givenReaction)
+  const reactionState: string | undefined = useSelector((state: RootState) => status === 'feeds' ? state.feeds.feeds[index]?.reactions.find((data: any) => data.given_by === profileData.id)?.reaction : state.posts.posts[index]?.reactions.find((data: any) => data.given_by === profileData.id)?.reaction)
 
   const [givenReaction, setReaction] = useState<string>("");
 
   useEffect(() => {
-    setReaction(reactionState || "");
-  }, [reactionState]);
+    const formattedReactionState = reactionState ? reactionState.charAt(0).toUpperCase() + reactionState.slice(1) : "";
+    setReaction(formattedReactionState || "");
+  }, [reactionState, location]);
 
   const [apiCallStatus, setApiCallStatus] = useState(false);
 
@@ -115,9 +122,6 @@ const Like: React.FC<LikeProps> = ({
 
   // theme color
   const themeColor = useSelector((state: RootState) => state.themeConfig.mode);
-
-  // profile data
-  const profileData = useSelector((state: RootState) => state.auth);
 
   // dispatch
   const dispatch: AppDispatch = useDispatch();
@@ -150,9 +154,9 @@ const Like: React.FC<LikeProps> = ({
     } catch (err) {
       error({ message: "Unable to reaction on post. try later", themeColor });
       if (status !== 'feeds') {
-        postId && dispatch(setGivenReaction({ index, reaction: "" }));
+        postId && dispatch(setGivenReaction({ index, reaction: "", userId: profileData?.id }));
       } else {
-        postId && dispatch(setFeedGivenReaction({ index, reaction: "" }));
+        postId && dispatch(setFeedGivenReaction({ index, reaction: "", userId: profileData?.id }));
       }
       throw err;
     }
@@ -194,9 +198,9 @@ const Like: React.FC<LikeProps> = ({
           findReaction.reaction.slice(1);
 
         if (status !== 'feeds') {
-          postId && dispatch(setGivenReaction({ index, reaction: reactionToCap }));
+          postId && dispatch(setGivenReaction({ index, reaction: reactionToCap, userId: profileData?.id }));
         } else {
-          postId && dispatch(setFeedGivenReaction({ index, reaction: reactionToCap }));
+          postId && dispatch(setFeedGivenReaction({ index, reaction: reactionToCap, userId: profileData?.id }));
         }
         setReactionIncrementStatus(true);
       }
@@ -232,9 +236,9 @@ const Like: React.FC<LikeProps> = ({
           onClick={() => {
             setOpen(!isOpen);
             if (status !== 'feeds') {
-              postId && dispatch(setGivenReaction({ index, reaction: givenReaction === "" ? "Like" : "" }));
+              postId && dispatch(setGivenReaction({ index, reaction: givenReaction === "" ? "Like" : "", userId: profileData?.id }));
             } else {
-              postId && dispatch(setFeedGivenReaction({ index, reaction: givenReaction === "" ? "Like" : "" }));
+              postId && dispatch(setFeedGivenReaction({ index, reaction: givenReaction === "" ? "Like" : "", userId: profileData?.id }));
             }
             if (givenReaction) {
               setPrvState(givenReaction);
@@ -323,9 +327,9 @@ const Like: React.FC<LikeProps> = ({
                 setPrvState(givenReaction);
               }
               if (status !== 'feeds') {
-                postId && dispatch(setGivenReaction({ index, reaction: item.key === givenReaction ? "" : item.key }));
+                postId && dispatch(setGivenReaction({ index, reaction: item.key === givenReaction ? "" : item.key, userId: profileData?.id }));
               } else {
-                postId && dispatch(setFeedGivenReaction({ index, reaction: item.key === givenReaction ? "" : item.key }));
+                postId && dispatch(setFeedGivenReaction({ index, reaction: item.key === givenReaction ? "" : item.key, userId: profileData?.id }));
               }
               setApiCallStatus(true);
             }}

@@ -34,12 +34,26 @@ const feeds = createSlice({
         },
         setFeedGivenReaction: (
             state,
-            action: PayloadAction<{ index: number, reaction: string }>
+            action: PayloadAction<{ index: number, reaction: string, userId: string }>
         ) => {
-            state.feeds[action.payload.index] = {
-                ...state.feeds[action.payload.index],
-                givenReaction: action.payload.reaction,
-            };
+            const reactionIndex = state.feeds[action.payload.index].reactions.findIndex((data: any) => data.given_by === action.payload.userId);
+      
+            if (reactionIndex !== -1) {
+              if (!action.payload.reaction) {
+                state.feeds[action.payload.index].reactions.splice(reactionIndex, 1);
+              } else {
+                state.feeds[action.payload.index].reactions[reactionIndex] = {
+                  reaction: action.payload.reaction,
+                  given_by: action.payload.userId
+                }
+              }
+            } else {
+              console.log('reactionIndex', reactionIndex)
+              state.feeds[action.payload.index].reactions = [...state.feeds[action.payload.index].reactions, {
+                reaction: action.payload.reaction,
+                given_by: action.payload.userId
+              }];
+            }
         },
         setFeedCommentCount: (
             state,
