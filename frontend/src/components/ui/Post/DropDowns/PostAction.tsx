@@ -6,12 +6,14 @@ import { updatePostInStore } from "@src/store/actions/post";
 import { AppDispatch } from "@src/store/store";
 import { useDispatch } from "react-redux";
 import { getSocket } from "@src/utils/socket";
+import { updateFeedInStore } from "@src/store/actions/feeds";
 
 interface PostActionProps {
   openButton: ReactNode;
   postId: string;
   postIndex: number;
   data?: any;
+  status?: string;
 }
 
 interface Items {
@@ -21,7 +23,7 @@ interface Items {
 
 
 // post action
-const PostAction: React.FC<PostActionProps> = ({ openButton, postId, postIndex, data }) => {
+const PostAction: React.FC<PostActionProps> = ({ openButton, postId, postIndex, data, status }) => {
 
   const deletePopupRef = useRef<HTMLElement | null>();
   const editPopupRef = useRef<any>();
@@ -61,7 +63,11 @@ const PostAction: React.FC<PostActionProps> = ({ openButton, postId, postIndex, 
     socket.on("postUpdated", (data: any) => {
       const newData: any = JSON.parse(data);
       if (newData) {
-        dispatch(updatePostInStore({ postId: newData?._id, data: newData }))
+        if (status === 'feeds') {
+          dispatch(updateFeedInStore({ postId: newData?._id, data: newData }))
+        } else {
+          dispatch(updatePostInStore({ postId: newData?._id, data: newData }))
+        }
       }
     })
 

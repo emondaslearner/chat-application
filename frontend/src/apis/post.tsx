@@ -33,6 +33,35 @@ const getPostsAPI = ({
   });
 };
 
+interface getUserFeedsAPIStates {
+  page: number;
+  limit: number;
+  search: string;
+  sortBy: string;
+  sortType: string;
+}
+
+const getUserFeedsAPI = ({
+  page,
+  limit,
+  search,
+  sortBy,
+  sortType
+}: getUserFeedsAPIStates) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .get(
+        `/user/feeds?page=${page}&limit=${limit}&search=${search}&sortBy=${sortBy}&sortType=${sortType}`
+      )
+      .then((response) => {
+        resolve(response?.data);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+};
+
 interface addReactionToPostAPIStates {
   reaction: string;
   postId?: string;
@@ -168,4 +197,5 @@ export {
   deletePostAPI,
   getSinglePostAPI,
   editPostAPI,
+  getUserFeedsAPI
 };

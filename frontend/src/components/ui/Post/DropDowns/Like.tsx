@@ -29,14 +29,15 @@ import { AppDispatch, RootState } from "@src/store/store";
 import { addReactionToPostAPI } from "@src/apis/post";
 import { addReactionToCommentAPI } from "@src/apis/comment";
 import { decreaseReactionCount, increaseReactionCount, setGivenReaction } from "@src/store/actions/post";
+import { decreaseFeedsReactionCount, increaseFeedsReactionCount, setFeedGivenReaction } from "@src/store/actions/feeds";
 
 interface LikeProps {
-  reactionStatus: string;
   setActiveReaction?: (e: string) => void;
   postId?: string;
   data?: any;
   commentId?: string;
-  index: number
+  index: number;
+  status?: string;
 }
 
 interface Items {
@@ -88,16 +89,16 @@ const items: Items[] = [
 ];
 
 const Like: React.FC<LikeProps> = ({
-  reactionStatus,
   setActiveReaction,
   postId,
   data,
   commentId,
-  index
+  index,
+  status
 }) => {
   const [isOpen, setOpen] = useState<boolean>(false);
 
-  const reactionState: string | undefined = useSelector((state: RootState) => state.posts.posts[index]?.givenReaction)
+  const reactionState: string | undefined = useSelector((state: RootState) => status === 'feeds' ? state.feeds.feeds[index]?.givenReaction : state.posts.posts[index]?.givenReaction)
 
   const [givenReaction, setReaction] = useState<string>("");
 
@@ -148,7 +149,11 @@ const Like: React.FC<LikeProps> = ({
       }
     } catch (err) {
       error({ message: "Unable to reaction on post. try later", themeColor });
-      postId && dispatch(setGivenReaction({ _id: postId, reaction: "" }));
+      if (status !== 'feeds') {
+        postId && dispatch(setGivenReaction({ index, reaction: "" }));
+      } else {
+        postId && dispatch(setFeedGivenReaction({ index, reaction: "" }));
+      }
       throw err;
     }
   };
@@ -178,7 +183,7 @@ const Like: React.FC<LikeProps> = ({
   // check given reaction or not
 
   useEffect(() => {
-    if (data?.reactions.length > 0) {
+    if (data?.reactions?.length > 0) {
       const findReaction = data.reactions.find(
         (data: any) => data.given_by === profileData.id
       );
@@ -188,7 +193,11 @@ const Like: React.FC<LikeProps> = ({
           findReaction.reaction.charAt(0).toUpperCase() +
           findReaction.reaction.slice(1);
 
-        postId && dispatch(setGivenReaction({ _id: postId, reaction: reactionToCap }));
+        if (status !== 'feeds') {
+          postId && dispatch(setGivenReaction({ index, reaction: reactionToCap }));
+        } else {
+          postId && dispatch(setFeedGivenReaction({ index, reaction: reactionToCap }));
+        }
         setReactionIncrementStatus(true);
       }
     }
@@ -196,10 +205,18 @@ const Like: React.FC<LikeProps> = ({
 
   useEffect(() => {
     if (reactionIncrementStatus && apiCallStatus && postId) {
-      dispatch(increaseReactionCount(postId));
+      if (status !== 'feeds') {
+        dispatch(increaseReactionCount(postId));
+      } else {
+        dispatch(increaseFeedsReactionCount(postId));
+      }
     }
     if (reactionIncrementStatus === false && apiCallStatus && postId) {
-      dispatch(decreaseReactionCount(postId));
+      if (status !== 'feeds') {
+        dispatch(decreaseReactionCount(postId));
+      } else {
+        dispatch(decreaseFeedsReactionCount(postId));
+      }
     }
   }, [reactionIncrementStatus]);
 
@@ -208,159 +225,86 @@ const Like: React.FC<LikeProps> = ({
     <DropDowns size="sm" isOpen={isOpen} onOpenChange={(open) => setOpen(open)}>
       <DropdownTrigger>
         {/* post reactions  */}
-        {reactionStatus === "post" ? (
-          <div
-            onMouseEnter={() => setOpen(true)}
-            onMouseLeave={() => setOpen(false)}
-            className="flex items-center gap-x-2 cursor-pointer"
-            onClick={() => {
-              setOpen(!isOpen);
-              postId && dispatch(setGivenReaction({ _id: postId, reaction: givenReaction === "" ? "Like" : "" }));
-              if (givenReaction) {
-                setPrvState(givenReaction);
-              }
-              setApiCallStatus(true);
-            }}
-          >
-            {givenReaction === "" && (
-              <>
-                <AiFillLike
-                  className="text-dark_ dark:text-dark_text_"
-                  size={30}
-                />
-                <p className="text-dark_ dark:text-dark_text_ font-semibold text-[18px]">
-                  Like
-                </p>
-              </>
-            )}
-
-            {givenReaction === "Like" && (
-              <>
-                <AiFillLike className="text-blue-500" size={30} />
-                <p className="text-blue-500 font-semibold text-[18px]">Like</p>
-              </>
-            )}
-
-            {givenReaction === "Love" && (
-              <>
-                <FcLike className="" size={30} />
-                <p className="text-[#F44336] font-semibold text-[18px]">Love</p>
-              </>
-            )}
-
-            {givenReaction === "Care" && (
-              <>
-                <img src={care} alt="care" className="w-[30px] h-[30px]" />
-                <p className="text-[#FFCE00] font-semibold text-[18px]">Care</p>
-              </>
-            )}
-
-            {givenReaction === "Sad" && (
-              <>
-                <img src={sad} alt="Sad" className="w-[20px] h-[20px]" />
-                <p className="text-[#FFCE00] font-semibold text-[18px]">Sad</p>
-              </>
-            )}
-
-            {givenReaction === "Wow" && (
-              <>
-                <img src={wow} alt="Wow" className="w-[30px] h-[30px]" />
-                <p className="text-[#FFCE00] font-semibold text-[18px]">Wow</p>
-              </>
-            )}
-
-            {givenReaction === "Haha" && (
-              <>
-                <img src={haha} alt="Haha" className="w-[20px] h-[20px]" />
-                <p className="text-[#FFCE00] font-semibold text-[18px]">Haha</p>
-              </>
-            )}
-            {givenReaction === "Angry" && (
-              <>
-                <img src={angry} alt="Angry" className="w-[30px] h-[30px]" />
-                <p className="text-[#FF721A] font-semibold text-[18px]">
-                  Angry
-                </p>
-              </>
-            )}
-          </div>
-        ) : (
-          // comment reaction
-          <div
-            onMouseEnter={() => setOpen(true)}
-            onMouseLeave={() => setOpen(false)}
-            className="flex items-center gap-x-2 cursor-pointer"
-            onClick={() => {
-              setOpen(!isOpen);
-              postId && dispatch(setGivenReaction({ _id: postId, reaction: givenReaction === "" ? "Like" : "" }));
-              if (givenReaction) {
-                setPrvState(givenReaction);
-              }
-              setApiCallStatus(true);
-            }}
-          >
-            {givenReaction === "" && (
-              <p className="text-dark_ dark:text-dark_text_ font-bold cursor-pointer text-[14px]">
+        <div
+          onMouseEnter={() => setOpen(true)}
+          onMouseLeave={() => setOpen(false)}
+          className="flex items-center gap-x-2 cursor-pointer"
+          onClick={() => {
+            setOpen(!isOpen);
+            if (status !== 'feeds') {
+              postId && dispatch(setGivenReaction({ index, reaction: givenReaction === "" ? "Like" : "" }));
+            } else {
+              postId && dispatch(setFeedGivenReaction({ index, reaction: givenReaction === "" ? "Like" : "" }));
+            }
+            if (givenReaction) {
+              setPrvState(givenReaction);
+            }
+            setApiCallStatus(true);
+          }}
+        >
+          {givenReaction === "" && (
+            <>
+              <AiFillLike
+                className="text-dark_ dark:text-dark_text_"
+                size={30}
+              />
+              <p className="text-dark_ dark:text-dark_text_ font-semibold text-[18px]">
                 Like
               </p>
-            )}
+            </>
+          )}
 
-            {givenReaction === "Like" && (
-              <>
-                <p className="text-blue-500 font-bold cursor-pointer text-[14px]">
-                  Like
-                </p>
-              </>
-            )}
+          {givenReaction === "Like" && (
+            <>
+              <AiFillLike className="text-blue-500" size={30} />
+              <p className="text-blue-500 font-semibold text-[18px]">Like</p>
+            </>
+          )}
 
-            {givenReaction === "Love" && (
-              <>
-                <p className="text-[#F44336] font-bold cursor-pointer text-[14px]">
-                  Love
-                </p>
-              </>
-            )}
+          {givenReaction === "Love" && (
+            <>
+              <FcLike className="" size={30} />
+              <p className="text-[#F44336] font-semibold text-[18px]">Love</p>
+            </>
+          )}
 
-            {givenReaction === "Care" && (
-              <>
-                <p className="text-[#FFCE00] font-bold cursor-pointer text-[14px]">
-                  Care
-                </p>
-              </>
-            )}
+          {givenReaction === "Care" && (
+            <>
+              <img src={care} alt="care" className="w-[30px] h-[30px]" />
+              <p className="text-[#FFCE00] font-semibold text-[18px]">Care</p>
+            </>
+          )}
 
-            {givenReaction === "Sad" && (
-              <>
-                <p className="text-[#FFCE00] font-bold cursor-pointer text-[14px]">
-                  Sad
-                </p>
-              </>
-            )}
+          {givenReaction === "Sad" && (
+            <>
+              <img src={sad} alt="Sad" className="w-[20px] h-[20px]" />
+              <p className="text-[#FFCE00] font-semibold text-[18px]">Sad</p>
+            </>
+          )}
 
-            {givenReaction === "Wow" && (
-              <>
-                <p className="text-[#FFCE00] font-bold cursor-pointer text-[14px]">
-                  Wow
-                </p>
-              </>
-            )}
+          {givenReaction === "Wow" && (
+            <>
+              <img src={wow} alt="Wow" className="w-[30px] h-[30px]" />
+              <p className="text-[#FFCE00] font-semibold text-[18px]">Wow</p>
+            </>
+          )}
 
-            {givenReaction === "Haha" && (
-              <>
-                <p className="text-[#FFCE00] font-bold cursor-pointer text-[14px]">
-                  Haha
-                </p>
-              </>
-            )}
-            {givenReaction === "Angry" && (
-              <>
-                <p className="text-[#FF721A] font-bold cursor-pointer text-[14px]">
-                  Angry
-                </p>
-              </>
-            )}
-          </div>
-        )}
+          {givenReaction === "Haha" && (
+            <>
+              <img src={haha} alt="Haha" className="w-[20px] h-[20px]" />
+              <p className="text-[#FFCE00] font-semibold text-[18px]">Haha</p>
+            </>
+          )}
+          {givenReaction === "Angry" && (
+            <>
+              <img src={angry} alt="Angry" className="w-[30px] h-[30px]" />
+              <p className="text-[#FF721A] font-semibold text-[18px]">
+                Angry
+              </p>
+            </>
+          )}
+        </div>
+
       </DropdownTrigger>
       <DropdownMenu
         aria-label="Dynamic Actions"
@@ -378,7 +322,11 @@ const Like: React.FC<LikeProps> = ({
               if (givenReaction) {
                 setPrvState(givenReaction);
               }
-              postId && dispatch(setGivenReaction({ _id: postId, reaction: item.key === givenReaction ? "" : item.key }));
+              if (status !== 'feeds') {
+                postId && dispatch(setGivenReaction({ index, reaction: item.key === givenReaction ? "" : item.key }));
+              } else {
+                postId && dispatch(setFeedGivenReaction({ index, reaction: item.key === givenReaction ? "" : item.key }));
+              }
               setApiCallStatus(true);
             }}
           >

@@ -56,6 +56,7 @@ const Content: React.FC<ContentProps> = ({ setStatus }) => {
   });
 
   useEffect(() => {
+    dispatch(setPosts([]))
     if (data?.data?.length) {
       dispatch(setPosts(data?.data));
     }

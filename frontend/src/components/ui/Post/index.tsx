@@ -21,6 +21,7 @@ import { handleAxiosError } from "@src/utils/error";
 import { success } from "@src/utils/alert";
 import { queryClient } from "@src/App";
 import { setCommentCount } from "@src/store/actions/post";
+import { setFeedCommentCount } from "@src/store/actions/feeds";
 
 interface PhotosStates {
   photo?: string;
@@ -52,11 +53,12 @@ interface DataStates {
 interface PostProps {
   border?: "none";
   data?: DataStates;
-  postIndex: number
+  postIndex: number;
+  status?: string;
 }
 
 
-const Post: React.FC<PostProps> = ({ border = "", data, postIndex }) => {
+const Post: React.FC<PostProps> = ({ border = "", data, postIndex, status }) => {
 
   // theme mode
   const themeColor: 'light' | 'dark' = useSelector((state: RootState) => state.themeConfig.mode)
@@ -64,7 +66,7 @@ const Post: React.FC<PostProps> = ({ border = "", data, postIndex }) => {
   const profileData = useSelector((state: RootState) => state.auth);
 
   // const [commentCount, setCommentCount] = useState<number>(0);
-  const commentCount: number = useSelector((state: RootState) => state.posts.posts[postIndex].commentCount)
+  const commentCount: number = useSelector((state: RootState) => status === 'feeds' ? state.feeds.feeds[postIndex].commentCount : state.posts.posts[postIndex].commentCount)
 
   const [comment, setComment] = useState<string>("");
 
@@ -94,7 +96,8 @@ const Post: React.FC<PostProps> = ({ border = "", data, postIndex }) => {
     onSuccess: () => {
       success({ message: "Comment added successfully", themeColor });
       setComment("");
-      dispatch(setCommentCount({ index: postIndex, commentCount: commentCount + 1 }));
+      if (status !== 'feeds') dispatch(setCommentCount({ index: postIndex, commentCount: commentCount + 1 }));
+      else dispatch(setFeedCommentCount({ index: postIndex, commentCount: commentCount + 1 }))
       queryClient.invalidateQueries([`getComments${data?._id}`]);
     }
   })
@@ -136,13 +139,14 @@ const Post: React.FC<PostProps> = ({ border = "", data, postIndex }) => {
                 </div>
               }
               data={data}
+              status={status}
             />
           )
         }
 
       </div>
 
-      {data?.photos.length && (
+      {data?.photos?.length && (
         <p className="my-3 text-[16px] text-dark_ dark:text-dark_text_ px-[25px] font-semibold">
           {data?.title}
         </p>
@@ -204,13 +208,14 @@ const Post: React.FC<PostProps> = ({ border = "", data, postIndex }) => {
           data={data}
           setCommentCount={setCommentCount}
           postIndex={postIndex}
+          status={status}
         />
       </div>
 
       <>
         <div className="px-5 flex items-center justify-between py-3 border-b-[2px] border-t-[2px] border-light_border_ dark:border-dark_border_ mt-2">
           {/* Add reactions on post */}
-          <Like index={postIndex} reactionStatus="post" data={data} postId={data?._id} />
+          <Like status={status} index={postIndex} data={data} postId={data?._id} />
 
           {/* Comments */}
           <div>
@@ -230,6 +235,7 @@ const Post: React.FC<PostProps> = ({ border = "", data, postIndex }) => {
               data={data}
               setCommentCount={setCommentCount}
               postIndex={postIndex}
+              status={status}
             />
           </div>
 

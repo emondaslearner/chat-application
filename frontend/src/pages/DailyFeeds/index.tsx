@@ -5,8 +5,14 @@ import Suggestions from "./Content/Suggestions";
 import AvatarSingle from "@src/components/shared/Avatar";
 import AddPost from "@src/components/ui/SideBar/Popups/AddPost";
 import { Location, useLocation } from "react-router-dom";
+import { useQuery } from "react-query";
+import { getUserFeedsAPI } from "@src/apis/post";
+import Spinner from "@src/components/shared/Spinner";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@src/store/store";
+import { setFeeds } from "@src/store/actions/feeds";
 
-interface DailyFeedsProps {}
+interface DailyFeedsProps { }
 
 const DailyFeeds: React.FC<DailyFeedsProps> = () => {
   // location
@@ -28,6 +34,39 @@ const DailyFeeds: React.FC<DailyFeedsProps> = () => {
       setView("all");
     }
   }, [location.search]);
+
+  // posts
+  const posts = useSelector((state: RootState) => state.feeds.feeds);
+
+  // dispatch
+  const dispatch = useDispatch();
+
+  // states
+  const [page, setPage] = useState<number>(1);
+  const sortBy = 'updatedAt';
+  const sortType = 'dsc';
+  const limit = 30;
+  const search = '';
+
+  const { data, isLoading }: { data: any, isLoading: boolean } = useQuery({
+    queryFn: () => getUserFeedsAPI({
+      page,
+      sortBy,
+      sortType,
+      limit,
+      search
+    }),
+    queryKey: [`feeds${search}${page}${limit}`],
+    staleTime: Infinity
+  });
+
+  useEffect(() => {
+    if (data?.data?.length) {
+      console.log('data?.data', data?.data);
+      dispatch(setFeeds(data?.data));
+    }
+  }, [data?.data])
+
 
   return (
     <div className="w-full h-[100vh] overflow-hidden bg-light_bg_ dark:bg-dark_light_bg_ flex justify-end">
@@ -57,10 +96,27 @@ const DailyFeeds: React.FC<DailyFeedsProps> = () => {
               </div>
             </AddPost>
 
-            {/* <Post />
-            <Post />
-            <Post />
-            <Post /> */}
+            {
+              isLoading ? (
+                <div className="w-full h-full flex justify-center items-center">
+                  <Spinner loaderStatus={"elementLoader"} />
+                </div>
+              ) : (
+                posts.length ? (
+                  posts.map((data: any, i: number) => (
+                    <div key={i}>
+                      <Post postIndex={i} data={data} status="feeds" />
+                    </div>
+                  ))
+                ) : (
+                  <div className="w-full h-full flex justify-center items-center">
+                    <p className="text-dark_ dark:text-dark_text_ text-[20px] font-semibold">
+                      No feeds to show. Please make friend to see user feeds.
+                    </p>
+                  </div>
+                )
+              )
+            }
           </div>
 
           <div className="md:block hidden w-[40%] lg:w-[23%]">

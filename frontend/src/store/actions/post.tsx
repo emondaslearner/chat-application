@@ -34,13 +34,10 @@ const posts = createSlice({
     },
     setGivenReaction: (
       state,
-      action: PayloadAction<{ _id: string; reaction: string }>
+      action: PayloadAction<{ index: number, reaction: string }>
     ) => {
-      const index = state.posts.findIndex(
-        (obj: any) => obj._id === action.payload._id
-      );
-      state.posts[index] = {
-        ...state.posts[index],
+      state.posts[action.payload.index] = {
+        ...state.posts[action.payload.index],
         givenReaction: action.payload.reaction,
       };
     },

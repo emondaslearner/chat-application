@@ -18,6 +18,7 @@ import { handleAxiosError } from "@src/utils/error";
 import { success } from "@src/utils/alert";
 import { queryClient } from "@src/App";
 import { addComments, setCommentCount, setComments, setReplies } from "@src/store/actions/post";
+import { addFeedComments, setFeedCommentCount, setFeedComments, setFeedReplies } from "@src/store/actions/feeds";
 
 
 interface PostViewProps {
@@ -26,6 +27,7 @@ interface PostViewProps {
   data?: any;
   setCommentCount?: any;
   postIndex: number;
+  status?: string;
 }
 
 interface SingleCommentProps {
@@ -34,7 +36,8 @@ interface SingleCommentProps {
   comment: any;
   addCommentMutation: any;
   commentLoader: boolean;
-  postIndex: number
+  postIndex: number;
+  status?: string;
 }
 
 interface CommentApiStates {
@@ -63,7 +66,8 @@ const SingleComment: React.FC<SingleCommentProps> = ({
   comment,
   addCommentMutation,
   commentLoader,
-  postIndex
+  postIndex,
+  status
 }) => {
 
   const [reply, setReply] = useState<boolean>(false);
@@ -81,7 +85,12 @@ const SingleComment: React.FC<SingleCommentProps> = ({
 
     addCommentMutation({ path: data?.path ? `${data?.path}/${data?._id}` : data._id, parent: data?._id, body: replyMessage });
 
-    dispatch(setComments({ index: postIndex, comments: list }))
+    if(status !== 'feeds') {
+      dispatch(setComments({ index: postIndex, comments: list }))
+    } else {
+      dispatch(setFeedComments({ index: postIndex, comments: list }))
+    }
+
     setReplyMessage('')
 
     setReply(false);
@@ -164,7 +173,8 @@ const PostView: React.FC<PostViewProps> = ({
   openButton,
   postId,
   data,
-  postIndex
+  postIndex,
+  status
 }) => {
   const closeButton = useRef<HTMLDivElement>(null);
 
@@ -183,11 +193,11 @@ const PostView: React.FC<PostViewProps> = ({
   const dispatch: AppDispatch = useDispatch();
 
   // comments
-  const allCommentFromState = useSelector((state: RootState) => state.posts.posts[postIndex].comments);
+  const allCommentFromState = useSelector((state: RootState) => status === 'feeds' ? state.feeds.feeds[postIndex].comments : state.posts.posts[postIndex].comments);
   const comments = allCommentFromState || [];
 
   // allReplies
-  const allRepliesFromState = useSelector((state: RootState) => state.posts.posts[postIndex].replies);
+  const allRepliesFromState = useSelector((state: RootState) => status === 'feeds' ? state.feeds.feeds[postIndex].replies : state.posts.posts[postIndex].replies);
   const allReplies = allRepliesFromState || [];
 
 
@@ -215,8 +225,13 @@ const PostView: React.FC<PostViewProps> = ({
         }
       }
 
-      dispatch(setComments({ index: postIndex, comments: allMainComments }))
-      dispatch(setReplies({ index: postIndex, replies: allReplyComments }))
+      if (status !== 'feeds') {
+        dispatch(setComments({ index: postIndex, comments: allMainComments }))
+        dispatch(setReplies({ index: postIndex, replies: allReplyComments }))
+      } else {
+        dispatch(setFeedComments({ index: postIndex, comments: allMainComments }))
+        dispatch(setFeedReplies({ index: postIndex, replies: allReplyComments }))
+      }
     }
   }, [allComments]);
 
@@ -249,11 +264,19 @@ const PostView: React.FC<PostViewProps> = ({
     mutationKey: ['addCommentKey'],
     onSuccess: (data: any) => {
       success({ message: "Comment added successfully", themeColor })
-      postId && dispatch(setCommentCount({ index: postIndex, commentCount: 0 }));
+      if (status !== 'feeds') {
+        postId && dispatch(setCommentCount({ index: postIndex, commentCount: 0 }));
+      } else {
+        postId && dispatch(setFeedCommentCount({ index: postIndex, commentCount: 0 }));
+      }
       setMessage('');
 
       if (!data?.data?.parent) {
-        dispatch(addComments({ index: postIndex, comment: { ...data?.data, send_by: { profile_picture: profileData.profile_picture, name: profileData.name } } }))
+        if (status !== 'feeds') {
+          dispatch(addComments({ index: postIndex, comment: { ...data?.data, send_by: { profile_picture: profileData.profile_picture, name: profileData.name } } }))
+        } else {
+          dispatch(addFeedComments({ index: postIndex, comment: { ...data?.data, send_by: { profile_picture: profileData.profile_picture, name: profileData.name } } }))
+        }
       } else {
         queryClient.invalidateQueries([`getComments${postId}`])
         closeButton.current?.click();
@@ -306,7 +329,11 @@ const PostView: React.FC<PostViewProps> = ({
                     let newArray = [...comments];
                     newArray.splice(index + 1, 0, ...replies);
 
-                    dispatch(setComments({ index: postIndex, comments: newArray }))
+                    if(status !== 'feeds') {
+                      dispatch(setComments({ index: postIndex, comments: newArray }))
+                    } else {
+                      dispatch(setFeedComments({ index: postIndex, comments: newArray }))
+                    }
                     newArray = [];
                   }
 
@@ -323,6 +350,7 @@ const PostView: React.FC<PostViewProps> = ({
                         addCommentMutation={addCommentMutation}
                         commentLoader={commentLoader}
                         postIndex={postIndex}
+                        status={status}
                       />
 
                       {data?.replyCount > 0 &&
