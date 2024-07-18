@@ -13,6 +13,7 @@ import { RootState } from "@src/store/store";
 import { handleAxiosError } from "@src/utils/error";
 import { queryClient } from "@src/App";
 import { success } from "@src/utils/alert";
+import { cancelFriendRequestAPI } from "@src/apis/friend-request";
 
 interface SuggestionsProps { }
 
@@ -99,6 +100,9 @@ interface ComponentProps {
 
 
 const Component = ({ item, profileData, themeColor }: ComponentProps) => {
+
+  const [status, setStatus] = useState<string>("");
+
   const addFriend = async () => {
     try {
       const data: any = await addFriendAPI({ friendId: item._id });
@@ -119,6 +123,33 @@ const Component = ({ item, profileData, themeColor }: ComponentProps) => {
         success({ message: "Sent Friend Request successfully", themeColor });
         queryClient.invalidateQueries(["friendRequest"]);
         queryClient.invalidateQueries([`friendRequest${profileData.id}${item._id}`]);
+        setStatus('sended');
+      },
+    });
+
+  // cancel friend request api
+  const cancelRequest = async () => {
+    try {
+      const data = await cancelFriendRequestAPI({ id: item._id });
+
+      return data;
+    } catch (err) {
+      handleAxiosError(err, themeColor);
+      throw err;
+    }
+  };
+
+  // cancel friend request react query mutation
+  const { isLoading: cancelFriendLoadingStatus, mutate: cancelFriendMutation } =
+    useMutation({
+      mutationFn: cancelRequest,
+      mutationKey: ["cancelRequestKey"],
+      onSuccess: (_data: any) => {
+        success({ message: "Cancel Request successfully", themeColor });
+        queryClient.invalidateQueries(["friendRequest"]);
+        queryClient.invalidateQueries([`friendRequest${profileData.id}${item._id}`]);
+
+        setStatus("");
       },
     });
 
@@ -140,15 +171,29 @@ const Component = ({ item, profileData, themeColor }: ComponentProps) => {
           maxTextWidth={70}
         />
       </div>
-      <Button
-        fill={true}
-        className="w-full hover:text-primary_ hover:bg-transparent border-[1px] border-primary_"
-        loader={isLoading}
-        loaderMessage="Processing..."
-        onClick={mutate}
-      >
-        Add Friend
-      </Button>
+      {
+        status === 'sended' ? (
+          <Button
+            fill={true}
+            className="w-full hover:text-primary_ hover:bg-transparent border-[1px] border-primary_"
+            loader={cancelFriendLoadingStatus}
+            loaderMessage="Processing..."
+            onClick={cancelFriendMutation}
+          >
+            Cancel Request
+          </Button>
+        ) : (
+          <Button
+            fill={true}
+            className="w-full hover:text-primary_ hover:bg-transparent border-[1px] border-primary_"
+            loader={isLoading}
+            loaderMessage="Processing..."
+            onClick={mutate}
+          >
+            Add Friend
+          </Button>
+        )
+      }
     </div>
   )
 }
