@@ -12,11 +12,15 @@ const getAllUser = async ({ filterData, userId, type }) => {
     filterData.sortBy
   }`;
 
-  const filter = { _id: { $ne: userId }, name: filterData.search };
+  const filter = { _id: { $ne: userId } };
+
+  if (filterData.search) {
+    filter.name = filterData.search;
+  }
 
   // Step 1: Retrieve users based on filter, sort, and pagination criteria
   const users = await User.find(filter)
-    .select("name profile_picture status")
+    .select("name profile_picture")
     .sort(sortStr)
     .skip(filterData.page * filterData.limit - filterData.limit)
     .limit(filterData.limit)
