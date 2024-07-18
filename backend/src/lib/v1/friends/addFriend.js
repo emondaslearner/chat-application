@@ -37,6 +37,7 @@ const addFriend = async ({ friendId, userId }) => {
   });
 
   deleteKeysWithPrefix("friendRequest:");
+  deleteKeysWithPrefix("users:");
   return friendData;
 };
 

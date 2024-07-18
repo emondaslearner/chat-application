@@ -30,6 +30,7 @@ const deleteRequest = async ({ userId, friendId }) => {
   });
 
   deleteKeysWithPrefix("friendRequest:");
+  deleteKeysWithPrefix("users:");
 
   return data;
 };
