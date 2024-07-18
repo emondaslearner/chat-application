@@ -2,6 +2,7 @@ const User = require("@models/User");
 const Friend = require("@models/Friend");
 const { error, functions } = require("@utils");
 const { getDataFromRedis } = require("@third-party/redis");
+const FriendRequest = require("@models/FriendRequest");
 
 const getAllUser = async ({ filterData, userId, type }) => {
   if (!userId) {
@@ -29,7 +30,11 @@ const getAllUser = async ({ filterData, userId, type }) => {
   // Step 2: Retrieve all friend relationships for the current user
   const friends = await Friend.find({
     $or: [{ first_user: userId }, { second_user: userId }],
-  }).lean();
+  });
+
+  const friendsRequest = await FriendRequest.find({
+    $or: [{ sent_by: userId }, { sent_to: userId }],
+  });
 
   // Step 3: Add the 'friend' property to each user
   const getUsers = (async = () => {
@@ -53,13 +58,31 @@ const getAllUser = async ({ filterData, userId, type }) => {
         filteredUsers = usersWithFriendStatus.filter((user) => user.friend);
         break;
       case "no-friend":
-        filteredUsers = usersWithFriendStatus.filter((user) => !user.friend);
+        console.log("friendsRequest", friendsRequest);
+
+        filteredUsers = usersWithFriendStatus.filter((user) => {
+          if (user.friend) {
+            return false;
+          }
+
+          const hasPendingRequest = friendsRequest.some((request) => {
+            const requestUser =
+              request.sent_by.toString() === userId
+                ? request.sent_to.toString()
+                : request.sent_by.toString();
+            return requestUser === user._id.toString();
+          });
+
+          return !hasPendingRequest;
+        });
         break;
       case "all":
       default:
         filteredUsers = usersWithFriendStatus;
         break;
     }
+
+    console.log("filteredUsers", filteredUsers);
 
     return filteredUsers;
   });
