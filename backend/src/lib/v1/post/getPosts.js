@@ -17,13 +17,11 @@ const getPosts = async ({ userId, filterData }) => {
 
   const friends = await Friend.find(friendFilter);
 
-  let friendsIds = friends.map((friend) =>
-    friend.first_user._id === userId
-      ? friend.second_user._id
-      : friend.first_user._id
-  );
-
-  friendsIds = [...friendsIds, userId];
+  const friendsIds = friends.map((friend) => {
+    return friend.second_user.toString() === userId
+      ? friend.first_user
+      : friend.second_user;
+  });
 
   // const allFriendsStringify = await getDataFromRedis(
   //   `userFriends:${userId}`,

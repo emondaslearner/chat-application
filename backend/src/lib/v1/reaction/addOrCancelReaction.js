@@ -136,7 +136,7 @@ const addOrCancelReaction = async ({ userId, postId, reaction, commentId }) => {
     io.to(userId).emit(`reaction$`, {
       userId,
       postId,
-      reaction
+      reaction,
     });
 
     return "updated";
@@ -189,7 +189,7 @@ const addOrCancelReaction = async ({ userId, postId, reaction, commentId }) => {
   io.to(userId).emit(`reaction$`, {
     userId,
     postId,
-    reaction
+    reaction,
   });
 
   return "added";
