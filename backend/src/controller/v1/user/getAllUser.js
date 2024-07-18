@@ -14,6 +14,7 @@ const getAllUser = async (req, res, next) => {
     const { users, counts } = await getAllUserLib({
       filterData,
       userId: req.user.id,
+      type: req.query.type || "all"
     });
 
     const pagination = await functions.paginationDetails({

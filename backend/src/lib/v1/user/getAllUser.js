@@ -3,7 +3,7 @@ const Friend = require("@models/Friend");
 const { error, functions } = require("@utils");
 const { getDataFromRedis } = require("@third-party/redis");
 
-const getAllUser = async ({ filterData, userId }) => {
+const getAllUser = async ({ filterData, userId, type }) => {
   if (!userId) {
     throw error.badRequest("userId:userId is missing");
   }
@@ -20,7 +20,7 @@ const getAllUser = async ({ filterData, userId }) => {
     .sort(sortStr)
     .skip(filterData.page * filterData.limit - filterData.limit)
     .limit(filterData.limit)
-    .lean(); // Use .lean() to get plain JavaScript objects instead of Mongoose documents
+    .lean();
 
   // Step 2: Retrieve all friend relationships for the current user
   const friends = await Friend.find({
@@ -42,13 +42,28 @@ const getAllUser = async ({ filterData, userId }) => {
       };
     });
 
-    return usersWithFriendStatus;
+    let filteredUsers;
+
+    switch (type) {
+      case "friend":
+        filteredUsers = usersWithFriendStatus.filter((user) => user.friend);
+        break;
+      case "no-friend":
+        filteredUsers = usersWithFriendStatus.filter((user) => !user.friend);
+        break;
+      case "all":
+      default:
+        filteredUsers = usersWithFriendStatus;
+        break;
+    }
+
+    return filteredUsers;
   });
 
   // check in redis
   const serializedFilterData = JSON.stringify(filterData);
   const keyPrefix = "users:";
-  const key = `${keyPrefix}${serializedFilterData}${userId}`;
+  const key = `${keyPrefix}${serializedFilterData}${userId}${type}`;
 
   const usersData = await getDataFromRedis(key, getUsers);
 
