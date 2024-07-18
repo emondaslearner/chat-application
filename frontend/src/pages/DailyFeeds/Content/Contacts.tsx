@@ -1,12 +1,45 @@
 import AvatarSingle from "@src/components/shared/Avatar";
 import TextEllipsis from "@src/components/shared/TextEllipsis";
 import SearchBar from "@src/components/shared/SearchBar";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useQuery } from "react-query";
+import { getAllUserAPI } from "@src/apis/user";
+import { NavigateFunction, useNavigate } from "react-router-dom";
+import Spinner from "@src/components/shared/Spinner";
 
-interface ContactsProps {}
+interface ContactsProps { }
 
 const Contacts: React.FC<ContactsProps> = () => {
-  const data = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}];
+  const [contacts, setContacts] = useState<any>([]);
+
+  // navigation
+  const navigate: NavigateFunction = useNavigate();
+
+  const [search, setSearch] = useState<string>("");
+  const sortBy: string = "updateAt";
+  const sortType: string = "dsc";
+  const limit: number = 30;
+  const [page, setPage] = useState<number>(1);
+
+  const { data, isLoading }: { data: any; isLoading: boolean } = useQuery({
+    queryFn: () =>
+      getAllUserAPI({
+        search,
+        sortBy,
+        sortType,
+        limit,
+        page,
+        type: "friend",
+      }),
+    queryKey: [`allContacts${search}${page}${limit}${'friend'}`],
+  });
+
+  useEffect(() => {
+    if (data?.data) {
+      setContacts(data?.data);
+    }
+  }, [data?.data]);
+
   return (
     <div className=" overflow-y-auto max-h-[100%] bg-white_ dark:bg-dark_bg_ mt-[20px] p-[15px] rounded-[10px] pb-[30px]">
       <div className="mb-[15px] flex items-center justify-between">
@@ -15,26 +48,40 @@ const Contacts: React.FC<ContactsProps> = () => {
         </h3>
 
         <div className="max-w-[30px]">
-          <SearchBar />
+          <SearchBar setValue={setSearch} />
         </div>
       </div>
 
       <div className="flex flex-col gap-y-[10px]">
-        {data.map((_item, i) => (
-          <div key={i} className="flex items-center gap-x-[13px]">
-            <AvatarSingle
-              size="md"
-              status="online"
-              src="https://play-lh.googleusercontent.com/jInS55DYPnTZq8GpylyLmK2L2cDmUoahVacfN_Js_TsOkBEoizKmAl5-p8iFeLiNjtE=w526-h296-rw"
-              alt="Profile Picture"
-            />
+        {
+          isLoading ? (
+            <div className="w-full h-full flex justify-center items-center">
+              <Spinner loaderStatus={"elementLoader"} />
+            </div>
+          ) : (
+            contacts.length === 0 ? (
+              <div className="text-center w-full flex justify-center">
+                <p className="text-[18px] font-semibold text-dark_ dark:text-dark_text_" >There is no friends</p>
+              </div>
+            ) : (contacts.map((item: any, i: number) => (
+              <div onClick={() => navigate(`/profile/${item._id}`)} key={i} className="flex items-center gap-x-[13px] cursor-pointer">
+                <AvatarSingle
+                  size="md"
+                  status="online"
+                  src={item?.profile_picture || "https://pipilikasoft.com/wp-content/uploads/2018/08/demo.jpg"}
+                  alt="Profile Picture"
+                />
 
-            <TextEllipsis
-              className="font-semibold text-dark_ dark:text-dark_text_ "
-              text="Emon Das Emon Das Emon DasEmon Das Emon Das Emon Das"
-            />
-          </div>
-        ))}
+                <TextEllipsis
+                  className="font-semibold text-dark_ dark:text-dark_text_ "
+                  text={item?.name}
+                />
+              </div>
+            ))
+            )
+          )
+        }
+        { }
       </div>
     </div>
   );

@@ -119,7 +119,7 @@ const DailyFeeds: React.FC<DailyFeedsProps> = () => {
             }
           </div>
 
-          <div className="md:block hidden w-[40%] lg:w-[23%]">
+          <div className="h-[99%] md:block hidden w-[40%] lg:w-[23%] overflow-hidden">
             <Suggestions />
           </div>
         </div>

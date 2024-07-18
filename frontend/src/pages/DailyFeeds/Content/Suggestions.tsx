@@ -1,13 +1,57 @@
 import AvatarSingle from "@src/components/shared/Avatar";
 import Button from "@components/shared/Button";
 import TextEllipsis from "@src/components/shared/TextEllipsis";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import SearchBar from "@src/components/shared/SearchBar";
+import { NavigateFunction, useNavigate } from "react-router-dom";
+import { useMutation, useQuery } from "react-query";
+import { getAllUserAPI } from "@src/apis/user";
+import Spinner from "@src/components/shared/Spinner";
+import { addFriendAPI } from "@src/apis/friend";
+import { useSelector } from "react-redux";
+import { RootState } from "@src/store/store";
+import { handleAxiosError } from "@src/utils/error";
+import { queryClient } from "@src/App";
+import { success } from "@src/utils/alert";
 
-interface SuggestionsProps {}
+interface SuggestionsProps { }
 
 const Suggestions: React.FC<SuggestionsProps> = () => {
-  const data = [{}, {}, {}, {}, {}, {}];
+  const [suggestion, setSuggestion] = useState<any>([]);
+
+
+  const [search, setSearch] = useState<string>("");
+  const sortBy: string = "updateAt";
+  const sortType: string = "dsc";
+  const limit: number = 30;
+  const [page, setPage] = useState<number>(1);
+
+  // profiledata
+  const profileData = useSelector((state: RootState) => state.auth)
+
+
+  const { data, isLoading }: { data: any; isLoading: boolean } = useQuery({
+    queryFn: () =>
+      getAllUserAPI({
+        search,
+        sortBy,
+        sortType,
+        limit,
+        page,
+        type: "no-friend",
+      }),
+    queryKey: [`allSuggestions${search}${page}${limit}${'no-friend'}`]
+  });
+
+  useEffect(() => {
+    if (data?.data) {
+      setSuggestion(data?.data);
+    }
+  }, [data?.data]);
+
+  // theme mode
+  const themeColor = useSelector((state: RootState) => state.themeConfig.mode)
+
   return (
     <div className="overflow-y-auto max-h-[100%] bg-white_ dark:bg-dark_bg_ mt-[20px] p-[15px] rounded-[10px] pb-[30px]">
       <div className="flex items-center justify-between mb-[10px]">
@@ -16,41 +60,95 @@ const Suggestions: React.FC<SuggestionsProps> = () => {
         </h3>
 
         <div className="max-w-[30px]">
-          <SearchBar />
+          <SearchBar setValue={setSearch} />
         </div>
       </div>
 
       <div className="flex flex-col gap-y-[10px]">
-        {data.map((_item, i) => (
-          <div
-            key={i}
-            className="w-full flex flex-col gap-[8px] bg-light_bg_ p-[13px] rounded-[5px] cursor-pointer transition-all duration-300 hover:bg-white_ dark:bg-dark_light_bg_ hover:dark:bg-dark_bg_"
-          >
-            <div className="flex items-center gap-x-[13px]">
-              <AvatarSingle
-                size="md"
-                status="online"
-                src="https://play-lh.googleusercontent.com/jInS55DYPnTZq8GpylyLmK2L2cDmUoahVacfN_Js_TsOkBEoizKmAl5-p8iFeLiNjtE=w526-h296-rw"
-                alt="Profile Picture"
-              />
-
-              <TextEllipsis
-                className="font-semibold text-dark_ dark:text-dark_text_ "
-                text="Emon Das Emon Das Emon DasEmon Das Emon Das Emon Das"
-                maxTextWidth={70}
-              />
+        {
+          isLoading ? (
+            <div className="w-full h-full flex justify-center items-center">
+              <Spinner loaderStatus={"elementLoader"} />
             </div>
-            <Button
-              fill={true}
-              className="w-full hover:text-primary_ hover:bg-transparent border-[1px] border-primary_"
-            >
-              Add Friend
-            </Button>
-          </div>
-        ))}
+          ) : (
+            suggestion.length === 0 ? (
+              <div className="text-center w-full flex justify-center">
+                <p className="text-[18px] font-semibold text-dark_ dark:text-dark_text_" >There is no friends to sent request</p>
+              </div>
+            ) : (
+              suggestion.map((item: any, i: number) => (
+                <div key={i}>
+                  <Component item={item} themeColor={themeColor} profileData={profileData} />
+                </div>
+              ))
+            )
+          )
+        }
       </div>
     </div>
   );
 };
 
 export default Suggestions;
+
+interface ComponentProps {
+  item: any;
+  profileData: any;
+  themeColor: 'dark' | 'light';
+}
+
+
+const Component = ({ item, profileData, themeColor }: ComponentProps) => {
+  const addFriend = async () => {
+    try {
+      const data: any = await addFriendAPI({ friendId: item._id });
+
+      return data;
+    } catch (err: any) {
+      handleAxiosError(err, themeColor);
+      throw err;
+    }
+  };
+
+  // add friend react query mutation
+  const { isLoading, mutate } =
+    useMutation({
+      mutationFn: addFriend,
+      mutationKey: [`addFriendKey${profileData.id}`],
+      onSuccess: (_data: any) => {
+        success({ message: "Sent Friend Request successfully", themeColor });
+        queryClient.invalidateQueries(["friendRequest"]);
+        queryClient.invalidateQueries([`friendRequest${profileData.id}${item._id}`]);
+      },
+    });
+
+  return (
+    <div
+      className="w-full flex flex-col gap-[8px] bg-light_bg_ p-[13px] rounded-[5px] cursor-pointer transition-all duration-300 hover:bg-white_ dark:bg-dark_light_bg_ hover:dark:bg-dark_bg_"
+    >
+      <div className="flex items-center gap-x-[13px]">
+        <AvatarSingle
+          size="md"
+          status="online"
+          src={item?.profile_picture || "https://pipilikasoft.com/wp-content/uploads/2018/08/demo.jpg"}
+          alt="Profile Picture"
+        />
+
+        <TextEllipsis
+          className="font-semibold text-dark_ dark:text-dark_text_ "
+          text={item?.name}
+          maxTextWidth={70}
+        />
+      </div>
+      <Button
+        fill={true}
+        className="w-full hover:text-primary_ hover:bg-transparent border-[1px] border-primary_"
+        loader={isLoading}
+        loaderMessage="Processing..."
+        onClick={mutate}
+      >
+        Add Friend
+      </Button>
+    </div>
+  )
+}

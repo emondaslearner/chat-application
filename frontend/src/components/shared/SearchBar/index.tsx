@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import Modal from "../../ui/Model";
 import { IoMdClose } from "react-icons/io";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -6,9 +6,17 @@ import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import Input from "../Input";
 import Button from "../Button";
 
-interface SearchBarProps {}
+interface SearchBarProps {
+  setValue?: any;
+}
 
-const SearchBar: React.FC<SearchBarProps> = () => {
+const SearchBar: React.FC<SearchBarProps> = ({ setValue }) => {
+
+  const [search, setSearch] = useState<string>("");
+
+  // close model ref
+  const closeModel: any = useRef();
+
   return (
     <Modal
       openButton={
@@ -27,7 +35,7 @@ const SearchBar: React.FC<SearchBarProps> = () => {
       size="2xl"
       closeButton={true}
       customCloseButton={
-        <div className="p-[10px] !bg-dark_gray_ dark:bg-light_gray_">
+        <div ref={closeModel} className="p-[10px] !bg-dark_gray_ dark:bg-light_gray_">
           <IoMdClose size={30} className="text-dark_" />
         </div>
       }
@@ -37,10 +45,16 @@ const SearchBar: React.FC<SearchBarProps> = () => {
         <Input
           type="text"
           className="rounded-[5px] !w-[80%] rounded-tr-none rounded-br-none py-[12px]"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
         />
         <Button
           className="w-[20%] rounded-[5px] rounded-tl-none rounded-bl-none py-[13px]"
           fill={true}
+          onClick={() => {
+            setValue(search)
+            closeModel.current?.click();
+          }}
         >
           {" "}
           Search

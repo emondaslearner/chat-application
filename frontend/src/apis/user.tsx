@@ -59,4 +59,25 @@ const updateUserData = async (data: UserData): Promise<void> => {
   });
 };
 
-export { getUserData, updateUserData };
+interface getUserAPIStates {
+  sortType: string;
+  sortBy: string;
+  limit: number;
+  page: number;
+  search: string;
+  type: string;
+}
+
+const getAllUserAPI = ({ sortType, sortBy, limit, page, search, type }: getUserAPIStates) => {
+  return new Promise((resolve, reject) => {
+    axios.get(`/users?page=${page}&limit=${limit}&sortBy=${sortBy}&sortType=${sortType}&search=${search}&type=${type}`)
+      .then((response) => {
+        resolve(response?.data);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  })
+}
+
+export { getUserData, updateUserData, getAllUserAPI };
