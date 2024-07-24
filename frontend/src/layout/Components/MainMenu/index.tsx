@@ -12,6 +12,7 @@ import {
   faSun,
   faMoon,
   faHouse,
+  faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { Location, NavigateFunction, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -22,6 +23,7 @@ import { IoMdLogOut } from "react-icons/io";
 // import { queryClient } from "@src/App";
 // import { setUserData } from "@src/store/actions/auth";
 import Spinner from "@src/components/shared/Spinner";
+import FriendRequest from "../Popups/FriendRequest";
 // import { setPosts } from "@src/store/actions/post";
 // import { setActiveFriendDetails } from "@src/store/actions/friend";
 // import nav from '../../../configs/nav.config.ts'
@@ -116,13 +118,20 @@ const MainMenu: React.FC<MainMenuProps> = () => {
           />
           <FontAwesomeIcon
             onClick={() => navigate("/friends")}
-            icon={faUserGroup}
+            icon={faUser}
             className={`text-[25px] cursor-pointer ${location.pathname === "/friends"
               ? "text-white_"
               : "text-dark_gray_"
               }`}
             title="Friends"
           />
+          <FriendRequest>
+            <FontAwesomeIcon
+              icon={faUserGroup}
+              className={`text-[25px] cursor-pointer text-dark_gray_`}
+              title="Friend Requests"
+            />
+          </FriendRequest>
           <FontAwesomeIcon
             onClick={() => navigate("/profile")}
             icon={faCircleUser}

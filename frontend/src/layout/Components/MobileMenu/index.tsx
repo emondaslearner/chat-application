@@ -8,7 +8,7 @@ import {
 import { FaBars } from "react-icons/fa6";
 import { CiHome } from "react-icons/ci";
 import { RiChatSmileLine } from "react-icons/ri";
-import { FaUserFriends } from "react-icons/fa";
+import { FaUser, FaUserFriends } from "react-icons/fa";
 import { CgProfile } from "react-icons/cg";
 import { MdOutlineContacts } from "react-icons/md";
 import {
@@ -69,6 +69,20 @@ const MobileMenu: React.FC<MobileMenuProps> = () => {
           <FaUserFriends size={25} className="dark:text-white" />
           <p className="font-semibold text-[16px] dark:text-light_gray_">
             Friends
+          </p>
+        </div>
+      ),
+      onClick: () => {
+        navigate("/friends");
+      },
+    },
+    {
+      key: "Friend Request",
+      label: (
+        <div className="flex items-center gap-x-[10px] pl-[10px] w-full bg-white hover:bg-light_gray_ rounded-[30px] dark:bg-transparent hover:dark:bg-dark_light_bg_ transition-all duration-300 py-[10px]">
+          <FaUser size={25} className="dark:text-white" />
+          <p className="font-semibold text-[16px] dark:text-light_gray_">
+            Friend Requests
           </p>
         </div>
       ),

@@ -73,7 +73,7 @@ const Modal: React.FC<ModalProps> = ({
         >
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1 text-center">
+              <ModalHeader className="flex flex-col gap-1 text-center text-black dark:text-white text-[20px]">
                 {title}
               </ModalHeader>
               <ModalBody className="p-0 !gap-0">{children}</ModalBody>
