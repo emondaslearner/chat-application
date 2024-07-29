@@ -5,6 +5,7 @@ import auth from "./actions/auth";
 import posts from "./actions/post"
 import friend from "./actions/friend";
 import feeds from "./actions/feeds";
+import friendRequest from "./actions/friendRequest";
 
 const rootReducer = {
     themeConfig,
@@ -12,7 +13,8 @@ const rootReducer = {
     auth,
     posts,
     friend,
-    feeds
+    feeds,
+    friendRequest
 }
 
 export default rootReducer

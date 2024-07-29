@@ -9,13 +9,14 @@ import Button from "@src/components/shared/Button";
 import Spinner from "@src/components/shared/Spinner";
 import TextEllipsis from "@src/components/shared/TextEllipsis";
 import Modal from "@src/components/ui/Model";
-import { RootState } from "@src/store/store";
+import { deleteFriendRequestFromStore, setFriendRequests } from "@src/store/actions/friendRequest";
+import { AppDispatch, RootState } from "@src/store/store";
 import { success } from "@src/utils/alert";
 import { handleAxiosError } from "@src/utils/error";
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import { useMutation, useQuery } from "react-query";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 interface FriendRequestProps {
     children: ReactNode;
@@ -30,11 +31,23 @@ const FriendRequest: React.FC<FriendRequestProps> = ({ children }) => {
     const [search, setSearch] = useState<string>("");
     const [page, setPage] = useState<number>(1);
 
+    // dispatch
+    const dispatch: AppDispatch = useDispatch();
+
     const { data, isLoading }: { data: any; isLoading: boolean } = useQuery({
         queryFn: () =>
             getAllFriendRequest({ limit, sortBy, sortType, search, page }),
         queryKey: [`allFriendRequest${profileData.id}`],
     });
+
+    useEffect(() => {
+        if (data?.data?.length) {
+            dispatch(setFriendRequests(data?.data))
+        }
+    }, [data]);
+
+    // data from store
+    const allRequests = useSelector((state: RootState) => state.friendRequest.friendRequests)
 
     return (
         <Modal
@@ -56,14 +69,14 @@ const FriendRequest: React.FC<FriendRequestProps> = ({ children }) => {
                     <div className="w-full h-full flex justify-center items-center">
                         <Spinner loaderStatus={"elementLoader"} />
                     </div>
-                ) : !data?.data.length ? (
+                ) : !allRequests.length ? (
                     <div className="text-center w-full flex justify-center">
                         <p className="text-[18px] font-semibold text-dark_ dark:text-dark_text_">
                             There is no friend requests
                         </p>
                     </div>
                 ) : (
-                    data?.data.map((data: any, i: number) => (
+                    allRequests.map((data: any, i: number) => (
                         <Request data={data} i={i} />
                     ))
                 )}
@@ -94,6 +107,9 @@ const Request: React.FC<RequestProps> = ({ data, i }) => {
     const themeColor = useSelector((state: RootState) => state.themeConfig.mode);
     const profileData = useSelector((state: RootState) => state.auth);
 
+    // dispatch
+    const dispatch: AppDispatch = useDispatch();
+
     // accept friend request
     const { mutate, isLoading } = useMutation({
         mutationFn: acceptRequest,
@@ -111,7 +127,7 @@ const Request: React.FC<RequestProps> = ({ data, i }) => {
     // delete friend requests
     const deleteFriendRequest = async () => {
         try {
-            const gotData = await cancelFriendRequestAPI({ id: data?.sent_by });
+            const gotData = await cancelFriendRequestAPI({ id: data?.sent_by._id });
 
             return gotData;
         } catch (err) {
@@ -125,10 +141,7 @@ const Request: React.FC<RequestProps> = ({ data, i }) => {
         mutationKey: [`deleteRequest${data?.sent_by}`],
         onSuccess: (_data: any) => {
             success({ message: "Cancel Request successfully", themeColor });
-            queryClient.invalidateQueries(["friendRequest"]);
-            queryClient.invalidateQueries([
-                `friendRequest${profileData.id}${data?.sent_by}`,
-            ]);
+            dispatch(deleteFriendRequestFromStore(i));
         },
     });
 
