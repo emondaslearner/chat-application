@@ -3,9 +3,11 @@ import TextEllipsis from "@src/components/shared/TextEllipsis";
 import SearchBar from "@src/components/shared/SearchBar";
 import React, { useEffect, useState } from "react";
 import { useQuery } from "react-query";
-import { getAllUserAPI } from "@src/apis/user";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import Spinner from "@src/components/shared/Spinner";
+import { getFriendList } from "@src/apis/friend";
+import { useSelector } from "react-redux";
+import { RootState } from "@src/store/store";
 
 interface ContactsProps { }
 
@@ -15,6 +17,9 @@ const Contacts: React.FC<ContactsProps> = () => {
   // navigation
   const navigate: NavigateFunction = useNavigate();
 
+  // profileData
+  const profileData = useSelector((state: RootState) => state.auth)
+
   const [search, setSearch] = useState<string>("");
   const sortBy: string = "updateAt";
   const sortType: string = "dsc";
@@ -23,13 +28,12 @@ const Contacts: React.FC<ContactsProps> = () => {
 
   const { data, isLoading }: { data: any; isLoading: boolean } = useQuery({
     queryFn: () =>
-      getAllUserAPI({
+      getFriendList({
         search,
         sortBy,
         sortType,
         limit,
-        page,
-        type: "friend",
+        page
       }),
     queryKey: [`allContacts${search}${page}${limit}${'friend'}`],
   });
@@ -68,13 +72,17 @@ const Contacts: React.FC<ContactsProps> = () => {
                 <AvatarSingle
                   size="md"
                   status="online"
-                  src={item?.profile_picture || "https://pipilikasoft.com/wp-content/uploads/2018/08/demo.jpg"}
+                  src={(profileData.id === item?.second_user._id
+                    ? item?.first_user?.profile_picture
+                    : item?.second_user?.profile_picture) || "https://pipilikasoft.com/wp-content/uploads/2018/08/demo.jpg"}
                   alt="Profile Picture"
                 />
 
                 <TextEllipsis
                   className="font-semibold text-dark_ dark:text-dark_text_ "
-                  text={item?.name}
+                  text={(profileData.id === item?.second_user._id
+                    ? item?.first_user?.name
+                    : item?.second_user?.name)}
                 />
               </div>
             ))

@@ -567,9 +567,19 @@ const Profile: React.FC<ProfileProps> = () => {
               </div>
             )}
             <div className="w-[48%]">
-              <Button fill={false} className="!w-full">
-                Message
-              </Button>
+              {((friendRequestStatus && !checkFriendStatus) || friendRequestStatus === "sent") ? (
+                <Button
+                  loaderMessage={"Processing..."}
+                  fill={false}
+                  className="!w-full"
+                >
+                  Delete Request
+                </Button>
+              ) : (
+                <Button fill={false} className="!w-full">
+                  Message
+                </Button>
+              )}
             </div>
           </>
         )}

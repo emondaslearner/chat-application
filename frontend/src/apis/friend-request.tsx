@@ -59,8 +59,38 @@ const acceptFriendRequestAPI = ({ friendId }: acceptFriendRequestStates) => {
   });
 };
 
+interface getAllFriendRequestStateTypes {
+  page: number;
+  search: string;
+  sortType: string;
+  sortBy: string;
+  limit: number;
+}
+
+const getAllFriendRequest = ({
+  page,
+  search,
+  sortType,
+  sortBy,
+  limit,
+}: getAllFriendRequestStateTypes) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .get(
+        `/user/friend-requests?page${page}&limit=${limit}&sortBy=${sortBy}&sortType=${sortType}&search=${search}`
+      )
+      .then((response) => {
+        resolve(response?.data);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+};
+
 export {
   getSingleFriendRequest,
   cancelFriendRequestAPI,
   acceptFriendRequestAPI,
+  getAllFriendRequest,
 };
