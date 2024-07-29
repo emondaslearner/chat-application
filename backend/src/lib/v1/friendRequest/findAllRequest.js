@@ -52,6 +52,7 @@ const findAllRequest = async ({ userId, filterData }) => {
                 name: "$sent_by_details.name",
                 profile_picture: "$sent_by_details.profile_picture",
               },
+              sent_to: 1
             },
           },
         ],

@@ -39,8 +39,9 @@ const acceptRequest = async ({ userId, friendId }) => {
     title: `A user accepted your friend request`,
     body: `New friend added to your friend list. A user accepted your friend request`,
   });
-
+  
   deleteKeysWithPrefix("friend:");
+  deleteKeysWithPrefix("friendRequest:");
   return friendData;
 };
 
