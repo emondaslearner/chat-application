@@ -3,6 +3,7 @@ const {
   getUser,
   changePassword,
   getAllUser,
+  getAllOnlineUser,
 } = require("@controller/v1/user");
 const multer = require("multer");
 
@@ -23,6 +24,7 @@ const userRoutes = (router, authenticate) => {
     .get(authenticate, getUser);
 
   router.get("/users", authenticate, getAllUser);
+  router.get("/users/online", authenticate, getAllOnlineUser);
 };
 
 module.exports = userRoutes;

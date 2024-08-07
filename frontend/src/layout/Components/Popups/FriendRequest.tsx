@@ -37,7 +37,7 @@ const FriendRequest: React.FC<FriendRequestProps> = ({ children }) => {
     const { data, isLoading }: { data: any; isLoading: boolean } = useQuery({
         queryFn: () =>
             getAllFriendRequest({ limit, sortBy, sortType, search, page }),
-        queryKey: [`allFriendRequest${profileData.id}`],
+        queryKey: [`allFriendRequest${profileData.id}${page}`],
     });
 
     useEffect(() => {

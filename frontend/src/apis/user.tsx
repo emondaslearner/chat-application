@@ -80,4 +80,23 @@ const getAllUserAPI = ({ sortType, sortBy, limit, page, search, type }: getUserA
   })
 }
 
-export { getUserData, updateUserData, getAllUserAPI };
+interface getOnlineUsersAPIDataType {
+  page: number;
+  limit: number;
+  sortBy: string;
+  sortType: string;
+}
+
+const getOnlineUsersAPI = ({ page, limit, sortBy, sortType }: getOnlineUsersAPIDataType) => {
+  return new Promise((resolve, reject) => {
+    axios.get(`/users/online?page=${page}&limit=${limit}&sortBy=${sortBy}&sortType=${sortType}`)
+      .then((response) => {
+        resolve(response?.data);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  })
+}
+
+export { getUserData, updateUserData, getAllUserAPI, getOnlineUsersAPI };

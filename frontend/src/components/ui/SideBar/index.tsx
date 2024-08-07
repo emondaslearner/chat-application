@@ -61,7 +61,9 @@ const SideBar: React.FC<SideBarProps> = ({ setChat }) => {
       )}
 
       {/* Profile */}
-      <Profile />
+      {
+        location.pathname === '/profile' && <Profile />
+      }
     </div>
   );
 };

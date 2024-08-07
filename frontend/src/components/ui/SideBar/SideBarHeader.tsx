@@ -3,7 +3,6 @@ import React, { ReactNode } from "react";
 // import third party components
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
-import Selects from "../../../components/shared/Select";
 import { Search } from "react-feather";
 import Input from "../../shared/Input";
 import Dropdown from "../Dropdown";
@@ -14,18 +13,6 @@ interface SideBarHeaderProps {
   setSearch: any;
   search: string;
 }
-
-interface OptionProps {
-  label: string;
-  value: string;
-}
-
-const options: OptionProps[] = [
-  { value: "chocolate", label: "Chocolate" },
-  { value: "strawberry", label: "Strawberry" },
-  { value: "vanilla", label: "Vanilla" },
-];
-
 interface Items {
   key: string;
   label: string;
@@ -66,7 +53,7 @@ const SideBarHeader: React.FC<SideBarHeaderProps> = ({ search, setSearch }) => {
           <Notification />
 
           {/* Dropdown */}
-          {
+          {/* {
             location.pathname !== '/friends' &&
             <Dropdown items={items}>
               <FontAwesomeIcon
@@ -74,15 +61,11 @@ const SideBarHeader: React.FC<SideBarHeaderProps> = ({ search, setSearch }) => {
                 className="text-[19px] text-dark_gray_ !cursor-pointer"
               />
             </Dropdown>
-          }
+          } */}
         </div>
       </div>
       <div className="flex px-4 items-center justify-between sidebarHeader">
-        {
-          location.pathname !== '/friends' &&
-          <Selects options={options} />
-        }
-        <div className={`relative ${location.pathname === '/friends' ? 'w-full' : 'w-[250px]'}`}>
+        <div className={`relative w-full`}>
           <Input
             type="text"
             className="w-full outline-none border-[1px] rounded-[5px] border-light_border_ py-[6px] px-2 dark:!bg-dark_bg_"

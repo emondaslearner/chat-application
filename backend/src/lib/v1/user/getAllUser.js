@@ -58,7 +58,6 @@ const getAllUser = async ({ filterData, userId, type }) => {
         filteredUsers = usersWithFriendStatus.filter((user) => user.friend);
         break;
       case "no-friend":
-        console.log("friendsRequest", friendsRequest);
 
         filteredUsers = usersWithFriendStatus.filter((user) => {
           if (user.friend) {
@@ -82,7 +81,6 @@ const getAllUser = async ({ filterData, userId, type }) => {
         break;
     }
 
-    console.log("filteredUsers", filteredUsers);
 
     return filteredUsers;
   });
