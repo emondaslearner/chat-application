@@ -1,4 +1,5 @@
 const User = require("@models/User");
+const { functions } = require("@utils");
 
 const getAllOnlineUser = async ({ userId, filterData }) => {
   const filter = { status: "online", _id: { $ne: userId } };
