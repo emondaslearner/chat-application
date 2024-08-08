@@ -1,5 +1,5 @@
 const Friend = require("@models/Friend");
-const { error, functions } = require("@utils");
+const { error } = require("@utils");
 const { getDataFromRedis } = require("@third-party/redis");
 const mongoose = require("mongoose");
 
@@ -91,6 +91,7 @@ const getAllChats = async ({ filterData, userId }) => {
                 name: "$second_user.name",
                 profile_picture: "$second_user.profile_picture",
               },
+              unread_message_count: 1
             },
           },
         ],
