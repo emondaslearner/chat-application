@@ -1,11 +1,8 @@
-import React, { ReactNode } from "react";
+import React from "react";
 
 // import third party components
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 import { Search } from "react-feather";
 import Input from "../../shared/Input";
-import Dropdown from "../Dropdown";
 import Notification from "./Popups/Notification";
 import { Location, useLocation } from "react-router-dom";
 
@@ -13,30 +10,6 @@ interface SideBarHeaderProps {
   setSearch: any;
   search: string;
 }
-interface Items {
-  key: string;
-  label: string;
-  icon?: ReactNode;
-}
-// sidebar header dropdown options
-const items: Items[] = [
-  {
-    key: "new",
-    label: "New file",
-  },
-  {
-    key: "copy",
-    label: "Copy link",
-  },
-  {
-    key: "edit",
-    label: "Edit file",
-  },
-  {
-    key: "delete",
-    label: "Delete file",
-  },
-];
 
 const SideBarHeader: React.FC<SideBarHeaderProps> = ({ search, setSearch }) => {
   // location

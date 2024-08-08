@@ -12,12 +12,10 @@ const ActiveUsers: React.FC<ActiveUsersProps> = () => {
   // profileData
   const profileData = useSelector((state: RootState) => state.auth);
 
-  const { data, isLoading }: { data: any, isLoading: boolean } = useQuery({
+  const { data }: { data: any, isLoading: boolean } = useQuery({
     queryFn: () => getOnlineUsersAPI({ page: 1, limit: 50, sortType: 'dsc', sortBy: 'updatedAt' }),
     queryKey: [`onlineUser${profileData.id}`]
   });
-
-  console.log('online users', data);
 
   return (
     <div className="w-[96.5%] h-auto flex mx-3 gap-3 mt-3 overflow-y-hidden overflow-x-auto online-users">

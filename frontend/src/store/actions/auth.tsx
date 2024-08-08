@@ -13,6 +13,7 @@ export interface AuthStoreInitialState {
   country: string;
   city: string;
   id: string;
+  status: string;
 }
 
 // Define the payload type for the setData action
@@ -26,6 +27,7 @@ const initialState: AuthStoreInitialState = {
   city: "",
   country: "",
   id: "",
+  status: "offline"
 };
 
 const siteConfig = createSlice({
@@ -42,6 +44,7 @@ const siteConfig = createSlice({
       state.cover_picture = action.payload.cover_picture;
       state.city = action.payload.city;
       state.country = action.payload.country;
+      state.status = action.payload.status;
     },
   },
 });

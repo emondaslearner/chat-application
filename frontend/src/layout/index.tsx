@@ -10,6 +10,7 @@ import PublicRoute from "@src/security/PublicRoute";
 import SpinnerLayout from "./Layouts/SpinnerLayout";
 import MainMenu from "./Components/MainMenu";
 import PrivateRoute from "@src/security/PrivateRoute";
+import OnlineChecker from "@src/components/ui/OnlineChecker";
 
 interface Meta {
   layout: string;
@@ -22,7 +23,7 @@ interface RouteConfig extends Omit<RouteProps, "meta"> {
   meta?: Meta;
 }
 
-interface LayoutProps {}
+interface LayoutProps { }
 
 const Layout: React.FC<LayoutProps> = () => {
   const routers: RouteConfig[] = [...AuthPages, ...PublicPages];
@@ -52,6 +53,7 @@ const Layout: React.FC<LayoutProps> = () => {
                 ) : (
                   <PrivateRoute>
                     <SpinnerLayout>
+                      <OnlineChecker />
                       {route?.meta?.layout === "vertical" ? (
                         <>
                           <MainMenu />

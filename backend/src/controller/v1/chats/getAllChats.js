@@ -4,12 +4,12 @@ const { functions } = require("@utils");
 const getAllChats = async (req, res, next) => {
   try {
     const filterData = {
-      filter: req.query?.filter ? req.query?.filter : "",
-      search: req.query?.search ? req.query?.search : "",
-      sortBy: req.query?.sortBy ? req.query?.sortBy : "updatedAt",
-      sortType: req.query?.sortType ? req.query?.sortType : "dsc",
-      page: req.query?.page ? parseInt(req.query?.page) : 1,
-      limit: req.query?.limit ? parseInt(req.query?.limit) : 10,
+      filter: req.query?.filter || "",
+      search: req.query?.search || "",
+      sortBy: req.query?.sortBy || "updatedAt",
+      sortType: req.query?.sortType || "dsc",
+      page: parseInt(req.query?.page) || 1,
+      limit: parseInt(req.query?.limit) || 10,
     };
 
     const { chats, counts } = await getAllChatsLib({
@@ -20,7 +20,7 @@ const getAllChats = async (req, res, next) => {
     const pagination = await functions.paginationDetails({
       page: filterData.page,
       limit: filterData.limit,
-      totalResources: counts,
+      totalResources: counts.length ? counts?.[0].count : 0,
     });
 
     // hateoas

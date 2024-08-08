@@ -38,7 +38,7 @@ const SideBar: React.FC<SideBarProps> = ({ setChat }) => {
               {location.pathname === "/chat" && (
                 <>
                   {/* Chat list */}
-                  <ChatList setChat={setChat} />
+                  <ChatList search={search} setChat={setChat} />
                 </>
               )}
 

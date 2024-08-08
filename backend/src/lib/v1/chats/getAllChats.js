@@ -1,53 +1,126 @@
 const Friend = require("@models/Friend");
 const { error, functions } = require("@utils");
 const { getDataFromRedis } = require("@third-party/redis");
+const mongoose = require("mongoose");
 
 const getAllChats = async ({ filterData, userId }) => {
   if (!userId) {
     throw error.badRequest("userId:userId is missing");
   }
 
-  const sortStr = `${filterData.sortType === "dsc" ? "-" : ""}${
-    filterData.sortBy
-  }`;
+  const sortField = filterData.sortBy;
+  const sortDirection = filterData.sortType === "dsc" ? -1 : 1;
+  const sortStr = { [sortField]: sortDirection };
 
   const filter = {
     $and: [
-      { $or: [{ first_user: userId }, { second_user: userId }] },
-      { chat_deleted_for: { $nin: [userId] } },
+      {
+        $or: [
+          { first_user: new mongoose.Types.ObjectId(userId) },
+          { second_user: new mongoose.Types.ObjectId(userId) },
+        ],
+      },
+      { chat_deleted_for: { $nin: [new mongoose.Types.ObjectId(userId)] } },
     ],
   };
-
 
   if (filterData.filter === "unread") {
     filter.$and.push({ unread_message_count: { $ne: 0 } });
   }
 
+  const aggregationPipeline = [
+    {
+      $match: filter,
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "first_user",
+        foreignField: "_id",
+        as: "first_user",
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "second_user",
+        foreignField: "_id",
+        as: "second_user",
+      },
+    },
+    {
+      $unwind: "$first_user",
+    },
+    {
+      $unwind: "$second_user",
+    },
+    {
+      $match: {
+        $or: [
+          {
+            "second_user.name": {
+              $regex: filterData.search,
+              $options: "i",
+            },
+          },
+          {
+            "first_user.name": {
+              $regex: filterData.search,
+              $options: "i",
+            },
+          },
+        ],
+      },
+    },
+    {
+      $facet: {
+        count: [{ $count: "count" }],
+        chats: [
+          { $sort: sortStr },
+          { $skip: (filterData.page - 1) * filterData.limit },
+          { $limit: filterData.limit },
+          {
+            $project: {
+              first_user: {
+                _id: "$first_user._id",
+                name: "$first_user.name",
+                profile_picture: "$first_user.profile_picture",
+              },
+              second_user: {
+                _id: "$second_user._id",
+                name: "$second_user.name",
+                profile_picture: "$second_user.profile_picture",
+              },
+            },
+          },
+        ],
+      },
+    },
+  ];
+
   const getChants = async () => {
-    const chats = await Friend.find(filter)
-      .sort(sortStr)
-      .skip(filterData.page * filterData.limit - filterData.limit)
-      .limit(filterData.limit);
+    const friendData = await Friend.aggregate(aggregationPipeline);
+
+    const { chats, count } = friendData[0];
 
     // Conditionally populate the fields
     const populatedChats = await Promise.all(
       chats.map(async (chat) => {
         if (chat.first_user.toString() === userId.toString()) {
-          await chat.populate(
-            "second_user",
-            "name profile_picture unread_message_count status"
-          );
+          return await Friend.populate(chat, {
+            path: "second_user",
+            select: "name profile_picture unread_message_count status",
+          });
         } else {
-          await chat.populate(
-            "first_user",
-            "name profile_picture unread_message_count status"
-          );
+          return await Friend.populate(chat, {
+            path: "first_user",
+            select: "name profile_picture unread_message_count status",
+          });
         }
-        return chat;
       })
     );
 
-    return populatedChats;
+    return { populatedChats, count };
   };
 
   // check in redis
@@ -55,11 +128,9 @@ const getAllChats = async ({ filterData, userId }) => {
   const keyPrefix = "chats:";
   const key = `${keyPrefix}${serializedFilterData}${userId}`;
 
-  const chats = await getDataFromRedis(key, getChants);
+  const { populatedChats, count } = await getDataFromRedis(key, getChants);
 
-  const counts = await functions.countEntities(Friend, filter);
-
-  return { chats, counts };
+  return { chats: populatedChats, counts: count };
 };
 
 module.exports = getAllChats;

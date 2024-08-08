@@ -157,6 +157,7 @@ const Profile: React.FC<ProfileProps> = () => {
             city: data.data.city,
             country: data.data.country,
             id: data.data._id,
+            status: data.data.status
           })
         );
         success({ message: "Profile Information Updated", themeColor });

@@ -24,6 +24,7 @@ import { IoMdLogOut } from "react-icons/io";
 // import { setUserData } from "@src/store/actions/auth";
 import Spinner from "@src/components/shared/Spinner";
 import FriendRequest from "../Popups/FriendRequest";
+import { setUserData } from "@src/store/actions/auth";
 // import { setPosts } from "@src/store/actions/post";
 // import { setActiveFriendDetails } from "@src/store/actions/friend";
 // import nav from '../../../configs/nav.config.ts'
@@ -52,19 +53,20 @@ const MainMenu: React.FC<MainMenuProps> = () => {
       window.location.href = "/login"
 
       // // Reset user data in your state management
-      // dispatch(
-      //   setUserData({
-      //     name: "",
-      //     email: "",
-      //     profile_picture: "",
-      //     date_of_birth: "",
-      //     bio: "",
-      //     cover_picture: "",
-      //     city: "",
-      //     country: "",
-      //     id: "",
-      //   })
-      // );
+      dispatch(
+        setUserData({
+          name: "",
+          email: "",
+          profile_picture: "",
+          date_of_birth: "",
+          bio: "",
+          cover_picture: "",
+          city: "",
+          country: "",
+          id: "",
+          status: ""
+        })
+      );
 
       // // Clear store
       // dispatch(setPosts([]));

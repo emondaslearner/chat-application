@@ -39,3 +39,20 @@ export const error = ({
     theme: themeColor,
   });
 };
+
+export const info = ({
+  message,
+  position = "bottom-right",
+  themeColor,
+}: ToastProps): void => {
+  toast.info(message, {
+    position,
+    autoClose: 3000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: themeColor,
+  });
+};

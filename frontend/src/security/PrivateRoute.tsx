@@ -9,7 +9,6 @@ interface PrivateRouteProps {
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
   const navigate: NavigateFunction = useNavigate();
 
-
   // token
   const token = localStorage.getItem("token");
 
