@@ -25,7 +25,8 @@ const ActiveUsers: React.FC<ActiveUsersProps> = () => {
             <div className="w-[15px] absolute z-[1] right-0 h-[15px] rounded-full bg-normal_green"></div>
             <AvatarSingle
               className="w-[50px] h-[50px] rounded-full"
-              src={data?.first_user?.profile_picture || data?.second_user?.profile_picture}
+              status={data?.status}
+              src={data?.profile_picture}
               alt="Online users"
             />
             <p className="text-center dark:text-dark_text_ font-semibold"></p>

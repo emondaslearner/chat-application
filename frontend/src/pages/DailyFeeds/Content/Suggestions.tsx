@@ -160,7 +160,7 @@ const Component = ({ item, profileData, themeColor }: ComponentProps) => {
       <div className="flex items-center gap-x-[13px]">
         <AvatarSingle
           size="md"
-          status="online"
+          status={item.status}
           src={item?.profile_picture || "https://pipilikasoft.com/wp-content/uploads/2018/08/demo.jpg"}
           alt="Profile Picture"
         />

@@ -92,6 +92,9 @@ const FriendsList: React.FC<FriendsListProps> = ({ setChat, search }) => {
                     } w-[92%] mx-auto py-4 px-3 flex items-center rounded-[5px] border-[1px] border-medium_dark_ dark:border-dark_border_ transition-all duration-300 hover:border-primary_ cursor-pointer relative`}
                 >
                   <AvatarSingle
+                    status={profileData.id === data?.second_user._id
+                      ? data?.first_user?.status
+                      : data?.second_user?.status}
                     src={(profileData.id === data?.second_user._id
                       ? data?.first_user?.profile_picture
                       : data?.second_user?.profile_picture) ||

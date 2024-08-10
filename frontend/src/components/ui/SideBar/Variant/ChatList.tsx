@@ -68,6 +68,9 @@ const ChatList: React.FC<ChatProps> = ({ setChat, search }) => {
                 } w-[92%] mx-auto py-4 px-3 flex items-center rounded-[5px] border-[1px] border-medium_dark_ dark:border-dark_border_ transition-all duration-300 hover:border-primary_ cursor-pointer relative`}
             >
               <AvatarSingle
+                status={profileData.id === (data?.first_user._id || data?.first_user)
+                  ? data?.second_user?.status
+                  : data?.first_user?.status}
                 src={
                   (profileData.id === (data?.first_user._id || data?.first_user)
                     ? data?.second_user?.profile_picture
@@ -101,9 +104,9 @@ const ChatList: React.FC<ChatProps> = ({ setChat, search }) => {
                 />
               </div>
 
-              {activeChat !== data?._id && (
+              {activeChat !== data?._id && data?.unread_message_count !== 0 && (
                 <div className="w-[25px] h-[25px] absolute rounded-full bg-primary_ text-white_ flex justify-center items-center bottom-[8px] right-[8px]">
-                  3
+                  {data?.unread_message_count}
                 </div>
               )}
             </li>

@@ -64,20 +64,8 @@ const Content: React.FC<ContentProps> = () => {
         ),
       });
     }
-
-    // Add new items to testData if they do not already exist
-    if (newDataList.length > 0) {
-      setTestData((prevState) => {
-        const updatedState = [...prevState];
-        newDataList.forEach((newData: any) => {
-          const checkData = updatedState.find((data) => data.title === newData.title);
-          if (!checkData) {
-            updatedState.push(newData);
-          }
-        });
-        return updatedState;
-      });
-    }
+    
+    setTestData(newDataList)
   }, [profileDetails]);
 
   return (

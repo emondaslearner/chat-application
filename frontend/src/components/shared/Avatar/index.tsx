@@ -34,7 +34,7 @@ const AvatarSingle: React.FC<AvatarProps> = ({
         <div className="w-[10px] h-[10px] rounded-[100%] bg-[green] absolute right-0 top-0"></div>
       )}
       {status === "offline" && (
-        <div className="w-[10px] h-[10px] rounded-[100%] bg-white_"></div>
+        <div className="w-[10px] h-[10px] rounded-[100%] bg-white_ absolute right-0 top-0"></div>
       )}
     </div>
   );
