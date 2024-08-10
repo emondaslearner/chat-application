@@ -1,6 +1,7 @@
 const { error } = require("@utils");
 const User = require("@models/User");
 const { uploadPhotoToCloudinary } = require("@third-party/cloudinary");
+const { deleteKeysWithPrefix } = require("@third-party/redis");
 
 const updateUser = async ({ id, data }) => {
   if (!id) {
@@ -89,6 +90,10 @@ const updateUser = async ({ id, data }) => {
       status: data.status,
     });
   }
+
+  deleteKeysWithPrefix("friend:");
+  deleteKeysWithPrefix("users:");
+  deleteKeysWithPrefix("chats:");
 
   return updatedData;
 };

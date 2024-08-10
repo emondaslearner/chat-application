@@ -38,7 +38,6 @@ const createUser = async ({ name, email, password, dateOfBirth }) => {
 
   const data = await user.save();
 
-  deleteKeysWithPrefix("friend:");
   deleteKeysWithPrefix("users:");
 
   return data;
