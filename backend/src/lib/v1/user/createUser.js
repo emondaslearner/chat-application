@@ -1,6 +1,7 @@
 const { error } = require("@utils");
 const User = require("@models/User");
 const { hash } = require("@utils");
+const { deleteKeysWithPrefix } = require("@third-party/redis");
 
 const createUser = async ({ name, email, password, dateOfBirth }) => {
   // check all information provided correctly or not
@@ -36,6 +37,9 @@ const createUser = async ({ name, email, password, dateOfBirth }) => {
   });
 
   const data = await user.save();
+
+  deleteKeysWithPrefix("friend:");
+  deleteKeysWithPrefix("users:");
 
   return data;
 };
