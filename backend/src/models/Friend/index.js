@@ -27,6 +27,9 @@ const friendSchema = new Schema(
       type: Number,
       default: 0,
     },
+    last_message: {
+      type: String,
+    },
   },
   {
     timestamps: true,

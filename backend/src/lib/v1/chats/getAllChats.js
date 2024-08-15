@@ -85,15 +85,20 @@ const getAllChats = async ({ filterData, userId }) => {
                 _id: "$first_user._id",
                 name: "$first_user.name",
                 profile_picture: "$first_user.profile_picture",
-                status: "$first_user.status"
+                status: "$first_user.status",
+                bio: "$first_user.bio",
+                updatedAt: "$first_user.updatedAt",
               },
               second_user: {
                 _id: "$second_user._id",
                 name: "$second_user.name",
                 profile_picture: "$second_user.profile_picture",
-                status: "$second_user.status"
+                status: "$second_user.status",
+                bio: "$second_user.bio",
+                updatedAt: "$second_user.updatedAt",
               },
-              unread_message_count: 1
+              unread_message_count: 1,
+              last_message: 1,
             },
           },
         ],

@@ -52,6 +52,16 @@ const sentMessage = async ({ userId, sentTo, replied, message, files }) => {
       data: JSON.stringify({ sentTo, message, userId, replied, files }),
     });
   } else {
+    const filter = {
+      $or: [
+        { first_user: sentTo, second_user: userId },
+        { first_user: userId, second_user: sentTo },
+      ],
+    };
+    const user = await Friend.findOne(filter);
+    user.last_message = message;
+    user.save();
+
     const messageData = await Message({
       sent_to: sentTo,
       message,

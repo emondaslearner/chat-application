@@ -89,6 +89,7 @@ const getAllFriend = async ({
                 address: "$first_user_details.address",
                 date_of_birth: "$first_user_details.date_of_birth",
                 status: "$first_user_details.status",
+                updatedAt: "$first_user.updatedAt",
               },
               second_user: {
                 _id: "$second_user_details._id",
@@ -98,6 +99,7 @@ const getAllFriend = async ({
                 address: "$second_user_details.address",
                 date_of_birth: "$second_user_details.date_of_birth",
                 status: "$second_user_details.status",
+                updatedAt: "$first_user.updatedAt",
               },
               blocked: 1,
               blocked_by: 1,

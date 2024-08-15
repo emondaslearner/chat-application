@@ -21,7 +21,7 @@ const getAllUser = async ({ filterData, userId, type }) => {
 
   // Step 1: Retrieve users based on filter, sort, and pagination criteria
   const users = await User.find(filter)
-    .select("name profile_picture status ")
+    .select("name profile_picture status updatedAt")
     .sort(sortStr)
     .skip(filterData.page * filterData.limit - filterData.limit)
     .limit(filterData.limit)
