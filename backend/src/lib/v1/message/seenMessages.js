@@ -6,6 +6,11 @@ const seenMessage = async ({ userId, id }) => {
     { sent_by: id, sent_to: userId, status: "delivered" },
     { status: "seen" }
   );
+
+  global.io.to(userId).emit("seenMessage", {
+    id: userId,
+  });
+
   deleteKeysWithPrefix("messages:");
 
   return "updated";

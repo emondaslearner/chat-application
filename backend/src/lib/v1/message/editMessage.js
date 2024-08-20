@@ -21,7 +21,7 @@ const editMessage = async ({ message, userId, id }) => {
 
   await messageData.save();
 
-  io.to(userId).emit("editMessage", {
+  global.io.to(userId).emit("editMessage", {
     id: userId,
     message,
   });
