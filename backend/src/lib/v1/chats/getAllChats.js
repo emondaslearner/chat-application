@@ -117,12 +117,12 @@ const getAllChats = async ({ filterData, userId }) => {
         if (chat.first_user.toString() === userId.toString()) {
           return await Friend.populate(chat, {
             path: "second_user",
-            select: "name profile_picture unread_message_count status",
+            select: "name profile_picture updatedAt bio unread_message_count status",
           });
         } else {
           return await Friend.populate(chat, {
             path: "first_user",
-            select: "name profile_picture unread_message_count status",
+            select: "name profile_picture updatedAt bio unread_message_count status",
           });
         }
       })

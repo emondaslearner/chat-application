@@ -3,6 +3,8 @@ const {
   deleteMessage,
   editMessage,
   getChatMessages,
+  getAllMessage,
+  seenMessage,
 } = require("@controller/v1/message");
 const multer = require("multer");
 
@@ -25,12 +27,15 @@ const messageRoutes = (router, authenticate) => {
   router
     .route("/user/:id/message")
     .post([authenticate, uploadFields], sentMessage)
-    .get(authenticate, getChatMessages);
+    .get(authenticate, getChatMessages)
+    .patch(authenticate, seenMessage);
 
   router
     .route("/user/message/:id")
     .patch(authenticate, editMessage)
     .delete(authenticate, deleteMessage);
+
+  router.get("/user/messages", authenticate, getAllMessage);
 };
 
 module.exports = messageRoutes;

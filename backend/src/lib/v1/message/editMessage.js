@@ -30,4 +30,14 @@ const editMessage = async ({ message, userId, id }) => {
   return messageData;
 };
 
-module.exports = editMessage;
+const seenMessage = async ({ userId, id }) => {
+  await Message.update(
+    { sent_by: id, sent_to: userId, status: "delivered" },
+    { status: "seen" }
+  );
+  deleteKeysWithPrefix("messages:");
+
+  return "updated";
+};
+
+module.exports = { seenMessage, editMessage };

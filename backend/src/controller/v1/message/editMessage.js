@@ -1,4 +1,7 @@
-const { editMessage: editMessageLib } = require("@lib/v1/message");
+const {
+  editMessage: editMessageLib,
+  seenMessage: seenMessageLib,
+} = require("@lib/v1/message");
 
 const editMessage = async (req, res, next) => {
   try {
@@ -21,4 +24,23 @@ const editMessage = async (req, res, next) => {
   }
 };
 
+const seenMessage = async (req, res, next) => {
+  try {
+    const data = await seenMessageLib({
+      userId: req.user.id,
+      id: req.params.id,
+    });
+
+    const response = {
+      code: 200,
+      message: "updated",
+    };
+
+    res.status(response.code).json(data);
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = { seenMessage };
 module.exports = editMessage;

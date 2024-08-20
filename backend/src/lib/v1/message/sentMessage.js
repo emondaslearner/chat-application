@@ -67,6 +67,7 @@ const sentMessage = async ({ userId, sentTo, replied, message, files }) => {
       message,
       sent_by: userId,
       replied: replied ? replied : null,
+      status: "delivered",
     });
 
     await messageData.save();

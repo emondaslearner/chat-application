@@ -30,6 +30,11 @@ const messageSchema = new Schema(
       type: Schema.ObjectId,
       ref: "user",
     },
+    status: {
+      type: String,
+      enum: ["not_delivered", "delivered", "seen"],
+      default: "not_delivered",
+    },
   },
   {
     timestamps: true,
