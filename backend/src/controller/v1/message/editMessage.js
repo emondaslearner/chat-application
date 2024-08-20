@@ -42,5 +42,4 @@ const seenMessage = async (req, res, next) => {
   }
 };
 
-module.exports = { seenMessage };
-module.exports = editMessage;
+module.exports = { seenMessage, editMessage };
