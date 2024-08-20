@@ -1,7 +1,7 @@
 import AvatarSingle from "@src/components/shared/Avatar";
 import React, { ReactNode, useEffect, useRef, useState } from "react";
 import { FaCamera } from "react-icons/fa";
-import { Link, useParams } from "react-router-dom";
+import { Link, NavigateFunction, useNavigate, useParams } from "react-router-dom";
 import Dropdown from "../../Dropdown";
 import EditProfile from "../Popups/EditProfile";
 import AddPost from "../Popups/AddPost";
@@ -700,6 +700,7 @@ const Friends = ({
   friends,
   paramId,
 }: FriendsProps) => {
+  const navigate: NavigateFunction = useNavigate();
   return (
     <div className="w-[95%] mx-auto mt-4">
       <p className="text-[20px] text-dark_ dark:text-white_ font-semibold">
@@ -733,7 +734,9 @@ const Friends = ({
           friends.data.map((data: any, i: number) => {
             const profileId = paramId || profileData.id;
             return (
-              <div key={i} className="cursor-pointer">
+              <div onClick={() => navigate(`/profile/${(profileId === data?.second_user._id
+                ? data?.first_user?._id
+                : data?.second_user?._id)}`)} key={i} className="cursor-pointer">
                 <img
                   className="rounded-[10px] h-[100px]"
                   src={

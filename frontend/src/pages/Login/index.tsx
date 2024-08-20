@@ -1,4 +1,5 @@
 import { signIn } from "@src/apis/auth";
+import { getAllMessageAPI } from "@src/apis/message";
 import Button from "@src/components/shared/Button";
 import Input from "@src/components/shared/Input";
 import Label from "@src/components/shared/Label";
@@ -9,7 +10,97 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, NavigateFunction, useNavigate } from "react-router-dom";
 
-interface LoginProps {}
+interface LoginProps { }
+
+const processUserMessagesInIndexDB = async () => {
+  // Function to open the database
+  const openDatabase = () => {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open('chats', 1);
+
+      request.onupgradeneeded = (event: any) => {
+        const db = event.target.result;
+
+        if (!db.objectStoreNames.contains('messages')) {
+          db.createObjectStore('messages', { keyPath: '_id' });
+        }
+      };
+
+      request.onsuccess = (event: any) => {
+        resolve(event.target.result);
+      };
+
+      request.onerror = (event: any) => {
+        reject(event.target.errorCode);
+      };
+    });
+  };
+
+  // Function to retrieve all messages from the object store
+  const getAllMessages = (db: IDBDatabase) => {
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction(['messages'], 'readwrite');
+      const objectStore = transaction.objectStore('messages');
+
+      const getAllRequest = objectStore.getAll();
+
+      getAllRequest.onsuccess = (event: any) => {
+        resolve({ messages: event.target.result, objectStore });
+      };
+
+      getAllRequest.onerror = (event: any) => {
+        reject(event.target.errorCode);
+      };
+    });
+  };
+
+  try {
+    // Open the database
+    const database: any = await openDatabase();
+
+    // Get all messages
+    const { messages }: any = await getAllMessages(database);
+
+    if (!messages.length) {
+      const data: any = await getAllMessageAPI({
+        page: 1,
+        limit: 50000
+      });
+
+      const allMessage = data?.data;
+
+      if (allMessage && allMessage.length > 0) {
+
+        const db = indexedDB.open('chats'); // Replace with your database name
+
+        db.onsuccess = (event: any) => {
+          const transaction = event.target.result.transaction(['messages'], 'readwrite'); // Replace with your object store name
+          const objectStore = transaction.objectStore('messages');
+
+          const insertMessages = async () => {
+            for (const message of allMessage) {
+              try {
+                await objectStore.put(message);
+              } catch (error) {
+                console.error(`Error inserting message with _id: ${message._id}`, error);
+              }
+            }
+          };
+
+          insertMessages()
+        };
+
+        db.onerror = (event) => {
+          console.error('Error opening database');
+        };
+      }
+    }
+
+  } catch (error) {
+    console.error('Error processing user messages:', error);
+  }
+};
+
 
 const Login: React.FC<LoginProps> = () => {
   // themeColor
@@ -52,6 +143,7 @@ const Login: React.FC<LoginProps> = () => {
         navigate("/");
       }
       clearStates();
+      processUserMessagesInIndexDB();
     } catch (err) {
       setLoader(false);
       handleAxiosError(err, themeColor);

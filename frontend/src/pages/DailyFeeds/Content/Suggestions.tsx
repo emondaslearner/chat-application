@@ -103,6 +103,9 @@ const Component = ({ item, profileData, themeColor }: ComponentProps) => {
 
   const [status, setStatus] = useState<string>("");
 
+  // navigation
+  const navigate: NavigateFunction = useNavigate();
+
   const addFriend = async () => {
     try {
       const data: any = await addFriendAPI({ friendId: item._id });
@@ -157,10 +160,11 @@ const Component = ({ item, profileData, themeColor }: ComponentProps) => {
     <div
       className="w-full flex flex-col gap-[8px] bg-light_bg_ p-[13px] rounded-[5px] cursor-pointer transition-all duration-300 hover:bg-white_ dark:bg-dark_light_bg_ hover:dark:bg-dark_bg_"
     >
-      <div className="flex items-center gap-x-[13px]">
+      <div onClick={() => navigate(`/profile/${item?._id}`)} className="flex items-center gap-x-[13px] cursor-pointer">
         <AvatarSingle
           size="md"
           status={item.status}
+          timeago={new Date(item.updatedAt)}
           src={item?.profile_picture || "https://pipilikasoft.com/wp-content/uploads/2018/08/demo.jpg"}
           alt="Profile Picture"
         />

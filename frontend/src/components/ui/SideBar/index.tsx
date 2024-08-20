@@ -20,6 +20,9 @@ const SideBar: React.FC<SideBarProps> = ({ setChat }) => {
   // search 
   const [search, setSearch] = useState<string>("");
 
+  // localhost length
+  const locationArray = location.pathname.split("/");
+
   return (
     <div className="border-r-[1px] border-light_border_ dark:border-dark_border_ h-[100vh] overflow-hidden dark:bg-dark_bg_">
       {/* if page is not profile */}
@@ -62,7 +65,7 @@ const SideBar: React.FC<SideBarProps> = ({ setChat }) => {
 
       {/* Profile */}
       {
-        location.pathname === '/profile' && <Profile />
+        (locationArray.length > 0 && locationArray[1] === 'profile') && <Profile />
       }
     </div>
   );

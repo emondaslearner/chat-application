@@ -1,12 +1,12 @@
 import React from "react";
 import { Avatar } from "@nextui-org/react";
-
 interface AvatarProps {
   src: string;
   alt: string;
   size?: "sm" | "md" | "lg" | undefined;
   className?: string;
   status?: string | undefined;
+  timeago?: Date;
 }
 
 const sizeMap: Record<string, string> = {
@@ -21,7 +21,11 @@ const AvatarSingle: React.FC<AvatarProps> = ({
   size,
   className,
   status,
+  timeago
 }) => {
+
+
+
   return (
     <div className={` ${status && `relative w-${sizeMap[size || "10"]}`}`}>
       <Avatar
@@ -30,6 +34,7 @@ const AvatarSingle: React.FC<AvatarProps> = ({
         size={size}
         className={`${className} border-[1px] border-light_border_`}
       />
+
       {status === "online" && (
         <div className="w-[10px] h-[10px] rounded-[100%] bg-[green] absolute right-0 top-0"></div>
       )}
