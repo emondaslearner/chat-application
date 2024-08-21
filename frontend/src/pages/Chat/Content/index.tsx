@@ -16,7 +16,7 @@ import { AppDispatch, RootState } from "@src/store/store";
 import { useMutation } from "react-query";
 import { handleAxiosError } from "@src/utils/error";
 import { sentMessageAPI } from "@src/apis/message";
-import { setChatMessages } from "@src/store/actions/chats";
+import { setChatMessages, setChats } from "@src/store/actions/chats";
 import { addData, getAllDataFromDB } from "@src/utils/indexDb";
 
 interface ContentProps { }
@@ -155,8 +155,6 @@ const Content: React.FC<ContentProps> = () => {
 
       list[list.length] = data.data;
 
-      console.log('this is list', list);
-
       dispatch(setChatMessages(list));
       setMessage("");
     },
@@ -182,6 +180,12 @@ const Content: React.FC<ContentProps> = () => {
 
   // all chats
   const getAllMessages = useSelector((state: RootState) => state.chats.userChatMessages);
+
+  console.log('all chat messages', getAllMessages);
+
+
+  // chat data
+  const chats = useSelector((state: RootState) => state.chats.chats);
 
   return (
     <div className="w-full h-[100vh] overflow-hidden">
@@ -274,7 +278,6 @@ const Content: React.FC<ContentProps> = () => {
             };
 
             const list = [...getAllMessages, newMessageObject];
-            console.log('saved list', list);
 
             dispatch(setChatMessages(list));
 
@@ -283,6 +286,27 @@ const Content: React.FC<ContentProps> = () => {
                 chatMainDiv.current.scrollTop = chatMainDiv.current.scrollHeight + 100;
               }
             }, 500);
+
+            // update chats
+            const index = chats.findIndex((item: any) => {
+              const isFirstUserMatch = activeChats._id === (item.first_user._id || item.first_user);
+              const isSecondUserMatch = activeChats._id === (item.second_user._id || item.second_user);
+
+              return (isFirstUserMatch || isSecondUserMatch);
+            });
+
+            if (index !== -1) {
+              const firstData = chats[index];
+              const chatsList = [...chats];
+
+              // Remove the item from its current position
+              chatsList.splice(index, 1);
+
+              // Add the item to the beginning of the array
+              chatsList.unshift(firstData);
+              dispatch(setChats(chatsList));
+            }
+
           }}
           className="flex items-center h-[10%] px-3 relative justify-between"
         >

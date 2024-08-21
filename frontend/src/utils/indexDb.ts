@@ -68,34 +68,37 @@ const getAllDataFromDB = async () => {
   }
 };
 
-const updateMultipleRecords = async (records: any) => {
-  return async () => {
-    // Open the database
-    const db: any = await openDatabase();
+const updateMultipleRecords = async (records: any[]) => {
+  const db: any = await openDatabase(); // Function to open your IndexedDB
+  const transaction = db.transaction(["messages"], "readwrite");
+  const store = transaction.objectStore("messages");
 
-    const transaction = db.transaction(["messages"], "readwrite");
-    const store = transaction.objectStore("messages");
-
-    records.forEach((record: any) => {
-      const request = store.put(record);
-      request.onerror = (event: any) => {
-        console.error(
-          `Failed to update record with key ${record.id}`,
-          event.target.error
-        );
-      };
-    });
-
+  return new Promise((resolve, reject) => {
     transaction.oncomplete = () => {
       console.log("All records updated successfully.");
-      return "updated";
+      resolve("updated");
     };
 
     transaction.onerror = (event: any) => {
       console.error("Transaction failed", event.target.error);
-      return event.target.error;
+      reject(event.target.error);
     };
-  };
+
+    for (const record of records) {
+      const request = store.put(record);
+
+      request.onerror = (event: any) => {
+        console.error(
+          `Failed to update record with key ${record.id}:`,
+          event.target.error
+        );
+        // Stop the loop on error
+        transaction.abort();
+        reject(event.target.error); // Reject the promise with the error
+        return; // Exit the loop early
+      };
+    }
+  });
 };
 
-export { getAllDataFromDB, addData, updateMultipleRecords };
+export { getAllDataFromDB, addData, updateMultipleRecords, openDatabase };

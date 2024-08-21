@@ -22,6 +22,18 @@ const sentMessageAPI = ({ id, message, replied }: sentMessageTypes) => {
   })
 }
 
+const seenMessageAAPI = ({ id }: { id: string }) => {
+  return new Promise((resolve, reject) => {
+    axios.patch(`/user/${id}/message`)
+      .then((response) => {
+        resolve(response?.data); // Resolve with response data
+      })
+      .catch((error) => {
+        reject(error); // Reject the promise with the error
+      });
+  })
+}
+
 
 interface getAllMessageAPITypes {
   page: number;
@@ -40,4 +52,4 @@ const getAllMessageAPI = ({ page, limit }: getAllMessageAPITypes) => {
   })
 }
 
-export { sentMessageAPI, getAllMessageAPI };
+export { sentMessageAPI, getAllMessageAPI, seenMessageAAPI };

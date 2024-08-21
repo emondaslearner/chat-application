@@ -6,7 +6,7 @@ import Button from "../../components/shared/Button";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@src/store/store";
 import { changeChatOpenedVar } from "@src/store/actions/siteConfig";
-import { setChatUserData } from "@src/store/actions/chats";
+import { setActiveChat, setChatUserData } from "@src/store/actions/chats";
 
 interface ChatNotOpenedProps { }
 
@@ -45,7 +45,7 @@ const ChatNotOpened: React.FC<ChatNotOpenedProps> = () => {
             </p>
             <Button onClick={() => {
               dispatch(changeChatOpenedVar(chats[0]?._id));
-
+              dispatch(setActiveChat(chats[0]?._id));
               dispatch(setChatUserData(profileData.id === (chats[0]?.first_user._id || chats[0]?.first_user)
                 ? chats[0]?.second_user
                 : chats[0]?.first_user));

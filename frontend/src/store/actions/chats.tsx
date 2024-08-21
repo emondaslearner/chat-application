@@ -4,12 +4,14 @@ interface DataTypes {
   chats: any;
   selectedChatUserData: any;
   userChatMessages: any;
+  activeChat: string
 }
 
 const initialState: DataTypes = {
   chats: [],
   selectedChatUserData: {},
-  userChatMessages: []
+  userChatMessages: [],
+  activeChat: ""
 };
 
 const chats = createSlice({
@@ -24,9 +26,12 @@ const chats = createSlice({
     },
     setChatMessages: (state, action: PayloadAction<any>) => {
       state.userChatMessages = action.payload;
+    },
+    setActiveChat: (state, action: PayloadAction<any>) => {
+      state.activeChat = action.payload
     }
   },
 });
 
-export const { setChats, setChatUserData, setChatMessages } = chats.actions;
+export const { setChats, setChatUserData, setChatMessages, setActiveChat } = chats.actions;
 export default chats.reducer;
