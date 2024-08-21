@@ -7,7 +7,7 @@ const seenMessage = async ({ userId, id }) => {
     { status: "seen" }
   );
 
-  global.io.to(userId).emit("seenMessage", {
+  global.io.to(id).emit("seenMessage", {
     id: userId,
   });
 

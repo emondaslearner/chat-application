@@ -62,6 +62,7 @@ const sentMessage = async ({ userId, sentTo, replied, message, files }) => {
     user.last_message = message;
     user.save();
 
+
     const messageData = await Message({
       sent_to: sentTo,
       message,
@@ -69,6 +70,10 @@ const sentMessage = async ({ userId, sentTo, replied, message, files }) => {
       replied: replied ? replied : null,
       status: "delivered",
     });
+
+    if(!files.length) {
+      global.io.to(sentTo).emit("addMessage", messageData);
+    }
 
     await messageData.save();
     deleteKeysWithPrefix("messages:");

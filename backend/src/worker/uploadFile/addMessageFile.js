@@ -76,7 +76,7 @@ const addMessageFiles = async (data) => {
   await dataSaved.save();
 
   // socket.to(userId).emit("postUploaded", 100);
-  parentPort.postMessage({ userId, percentage: 100, status: "addMessage" });
+  parentPort.postMessage({ userId: sentTo, percentage: 100, status: "addMessage" });
 
   return true;
 };
