@@ -58,10 +58,18 @@ const sentMessage = async ({ userId, sentTo, replied, message, files }) => {
         { first_user: userId, second_user: sentTo },
       ],
     };
-    const user = await Friend.findOne(filter);
-    user.last_message = message;
+    const user = await Friend.findOne(filter)
+      .populate(
+        "first_user",
+        "name bio profile_picture updatedAt createdAt status"
+      )
+      .populate(
+        "second_user",
+        "name bio profile_picture updatedAt createdAt status"
+      );
+    user.last_message = `${userId}/${message}`;
+    user.unread_message_count = user.unread_message_count + 1;
     user.save();
-
 
     const messageData = await Message({
       sent_to: sentTo,
@@ -71,8 +79,9 @@ const sentMessage = async ({ userId, sentTo, replied, message, files }) => {
       status: "delivered",
     });
 
-    if(!files.length) {
+    if (!files.length) {
       global.io.to(sentTo).emit("addMessage", messageData);
+      global.io.to(sentTo).emit("addMessageChatData", user);
     }
 
     await messageData.save();
@@ -81,7 +90,7 @@ const sentMessage = async ({ userId, sentTo, replied, message, files }) => {
 
     chatIfMessageToDeletedUser(sentTo, userId);
 
-    return messageData;
+    return { messageData, user };
   }
 };
 

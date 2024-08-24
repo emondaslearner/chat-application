@@ -99,6 +99,7 @@ const getAllChats = async ({ filterData, userId }) => {
               },
               unread_message_count: 1,
               last_message: 1,
+              updatedAt: 1
             },
           },
         ],

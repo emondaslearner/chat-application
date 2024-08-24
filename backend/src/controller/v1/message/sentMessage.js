@@ -6,7 +6,7 @@ const sentMessage = async (req, res, next) => {
 
     console.log(req.body);
 
-    const message = await sentMessageLib({
+    const { messageData, user } = await sentMessageLib({
       sentTo: req.params?.id,
       userId: req.user.id,
       message: req.body?.message,
@@ -15,11 +15,12 @@ const sentMessage = async (req, res, next) => {
     });
 
     let response = {};
-    if (message) {
-      response = {
+    if (messageData) {
+      response = {  
         code: 201,
         message: "Message sended successfully",
-        data: message,
+        data: messageData,
+        user: user,
         self: req.url,
       };
     } else {
