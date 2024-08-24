@@ -29,9 +29,13 @@ const chats = createSlice({
     },
     setActiveChat: (state, action: PayloadAction<any>) => {
       state.activeChat = action.payload
+    },
+    updateChatData: (state, action: PayloadAction<any>) => {
+      const index = state.chats.findIndex((data: any) => data._id === action.payload._id);
+      state.chats[index] = action.payload;
     }
   },
 });
 
-export const { setChats, setChatUserData, setChatMessages, setActiveChat } = chats.actions;
+export const { setChats, setChatUserData, setChatMessages, setActiveChat, updateChatData } = chats.actions;
 export default chats.reducer;

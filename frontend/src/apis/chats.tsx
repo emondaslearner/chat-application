@@ -21,5 +21,19 @@ const getAllChats = ({ page, limit, sortBy, sortType, search }: getAllChatsDataT
     })
 }
 
+const editChatAPI = (unreadCount: number, id: string) => {
+    return new Promise((resolve, reject) => {
+        axios.patch(`/user/${id}/chat`, {
+            unreadMessage: unreadCount
+        })
+            .then((response) => {
+                resolve(response?.data);
+            })
+            .catch((error) => {
+                reject(error);
+            })
+    })
+}
 
-export { getAllChats };
+
+export { getAllChats, editChatAPI };

@@ -16,7 +16,7 @@ import { AppDispatch, RootState } from "@src/store/store";
 import { useMutation } from "react-query";
 import { handleAxiosError } from "@src/utils/error";
 import { sentMessageAPI } from "@src/apis/message";
-import { setChatMessages, setChats } from "@src/store/actions/chats";
+import { setChatMessages, setChats, updateChatData } from "@src/store/actions/chats";
 import { addData, getAllDataFromDB } from "@src/utils/indexDb";
 
 interface ContentProps { }
@@ -104,9 +104,13 @@ const Content: React.FC<ContentProps> = () => {
   useEffect(() => {
     // Scroll the div to its bottom when the component mounts
     if (chatMainDiv.current) {
-      chatMainDiv.current.scrollTop = 500;
+      setTimeout(() => {
+        if (chatMainDiv.current) {
+          chatMainDiv.current.scrollTop = chatMainDiv.current.scrollHeight + 100;
+        }
+      }, 500);
     }
-  }, [chatMainDiv]);
+  }, [chatMainDiv, activeChats]);
 
   // message
   const [message, setMessage] = useState<string>("");
@@ -135,6 +139,8 @@ const Content: React.FC<ContentProps> = () => {
     mutationKey: ["SentMessageToUser"],
     onSuccess: (data: any) => {
       const request = indexedDB.open("chats", 1);
+
+      dispatch(updateChatData(data?.user));
 
       request.onupgradeneeded = (event: any) => {
         // This event is triggered when the database is being created or upgraded
@@ -181,8 +187,6 @@ const Content: React.FC<ContentProps> = () => {
   // all chats
   const getAllMessages = useSelector((state: RootState) => state.chats.userChatMessages);
 
-  console.log('all chat messages', getAllMessages);
-
 
   // chat data
   const chats = useSelector((state: RootState) => state.chats.chats);
@@ -217,46 +221,38 @@ const Content: React.FC<ContentProps> = () => {
           </div>
           <div className="h-full w-[95%] mx-auto px-8  gap-y-1 flex flex-col">
             {
-              getAllMessages.map((chat: any, i: number) => (
-                <div className={`${getAllMessages.length === i + 1 && '!pb-[20px] !block'}`} key={i}>
-                  {
-                    (chat.sent_by?._id || chat.sent_by) === profileData.id && (
-                      <div className="w-full flex justify-end">
-                        <div className="relative max-w-[400px] bg-[#f5f6fa] dark:bg-dark_bg_ pt-[3px] pb-3 px-2 rounded-[3px]">
-                          <p className=" text-deep_dark_ dark:text-dark_text_ leading-5 text-[15px] flex items-center gap-x-[10px]">
-                            {chat?.message} <span className="block mb-[-20px] text-[10px]">11:20 <span className="ml-[5px]">{chat.status === 'not_delivered' ? 'Not delivered' : chat.status}</span></span>
-                          </p>
-                          {/* <div className="absolute bottom-[-25px] right-[-15px] p-[8px] bg-white_ dark:bg-dark_bg_ rounded-[50%]">
-                            <img
-                              className="w-[30px] h-[30px] rounded-[50%]"
-                              src={profileData.profile_picture || "https://pipilikasoft.com/wp-content/uploads/2018/08/demo.jpg"}
-                              alt=""
-                            />
-                          </div> */}
-                        </div>
-                      </div>
-                    )
-                  }
-                  {
-                    (chat.sent_to?._id || chat.sent_to) === profileData.id && chat.status !== 'not_delivered' && (
-                      <div className="w-full flex">
-                        <div className="relative max-w-[400px] bg-primary_ py-2 px-2 rounded-[3px]">
-                          <p className="text-white_ leading-5 text-[15px]">
-                            {chat?.message}
-                          </p>
-                          {/* <div className="absolute bottom-[-20px] left-[-25px] p-[8px] bg-white_ dark:bg-dark_bg_ rounded-[50%]">
-                            <img
-                              className="w-[30px] h-[30px] rounded-[50%]"
-                              src={chat.sent_by?.profile_picture || "https://pipilikasoft.com/wp-content/uploads/2018/08/demo.jpg"}
-                              alt=""
-                            />
-                          </div> */}
-                        </div>
-                      </div>
-                    )
-                  }
-                </div>
-              ))
+              getAllMessages.map((chat: any, i: number) => {
+                return (
+                  <>
+                    <div className={`${getAllMessages.length === i + 1 && '!pb-[20px] !block'}`} key={i}>
+                      {
+                        (chat.sent_by?._id || chat.sent_by) === profileData.id && (
+                          <div className="w-full flex justify-end">
+                            <div className="relative max-w-[400px] bg-[#f5f6fa] dark:bg-dark_bg_ pt-[3px] pb-3 px-2 rounded-[3px]">
+                              <p className=" text-deep_dark_ dark:text-dark_text_ leading-5 text-[15px] flex items-end gap-x-[10px] pr-[50px]">
+                                {chat?.message}
+                              </p>
+                              <span className="mb-[-10px] text-[10px] flex items-center justify-end text-deep_dark_ dark:text-dark_text_">11:20 <span className="ml-[5px]">{chat.status === 'not_delivered' ? 'Not delivered' : chat.status}</span></span>
+                            </div>
+                          </div>
+                        )
+                      }
+                      {
+                        (chat.sent_to?._id || chat.sent_to) === profileData.id && chat.status !== 'not_delivered' && (
+                          <div className="w-full flex">
+                            <div className="relative max-w-[400px] bg-primary_ pt-[3px] pb-3 px-2 rounded-[3px]">
+                              <p className="text-white_ leading-5 text-[15px]">
+                                {chat?.message}
+                              </p>
+                              <span className="mb-[-10px] text-[10px] flex items-center justify-end text-deep_dark_ dark:text-dark_text_ ml-[40px]">11:20</span>
+                            </div>
+                          </div>
+                        )
+                      }
+                    </div>
+                  </>
+                )
+              })
             }
           </div>
         </div>
