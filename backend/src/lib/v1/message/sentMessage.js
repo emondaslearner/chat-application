@@ -69,6 +69,7 @@ const sentMessage = async ({ userId, sentTo, replied, message, files }) => {
       );
     user.last_message = `${userId}/${message}`;
     user.unread_message_count = user.unread_message_count + 1;
+    user.chat_deleted_for= [];
     user.save();
 
     const messageData = await Message({

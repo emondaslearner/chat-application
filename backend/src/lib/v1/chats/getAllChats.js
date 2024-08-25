@@ -13,16 +13,16 @@ const getAllChats = async ({ filterData, userId }) => {
   const sortStr = { [sortField]: sortDirection };
 
   const filter = {
-    $and: [
-      {
-        $or: [
-          { first_user: new mongoose.Types.ObjectId(userId) },
-          { second_user: new mongoose.Types.ObjectId(userId) },
-        ],
-      },
-      { chat_deleted_for: { $nin: [new mongoose.Types.ObjectId(userId)] } },
-    ],
-  };
+  $and: [
+    {
+      $or: [
+        { first_user: new mongoose.Types.ObjectId(userId) },
+        { second_user: new mongoose.Types.ObjectId(userId) },
+      ],
+    },
+    { chat_deleted_for: { $nin: [userId] } },
+  ],
+};
 
   if (filterData.filter === "unread") {
     filter.$and.push({ unread_message_count: { $ne: 0 } });
@@ -30,7 +30,7 @@ const getAllChats = async ({ filterData, userId }) => {
 
   const aggregationPipeline = [
     {
-      $match: filter,
+      $match: filter, // This filters out chats deleted for the user
     },
     {
       $lookup: {
@@ -98,8 +98,9 @@ const getAllChats = async ({ filterData, userId }) => {
                 updatedAt: "$second_user.updatedAt",
               },
               unread_message_count: 1,
+              chat_deleted_for: 1,
               last_message: 1,
-              updatedAt: 1
+              updatedAt: 1,
             },
           },
         ],
@@ -118,12 +119,14 @@ const getAllChats = async ({ filterData, userId }) => {
         if (chat.first_user.toString() === userId.toString()) {
           return await Friend.populate(chat, {
             path: "second_user",
-            select: "name profile_picture updatedAt bio unread_message_count status",
+            select:
+              "name profile_picture updatedAt bio unread_message_count status",
           });
         } else {
           return await Friend.populate(chat, {
             path: "first_user",
-            select: "name profile_picture updatedAt bio unread_message_count status",
+            select:
+              "name profile_picture updatedAt bio unread_message_count status",
           });
         }
       })

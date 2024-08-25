@@ -12,13 +12,13 @@ const getDataFromRedis = async (key, query, expire) => {
   let value = await client.get(key);
 
   if (!value) {
-    console.log("cache miss");
+    console.log(`cache miss ${key}`);
     const data = await query();
 
     value = JSON.stringify(data);
     addDataInRedis({ key, value, expire });
   } else {
-    console.log("cache hit");
+    console.log(`cache hit ${key}`);
   }
 
   return JSON.parse(value);

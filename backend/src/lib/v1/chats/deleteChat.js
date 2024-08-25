@@ -28,8 +28,9 @@ const deleteChat = async ({ userId, chatId }) => {
   await chat.save();
 
   deleteKeysWithPrefix("chats:");
+  deleteKeysWithPrefix("friends:");
   
-  return true;
+  return chat;
 };
 
 module.exports = deleteChat;

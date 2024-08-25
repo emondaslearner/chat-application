@@ -2,12 +2,12 @@ const { deleteChat: deleteChatLib } = require("@lib/v1/chats");
 
 const deleteChat = async (req, res, next) => {
   try {
-    await deleteChatLib({
+    const chat = await deleteChatLib({
       chatId: req.params.id,
       userId: req.user.id,
     });
 
-    res.status(204).end();
+    res.status(200).json(chat);
   } catch (err) {
     next(err);
   }
