@@ -304,14 +304,14 @@ const ChatList: React.FC<ChatProps> = ({ setChat, search }) => {
                       : data?.first_user?.name
                   }
                   className="font-semibold dark:text-white_ text-[18px]"
-                  maxTextWidth={80}
+                  maxTextWidth={150}
                 />
 
                 <TextEllipsis
                   className={`overflow-hidden text-ellipsis ${activeChat !== data?._id && "dark:text-dark_text_"
                     }`}
                   text={modifiedLastMessage || ""}
-                  maxTextWidth={90}
+                  maxTextWidth={150}
                 />
               </div>
 

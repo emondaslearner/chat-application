@@ -35,5 +35,18 @@ const editChatAPI = (unreadCount: number, id: string) => {
     })
 }
 
+// delete chat api
+const deleteChatAPI = (id: string) => {
+    return new Promise((resolve, reject) => {
+        axios.delete(`/user/${id}/chat`)
+            .then((response) => {
+                resolve(response?.data);
+            })
+            .catch((error) => {
+                reject(error);
+            })
+    })
+}
 
-export { getAllChats, editChatAPI };
+
+export { getAllChats, editChatAPI, deleteChatAPI };

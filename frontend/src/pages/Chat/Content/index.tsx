@@ -16,41 +16,73 @@ import { AppDispatch, RootState } from "@src/store/store";
 import { useMutation } from "react-query";
 import { handleAxiosError } from "@src/utils/error";
 import { sentMessageAPI } from "@src/apis/message";
-import { setChatMessages, setChats, updateChatData } from "@src/store/actions/chats";
+import { setActiveChat, setChatMessages, setChats, updateChatData } from "@src/store/actions/chats";
 import { addData, getAllDataFromDB } from "@src/utils/indexDb";
+import { success } from "@src/utils/alert";
+import Spinner from "@src/components/shared/Spinner";
+import { deleteChatAPI } from "@src/apis/chats";
 
 interface ContentProps { }
 
 interface HeaderProps {
   activeChats: any;
+  setChatDeleteStatus: any;
 }
 
 interface Items {
   key: string;
   label: string;
   icon?: ReactNode;
+  onClick?: any;
 }
-// sidebar header dropdown options
-const items: Items[] = [
-  {
-    key: "new",
-    label: "New file",
-  },
-  {
-    key: "copy",
-    label: "Copy link",
-  },
-  {
-    key: "edit",
-    label: "Edit file",
-  },
-  {
-    key: "delete",
-    label: "Delete file",
-  },
-];
 
-const Header: React.FC<HeaderProps> = ({ activeChats }) => {
+
+const Header: React.FC<HeaderProps> = ({ activeChats, setChatDeleteStatus }) => {
+
+  // mode
+  const mode: 'light' | 'dark' = useSelector((state: RootState) => state.themeConfig.mode);
+
+  // dispatch
+  const dispatch: AppDispatch = useDispatch();
+
+  const deleteChat = async () => {
+    try {
+      const data = await deleteChatAPI(activeChats._id);
+
+      return data;
+    } catch (err) {
+      handleAxiosError(err, mode);
+      throw err;
+    }
+  }
+
+  const { mutate, isLoading } = useMutation({
+    mutationFn: deleteChat,
+    mutationKey: ['deleteChat'],
+    onSuccess: (data: any) => {
+      success({ message: "Successfully deleted chat", themeColor: mode });
+      dispatch(setActiveChat({}));
+      // dispatch(updateChatData(data?.data));
+      console.log('delete data', data);
+    }
+  });
+
+  useEffect(() => {
+    setChatDeleteStatus(isLoading);
+  }, [isLoading]);
+
+  // sidebar header dropdown options
+  const items: Items[] = [
+    {
+      key: "edit",
+      label: "Edit file",
+    },
+    {
+      key: "delete",
+      label: "Delete Chats",
+      onClick: () => mutate()
+    },
+  ];
   return (
     <div className="px-8 py-3 border-light_border_ dark:border-dark_border_ dark:bg-dark_bg_ border-b-[1px] flex justify-between h-[9%]">
       <div className="flex items-center">
@@ -73,7 +105,7 @@ const Header: React.FC<HeaderProps> = ({ activeChats }) => {
       </div>
 
       <div className="flex items-center gap-x-4">
-        <Phone size={20} className="text-dark_gray_ cursor-pointer" />
+        {/* <Phone size={20} className="text-dark_gray_ cursor-pointer" /> */}
 
         {/* Dropdown */}
         <Dropdown items={items}>
@@ -86,6 +118,9 @@ const Header: React.FC<HeaderProps> = ({ activeChats }) => {
 
 
 const Content: React.FC<ContentProps> = () => {
+  // delete state
+  const [chatDeleteStatus, setChatDeleteStatus] = useState<boolean>(false);
+
   // active chat data
   const activeChats: any = useSelector(
     (state: RootState) => state.chats.selectedChatUserData
@@ -139,6 +174,10 @@ const Content: React.FC<ContentProps> = () => {
     mutationKey: ["SentMessageToUser"],
     onSuccess: (data: any) => {
       const request = indexedDB.open("chats", 1);
+
+      if (chatMainDiv?.current) {
+        chatMainDiv.current.scrollTop = chatMainDiv.current.scrollHeight + 100;
+      }
 
       dispatch(updateChatData(data?.user));
 
@@ -194,7 +233,7 @@ const Content: React.FC<ContentProps> = () => {
   return (
     <div className="w-full h-[100vh] overflow-hidden">
       {/* chat header */}
-      <Header activeChats={activeChats} />
+      <Header activeChats={activeChats} setChatDeleteStatus={setChatDeleteStatus} />
 
       {/* chat body */}
       <div className="w-full h-[91%]">
@@ -221,38 +260,62 @@ const Content: React.FC<ContentProps> = () => {
           </div>
           <div className="h-full w-[95%] mx-auto px-8  gap-y-1 flex flex-col">
             {
-              getAllMessages.map((chat: any, i: number) => {
-                return (
-                  <>
-                    <div className={`${getAllMessages.length === i + 1 && '!pb-[20px] !block'}`} key={i}>
-                      {
-                        (chat.sent_by?._id || chat.sent_by) === profileData.id && (
-                          <div className="w-full flex justify-end">
-                            <div className="relative max-w-[400px] bg-[#f5f6fa] dark:bg-dark_bg_ pt-[3px] pb-3 px-2 rounded-[3px]">
-                              <p className=" text-deep_dark_ dark:text-dark_text_ leading-5 text-[15px] flex items-end gap-x-[10px] pr-[50px]">
-                                {chat?.message}
-                              </p>
-                              <span className="mb-[-10px] text-[10px] flex items-center justify-end text-deep_dark_ dark:text-dark_text_">11:20 <span className="ml-[5px]">{chat.status === 'not_delivered' ? 'Not delivered' : chat.status}</span></span>
+              !chatDeleteStatus ?
+                getAllMessages.map((chat: any, i: number) => {
+                  const passedDate = new Date(chat?.createdAt);
+
+                  let hours = passedDate.getHours();
+                  let minutes = passedDate.getMinutes();
+                  const ampm = hours >= 12 ? 'PM' : 'AM';
+
+                  // Convert to 12-hour format
+                  hours = hours % 12;
+                  hours = hours || 12; // The hour '0' should be '12'
+
+                  // Ensure minutes are correctly formatted
+                  minutes = minutes || 0;
+
+                  // Format the minutes and hours with leading zeros if necessary
+                  const formattedHours = hours.toString().padStart(2, '0');
+                  const formattedMinutes = minutes.toString().padStart(2, '0');
+
+                  // Combine hours, minutes, and AM/PM
+                  const formattedTime = `${formattedHours}:${formattedMinutes} ${ampm}`;
+                  return (
+                    <>
+                      <div className={`${getAllMessages.length === i + 1 && '!pb-[20px] !block'}`} key={i}>
+                        {
+                          (chat.sent_by?._id || chat.sent_by) === profileData.id && (
+                            <div className="w-full flex justify-end">
+                              <div className="relative max-w-[400px] bg-[#f5f6fa] dark:bg-dark_bg_ pt-[3px] pb-3 px-2 rounded-[3px]">
+                                <p className=" text-deep_dark_ dark:text-dark_text_ leading-5 text-[15px] flex items-end gap-x-[10px] pr-[50px]">
+                                  {chat?.message}
+                                </p>
+                                <span className="mb-[-10px] text-[10px] flex items-center justify-end text-deep_dark_ dark:text-dark_text_">{formattedTime}<span className="ml-[5px]">{chat.status === 'not_delivered' ? 'Not delivered' : chat.status}</span></span>
+                              </div>
                             </div>
-                          </div>
-                        )
-                      }
-                      {
-                        (chat.sent_to?._id || chat.sent_to) === profileData.id && chat.status !== 'not_delivered' && (
-                          <div className="w-full flex">
-                            <div className="relative max-w-[400px] bg-primary_ pt-[3px] pb-3 px-2 rounded-[3px]">
-                              <p className="text-white_ leading-5 text-[15px]">
-                                {chat?.message}
-                              </p>
-                              <span className="mb-[-10px] text-[10px] flex items-center justify-end text-deep_dark_ dark:text-dark_text_ ml-[40px]">11:20</span>
+                          )
+                        }
+                        {
+                          (chat.sent_to?._id || chat.sent_to) === profileData.id && chat.status !== 'not_delivered' && (
+                            <div className="w-full flex">
+                              <div className="relative max-w-[400px] bg-primary_ pt-[3px] pb-3 px-2 rounded-[3px]">
+                                <p className="text-white_ leading-5 text-[15px]">
+                                  {chat?.message}
+                                </p>
+                                <span className="mb-[-10px] text-[10px] flex items-center justify-end text-deep_dark_ dark:text-dark_text_ ml-[40px]">{formattedTime}</span>
+                              </div>
                             </div>
-                          </div>
-                        )
-                      }
-                    </div>
-                  </>
+                          )
+                        }
+                      </div>
+                    </>
+                  )
+                }) : (
+                  <div className="w-full h-full flex justify-center items-center">
+                    <Spinner loaderStatus={"elementLoader"} />
+                  </div>
                 )
-              })
             }
           </div>
         </div>
