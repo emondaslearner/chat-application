@@ -5,15 +5,16 @@ import Content from "./Content";
 import SideBar from "../../components/ui/SideBar";
 import { useSelector } from "react-redux";
 import ChatNotOpened from "./ChatNotOpened";
+import { RootState } from "@src/store/store";
 
-interface ChatProps {}
+interface ChatProps { }
 
 const Chat: React.FC<ChatProps> = () => {
   const chatOpenedOrNot = useSelector(
     (state: any) => state?.siteConfig?.chatOpened
   );
 
-  const [chat, setChat] = useState<boolean>(false);
+  const chatStatus = useSelector((state: RootState) => state.chats.chatStatus);
 
   // console.log('chatOpenedOrNotchatOpenedOrNot', chatOpenedOrNot)
 
@@ -28,13 +29,13 @@ const Chat: React.FC<ChatProps> = () => {
         </div>
       </div>
 
-      {chat ? (
+      {chatStatus ? (
         <div className="lg:hidden block w-full">
           <Content />
         </div>
       ) : (
         <div className="lg:hidden block w-[95%] mx-auto">
-          <SideBar setChat={setChat} />
+          <SideBar />
         </div>
       )}
     </div>

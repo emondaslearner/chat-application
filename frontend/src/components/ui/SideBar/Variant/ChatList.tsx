@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { changeChatOpenedVar } from "../../../../store/actions/siteConfig";
 import AvatarSingle from "../../../shared/Avatar";
@@ -6,32 +6,27 @@ import TextEllipsis from "../../../shared/TextEllipsis";
 import { AppDispatch, RootState } from "@src/store/store";
 import { useMutation, useQuery } from "react-query";
 import {
+  addChatMessagesToStore,
   setActiveChat,
   setChatMessages,
   setChats,
+  setChatStatus,
   setChatUserData,
   updateChatData,
 } from "@src/store/actions/chats";
 import Spinner from "@src/components/shared/Spinner";
 import { editChatAPI, getAllChats } from "@src/apis/chats";
 import ReactTimeAgo from "react-time-ago";
-import {
-  addData,
-  getAllDataFromDB,
-  openDatabase,
-  updateMultipleRecords,
-} from "@src/utils/indexDb";
-import { getSocket } from "@src/utils/socket";
 import { handleAxiosError } from "@src/utils/error";
+import { getSocket } from "@src/utils/socket";
+import { addData, openDatabase } from "@src/utils/indexDb";
 import { seenMessageAAPI } from "@src/apis/message";
-import useBeforeUnload from "@src/hooks/useBeforeUnload";
 
 interface ChatProps {
-  setChat?: (value: boolean) => void;
   search: string;
 }
 
-const ChatList: React.FC<ChatProps> = ({ setChat, search }) => {
+const ChatList: React.FC<ChatProps> = ({ search }) => {
   // dispatch
   const dispatch: AppDispatch = useDispatch();
 
@@ -43,6 +38,11 @@ const ChatList: React.FC<ChatProps> = ({ setChat, search }) => {
 
   // chat id
   const activeChat = useSelector((state: RootState) => state.chats.activeChat);
+
+  // active chat user data
+  const activeChatUserData = useSelector(
+    (state: RootState) => state.chats.selectedChatUserData
+  );
 
   // fetch chat data
   const { data, isLoading }: { data: any; isLoading: boolean } = useQuery({
@@ -90,140 +90,41 @@ const ChatList: React.FC<ChatProps> = ({ setChat, search }) => {
   // mode
   const mode = useSelector((state: RootState) => state.themeConfig.mode);
 
-  // delete token from localStorage
-  const deleteActiveChat = () => {
-    localStorage.removeItem("activeChat");
-  };
-  useBeforeUnload(deleteActiveChat);
-
-  const updateMessagesToSeen = async (id: string) => {
-    try {
-      const data = seenMessageAAPI({ id });
-      return data;
-    } catch (err) {
-      handleAxiosError(err, mode);
-      throw err;
-    }
-  };
-
-  const { mutate: updateToSeen } = useMutation({
-    mutationFn: updateMessagesToSeen,
-    mutationKey: ["seenMessage"],
-  });
-
-  // active chat data
-  const activeChats = useSelector(
-    (state: RootState) => state.chats.selectedChatUserData
-  );
-
-  const updateUserMessage = (status?: string) => {
-    if (activeChats?._id || status) {
-      console.log("status", status);
-      const chatId: any = localStorage.getItem("activeChat");
-      console.log("chatId", chatId);
-
-      updateToSeen(status ? chatId : activeChats._id);
-      updateChatCount({ unreadCount: 0, id: status ? chatId : activeChats._id });
-    }
-  };
-
+  // chat data to local storage on chat change
   useEffect(() => {
-    if (activeChats._id) {
-      localStorage.setItem("activeChat", activeChats._id);
+    if (activeChatUserData._id) {
+      localStorage.setItem(
+        "activeChatData",
+        JSON.stringify(activeChatUserData)
+      );
+    } else {
+      localStorage.removeItem("activeChatData");
     }
+  }, [activeChatUserData]);
 
-    updateUserMessage();
-  }, [activeChats]);
 
+  // socket connection
   useEffect(() => {
     const socket = getSocket();
 
-    const getNewRecord = async (socketData: any, status: string) => {
-      const allMessages = await getAllDataFromDB();
+    // Define the event listener function
+    const handleNewMessage = async (socketData: any) => {
+      const activeChatDataString: any = localStorage.getItem("activeChatData");
 
-      const chatMessages = allMessages.filter((data: any) => {
-        return status === "me"
-          ? (data.sent_by?.id || data.sent_by) === profileData.id &&
-          (data.sent_to?.id || data.sent_to) === socketData.id &&
-          data.status === "delivered"
-          : (data.sent_by?.id || data.sent_by) === socketData.id &&
-          (data.sent_to?.id || data.sent_to) === profileData.id &&
-          data.status === "delivered";
-      });
+      const activeChatData = JSON.parse(activeChatDataString);
 
-      const newMessageStringify: any = localStorage.getItem("seenSocketData");
+      const db: any = await openDatabase();
+      addData(db, socketData);
 
-      const newMessage = newMessageStringify && JSON.parse(newMessageStringify);
-
-      const theActiveChat = localStorage.getItem("activeChat");
-
-      let allRecords = chatMessages.map((data: any) => ({
-        ...data,
-        status: "seen",
-      }));
-
-      if (newMessage?._id) {
-        allRecords = [...allRecords, newMessage];
+      if (activeChatData._id === socketData.sent_by) {
+        dispatch(addChatMessagesToStore(socketData));
       }
 
-      if (allRecords.length !== 0) {
-        await updateMultipleRecords(allRecords);
-
-        if (theActiveChat === socketData.id) {
-          const newData = await getAllDataFromDB();
-
-          const newMessages = newData.filter((data: any) => {
-            const sentById = data.sent_by?._id || data.sent_by;
-            const sentToId = data.sent_to?._id || data.sent_to;
-
-            // Check if the message is between you (profileData.id) and the other person (socketData.id)
-            return (
-              (sentById === profileData.id && sentToId === socketData.id) ||
-              (sentById === socketData.id && sentToId === profileData.id)
-            );
-          });
-
-          dispatch(setChatMessages(newMessages));
-        }
-      }
+      console.log("activeChatUserData", activeChatData);
     };
 
-    socket.on("seenMessage", async (socketData: any) => {
-      try {
-        localStorage.removeItem("seenSocketData");
-        getNewRecord(socketData, "me");
-      } catch (err) {
-        console.log("hello i am error", err);
-      }
-    });
-
-    socket.on("addMessage", async (socketData: any) => {
-      const theActiveChat = localStorage.getItem("activeChat");
-
-      console.log("theActiveChat", theActiveChat);
-      console.log("socketData", socketData);
-
-      if (theActiveChat === (socketData.sent_by?._id || socketData.sent_by)) {
-        console.log("Condition matched");
-        localStorage.setItem(
-          "seenSocketData",
-          JSON.stringify({ ...socketData, status: "seen" })
-        );
-        await getNewRecord(
-          { id: socketData.sent_by?._id || socketData.sent_by },
-          "he"
-        );
-        await updateUserMessage("yes");
-      } else {
-        const db = await openDatabase();
-        await addData(db, socketData);
-      }
-    });
-
-    socket.on("addMessageChatData", async (socketData: any) => {
-      console.log('update chat data in store', data);
-      dispatch(updateChatData(socketData));
-    });
+    // Attach the event listener
+    socket.on("addMessage", handleNewMessage);
 
     return () => {
       socket.off("chat message");
@@ -255,18 +156,20 @@ const ChatList: React.FC<ChatProps> = ({ setChat, search }) => {
           return (
             <li
               onClick={() => {
-                dispatch(setActiveChat(data?._id));
-                dispatch(changeChatOpenedVar(true));
-                dispatch(setChatMessages([]));
-                dispatch(
-                  setChatUserData(
-                    profileData.id ===
-                      (data?.first_user._id || data?.first_user)
-                      ? data?.second_user
-                      : data?.first_user
-                  )
-                );
-                setChat && setChat(true);
+                if (activeChat !== data._id) {
+                  dispatch(setActiveChat(data?._id));
+                  dispatch(changeChatOpenedVar(true));
+                  dispatch(setChatMessages([]));
+                  dispatch(
+                    setChatUserData(
+                      profileData.id ===
+                        (data?.first_user._id || data?.first_user)
+                        ? data?.second_user
+                        : data?.first_user
+                    )
+                  );
+                  dispatch(setChatStatus(true));
+                }
               }}
               key={i}
               className={`${activeChat === data?._id &&

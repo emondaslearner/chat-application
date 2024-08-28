@@ -4,7 +4,6 @@ import React, { useEffect, useRef, ReactNode, useState } from "react";
 import {
   ArrowRight,
   MoreVertical,
-  Phone,
   PlusCircle,
   Smile,
 } from "react-feather";
@@ -15,12 +14,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@src/store/store";
 import { useMutation } from "react-query";
 import { handleAxiosError } from "@src/utils/error";
-import { sentMessageAPI } from "@src/apis/message";
-import { setActiveChat, setChatMessages, setChats, updateChatData } from "@src/store/actions/chats";
-import { addData, getAllDataFromDB } from "@src/utils/indexDb";
+import { seenMessageAAPI, sentMessageAPI } from "@src/apis/message";
+import { deleteChatDataViaIndex, setActiveChat, setChatMessages, setChats, setChatStatus, updateChatData, updateChatMessageToSeen } from "@src/store/actions/chats";
+import { addData, deleteMultipleRecords, getAllDataFromDB, openDatabase, updateMultipleRecords } from "@src/utils/indexDb";
 import { success } from "@src/utils/alert";
 import Spinner from "@src/components/shared/Spinner";
 import { deleteChatAPI } from "@src/apis/chats";
+import { changeChatOpenedVar } from "@src/store/actions/siteConfig";
+import { getSocket } from "@src/utils/socket";
 
 interface ContentProps { }
 
@@ -45,6 +46,12 @@ const Header: React.FC<HeaderProps> = ({ activeChats, setChatDeleteStatus }) => 
   // dispatch
   const dispatch: AppDispatch = useDispatch();
 
+  // profile data
+  const profileData = useSelector((state: RootState) => state.auth);
+
+  // chats
+  const chats = useSelector((state: RootState) => state.chats.chats);
+
   const deleteChat = async () => {
     try {
       const data = await deleteChatAPI(activeChats._id);
@@ -59,17 +66,27 @@ const Header: React.FC<HeaderProps> = ({ activeChats, setChatDeleteStatus }) => 
   const { mutate, isLoading } = useMutation({
     mutationFn: deleteChat,
     mutationKey: ['deleteChat'],
-    onSuccess: (data: any) => {
-      success({ message: "Successfully deleted chat", themeColor: mode });
-      dispatch(setActiveChat({}));
-      // dispatch(updateChatData(data?.data));
-      console.log('delete data', data);
+    onSuccess: async (data: any) => {
+      try {
+        const index: number = chats.findIndex((data: any) => data._id === activeChat);
+        dispatch(deleteChatDataViaIndex(index));
+
+        success({ message: "Successfully deleted chat", themeColor: mode });
+        const db = await openDatabase();
+
+        deleteMultipleRecords(db, profileData.id, activeChats._id);
+      } catch (err) {
+        console.log('delete error', err);
+      }
+
     }
   });
 
   useEffect(() => {
     setChatDeleteStatus(isLoading);
   }, [isLoading]);
+
+  const activeChat = useSelector((state: RootState) => state.chats.activeChat);
 
   // sidebar header dropdown options
   const items: Items[] = [
@@ -80,7 +97,13 @@ const Header: React.FC<HeaderProps> = ({ activeChats, setChatDeleteStatus }) => 
     {
       key: "delete",
       label: "Delete Chats",
-      onClick: () => mutate()
+      onClick: () => {
+        mutate();
+        dispatch(setActiveChat({}));
+        localStorage.removeItem("activeChat");
+        dispatch(changeChatOpenedVar(false));
+        dispatch(setChatStatus(false))
+      }
     },
   ];
   return (
@@ -135,20 +158,24 @@ const Content: React.FC<ContentProps> = () => {
   // refs
   const chatMainDiv = useRef<HTMLParagraphElement>(null);
 
+  // message
+  const [message, setMessage] = useState<string>("");
+
+  // all messages
+  const getAllMessages = useSelector((state: RootState) => state.chats.userChatMessages);
+
   // default scroll the component to the bottom
   useEffect(() => {
     // Scroll the div to its bottom when the component mounts
-    if (chatMainDiv.current) {
+    if (chatMainDiv.current && activeChats) {
       setTimeout(() => {
         if (chatMainDiv.current) {
-          chatMainDiv.current.scrollTop = chatMainDiv.current.scrollHeight + 100;
+          chatMainDiv.current.scrollTop = chatMainDiv.current.scrollHeight;
         }
-      }, 500);
+      }, 100);
     }
-  }, [chatMainDiv, activeChats]);
+  }, [chatMainDiv, activeChats, message, getAllMessages]);
 
-  // message
-  const [message, setMessage] = useState<string>("");
 
   // theme mode
   const mode = useSelector((state: RootState) => state.themeConfig.mode);
@@ -174,10 +201,6 @@ const Content: React.FC<ContentProps> = () => {
     mutationKey: ["SentMessageToUser"],
     onSuccess: (data: any) => {
       const request = indexedDB.open("chats", 1);
-
-      if (chatMainDiv?.current) {
-        chatMainDiv.current.scrollTop = chatMainDiv.current.scrollHeight + 100;
-      }
 
       dispatch(updateChatData(data?.user));
 
@@ -206,7 +229,6 @@ const Content: React.FC<ContentProps> = () => {
   });
 
   // fetch data from indexDb
-
   useEffect(() => {
     const getData = async () => {
       const allMessages = await getAllDataFromDB();
@@ -223,12 +245,51 @@ const Content: React.FC<ContentProps> = () => {
     getData();
   }, [activeChats])
 
-  // all chats
-  const getAllMessages = useSelector((state: RootState) => state.chats.userChatMessages);
-
 
   // chat data
   const chats = useSelector((state: RootState) => state.chats.chats);
+
+  // user message
+  const updateMessagesToSeen = async (id: string) => {
+    try {
+      const data = seenMessageAAPI({ id });
+      return data;
+    } catch (err) {
+      handleAxiosError(err, mode);
+      throw err;
+    }
+  };
+
+  const { mutate: updateToSeen } = useMutation({
+    mutationFn: updateMessagesToSeen,
+    mutationKey: ["seenMessage"],
+  });
+
+  useEffect(() => {
+    if (getAllMessages.length && getAllMessages[getAllMessages.length - 1].status === 'delivered') {
+      updateToSeen(getAllMessages[getAllMessages.length - 1].sent_by);
+    }
+  }, [getAllMessages]);
+
+
+  // socket connection
+  useEffect(() => {
+    const socket = getSocket();
+
+    // Define the event listener function
+    const handleNewMessage = async (socketData: any) => {
+      const db = await openDatabase();
+      updateMultipleRecords(db, socketData.userId, socketData.id);
+      dispatch(updateChatMessageToSeen())
+    };
+
+    // Attach the event listener
+    socket.on("seenMessage", handleNewMessage);
+
+    return () => {
+      socket.off("chat message");
+    };
+  }, []);
 
   return (
     <div className="w-full h-[100vh] overflow-hidden">
@@ -339,12 +400,6 @@ const Content: React.FC<ContentProps> = () => {
             const list = [...getAllMessages, newMessageObject];
 
             dispatch(setChatMessages(list));
-
-            setTimeout(() => {
-              if (chatMainDiv.current) {
-                chatMainDiv.current.scrollTop = chatMainDiv.current.scrollHeight + 100;
-              }
-            }, 500);
 
             // update chats
             const index = chats.findIndex((item: any) => {

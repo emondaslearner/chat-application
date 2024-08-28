@@ -15,7 +15,8 @@ export const initializeSocket = (token: any) => {
 
 export const getSocket = () => {
   if (!socketInstance) {
-    throw new Error("Socket has not been initialized.");
+    const token = localStorage.getItem("token") || "";
+    initializeSocket(token);
   }
   return socketInstance;
 };
