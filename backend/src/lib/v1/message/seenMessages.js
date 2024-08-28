@@ -8,6 +8,7 @@ const seenMessage = async ({ userId, id }) => {
   );
 
   global.io.to(id).emit("seenMessage", {
+    userId: id,
     id: userId,
   });
 
