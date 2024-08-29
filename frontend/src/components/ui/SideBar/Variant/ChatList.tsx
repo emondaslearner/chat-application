@@ -102,6 +102,35 @@ const ChatList: React.FC<ChatProps> = ({ search }) => {
     }
   }, [activeChatUserData]);
 
+  // user message
+  const updateMessagesToSeen = async (id: string) => {
+    try {
+      const data = seenMessageAAPI({ id });
+      return data;
+    } catch (err) {
+      handleAxiosError(err, mode);
+      throw err;
+    }
+  };
+
+  const { mutate: updateToSeen } = useMutation({
+    mutationFn: updateMessagesToSeen,
+    mutationKey: ["seenMessage"],
+  });
+
+
+  // active chat data
+  const activeChats: any = useSelector(
+    (state: RootState) => state.chats.selectedChatUserData
+  );
+
+  useEffect(() => {
+    if (activeChats?._id) {
+      updateToSeen(activeChats?._id);
+      updateChatCount({ unreadCount: 0, id: activeChats?._id });
+    }
+  }, [activeChats])
+
 
   // socket connection
   useEffect(() => {
@@ -116,8 +145,11 @@ const ChatList: React.FC<ChatProps> = ({ search }) => {
       const db: any = await openDatabase();
       addData(db, socketData);
 
-      if (activeChatData._id === socketData.sent_by) {
+      if (activeChatData?._id === socketData.sent_by) {
+        console.log('add message running', socketData);
         dispatch(addChatMessagesToStore(socketData));
+        updateToSeen(socketData.sent_by);
+        updateChatCount({ unreadCount: 0, id: socketData.sent_by });
       }
 
       console.log("activeChatUserData", activeChatData);
@@ -125,6 +157,12 @@ const ChatList: React.FC<ChatProps> = ({ search }) => {
 
     // Attach the event listener
     socket.on("addMessage", handleNewMessage);
+
+    const handleNewMessageChat = (socketData: any) => {
+      dispatch(updateChatData(socketData))
+    }
+
+    socket.on("addMessageChatData", handleNewMessageChat);
 
     return () => {
       socket.off("chat message");

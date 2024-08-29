@@ -249,28 +249,6 @@ const Content: React.FC<ContentProps> = () => {
   // chat data
   const chats = useSelector((state: RootState) => state.chats.chats);
 
-  // user message
-  const updateMessagesToSeen = async (id: string) => {
-    try {
-      const data = seenMessageAAPI({ id });
-      return data;
-    } catch (err) {
-      handleAxiosError(err, mode);
-      throw err;
-    }
-  };
-
-  const { mutate: updateToSeen } = useMutation({
-    mutationFn: updateMessagesToSeen,
-    mutationKey: ["seenMessage"],
-  });
-
-  useEffect(() => {
-    if (getAllMessages.length && getAllMessages[getAllMessages.length - 1].status === 'delivered') {
-      updateToSeen(getAllMessages[getAllMessages.length - 1].sent_by);
-    }
-  }, [getAllMessages]);
-
 
   // socket connection
   useEffect(() => {
@@ -280,7 +258,7 @@ const Content: React.FC<ContentProps> = () => {
     const handleNewMessage = async (socketData: any) => {
       const db = await openDatabase();
       updateMultipleRecords(db, socketData.userId, socketData.id);
-      dispatch(updateChatMessageToSeen())
+      dispatch(updateChatMessageToSeen());
     };
 
     // Attach the event listener

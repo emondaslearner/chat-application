@@ -93,7 +93,6 @@ const updateMultipleRecords = async (
         const updateRequest = cursor.update(updatedRecord);
 
         updateRequest.onsuccess = () => {
-          console.log("Updated record with key:", cursor.key);
         };
 
         updateRequest.onerror = (updateEvent: any) => {
