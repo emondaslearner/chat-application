@@ -40,15 +40,15 @@ const addFriendAPI = ({ friendId }: addFriendStates) => {
   return new Promise((resolve, reject) => {
     friendId
       ? axios
-          .post("/user/friends", {
-            friendId,
-          })
-          .then((response) => {
-            resolve(response?.data);
-          })
-          .catch((error) => {
-            reject(error);
-          })
+        .post("/user/friends", {
+          friendId,
+        })
+        .then((response) => {
+          resolve(response?.data);
+        })
+        .catch((error) => {
+          reject(error);
+        })
       : reject();
   });
 };
@@ -61,13 +61,13 @@ const deleteFriendAPI = ({ id }: deleteFriendAPIState) => {
   return new Promise((resolve, reject) => {
     id
       ? axios
-          .delete(`/user/${id}/friend`)
-          .then((response) => {
-            resolve(response?.data);
-          })
-          .catch((error) => {
-            reject(error);
-          })
+        .delete(`/user/${id}/friend`)
+        .then((response) => {
+          resolve(response?.data);
+        })
+        .catch((error) => {
+          reject(error);
+        })
       : reject();
   });
 };
@@ -80,15 +80,30 @@ const getSingleFriendAPI = async ({ id }: getSingleFriendAPIStates) => {
   return new Promise((resolve, reject) => {
     id
       ? axios
-          .get(`/user/${id}/friend`)
-          .then((response) => {
-            resolve(response?.data);
-          })
-          .catch((error) => {
-            reject(error);
-          })
+        .get(`/user/${id}/friend`)
+        .then((response) => {
+          resolve(response?.data);
+        })
+        .catch((error) => {
+          reject(error);
+        })
       : reject();
   });
 };
 
-export { getFriendList, addFriendAPI, deleteFriendAPI, getSingleFriendAPI };
+const blockFriendAPI = async ({ id, block }: { id: string, block: boolean }) => {
+  return new Promise((resolve, reject) => {
+    axios.patch('/user/friends', {
+      friendId: id,
+      block
+    })
+      .then((response) => {
+        resolve(response?.data);
+      })
+      .catch((error) => {
+        reject(error);
+      })
+  })
+}
+
+export { getFriendList, addFriendAPI, deleteFriendAPI, getSingleFriendAPI, blockFriendAPI };

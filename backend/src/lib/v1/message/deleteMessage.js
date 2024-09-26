@@ -40,7 +40,7 @@ const deleteMessage = async ({ id, status, userId }) => {
   }
 
   deleteKeysWithPrefix("messages:");
-  return true;
+  return findMessage?._id ? findMessage : id;
 };
 
 module.exports = deleteMessage;

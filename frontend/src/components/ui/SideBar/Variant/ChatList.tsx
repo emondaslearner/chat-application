@@ -202,8 +202,8 @@ const ChatList: React.FC<ChatProps> = ({ search }) => {
                     setChatUserData(
                       profileData.id ===
                         (data?.first_user._id || data?.first_user)
-                        ? data?.second_user
-                        : data?.first_user
+                        ? { ...chats[0]?.second_user, blocked: chats[0].blocked, blocked_by: chats[0].blocked_by }
+                        : { ...chats[0]?.first_user, blocked: chats[0].blocked, blocked_by: chats[0].blocked_by }
                     )
                   );
                   dispatch(setChatStatus(true));

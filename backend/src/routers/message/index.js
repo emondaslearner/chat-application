@@ -5,6 +5,7 @@ const {
   getChatMessages,
   getAllMessage,
   seenMessage,
+  getLastMessage,
 } = require("@controller/v1/message");
 const multer = require("multer");
 
@@ -34,6 +35,8 @@ const messageRoutes = (router, authenticate) => {
     .route("/user/message/:id")
     .patch(authenticate, editMessage)
     .delete(authenticate, deleteMessage);
+
+  router.get("/user/:id/last-message", authenticate, getLastMessage);
 
   router.get("/user/messages", authenticate, getAllMessage);
 };

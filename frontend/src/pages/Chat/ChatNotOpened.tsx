@@ -49,8 +49,8 @@ const ChatNotOpened: React.FC<ChatNotOpenedProps> = () => {
               dispatch(changeChatOpenedVar(true));
               dispatch(setChatStatus(true));
               dispatch(setChatUserData(profileData.id === (chats[0]?.first_user._id || chats[0]?.first_user)
-                ? chats[0]?.second_user
-                : chats[0]?.first_user));
+                ? { ...chats[0]?.second_user, blocked: chats[0].blocked, blocked_by: chats[0].blocked_by }
+                : { ...chats[0]?.first_user, blocked: chats[0].blocked, blocked_by: chats[0].blocked_by }));
             }} className="mx-auto table mt-3" fill={false}>
               Start a Conversation
             </Button>

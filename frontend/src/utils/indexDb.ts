@@ -68,11 +68,7 @@ const getAllDataFromDB = async () => {
   }
 };
 
-const updateMultipleRecords = async (
-  db: any,
-  userId: string,
-  id: string
-) => {
+const updateMultipleRecords = async (db: any, userId: string, id: string) => {
   const transaction = db.transaction(["messages"], "readwrite");
   const objectStore = transaction.objectStore("messages");
 
@@ -89,11 +85,10 @@ const updateMultipleRecords = async (
         (user.sent_by?._id || user.sent_by) === id ||
         (user.sent_to?._id || user.sent_to) === userId
       ) {
-        const updatedRecord = { ...cursor.value, status: 'seen' };
+        const updatedRecord = { ...cursor.value, status: "seen" };
         const updateRequest = cursor.update(updatedRecord);
 
-        updateRequest.onsuccess = () => {
-        };
+        updateRequest.onsuccess = () => {};
 
         updateRequest.onerror = (updateEvent: any) => {
           console.error("Error updating record:", updateEvent.target.error);
@@ -154,10 +149,83 @@ const deleteMultipleRecords = async (db: any, userId: string, id: string) => {
   };
 };
 
+const deleteViaKeyFromIndexdb = async (db: any, id: string) => {
+  const transaction = db.transaction(["messages"], "readwrite");
+  const objectStore = transaction.objectStore("messages");
+
+  const cursorRequest = objectStore.openCursor();
+
+  cursorRequest.onsuccess = (event: any) => {
+    const cursor = event.target.result;
+
+    if (cursor) {
+      const user = cursor.value;
+      if (user._id === id) {
+        const deleteRequest = cursor.delete();
+
+        deleteRequest.onsuccess = () => {
+          console.log("Deleted user with key:", cursor.key);
+        };
+      }
+
+      cursor.continue(); // Move to the next record
+    } else {
+      console.log("No more entries to check");
+    }
+  };
+
+  cursorRequest.onerror = (event: any) => {
+    console.error("Error opening cursor:", event.target.error);
+  };
+
+  transaction.oncomplete = () => {
+    db.close();
+  };
+};
+
+const updateViaKeyInIndexdb = async (db: any, id: string, data: any) => {
+  const transaction = db.transaction(["messages"], "readwrite");
+  const objectStore = transaction.objectStore("messages");
+
+  const cursorRequest = objectStore.openCursor();
+
+  cursorRequest.onsuccess = (event: any) => {
+    const cursor = event.target.result;
+
+    if (cursor) {
+      const user = cursor.value;
+      if (user._id === id) {
+        const updatedRecord = data;
+        const updateRequest = cursor.update(updatedRecord);
+
+        updateRequest.onsuccess = () => {};
+
+        updateRequest.onerror = (updateEvent: any) => {
+          console.error("Error updating record:", updateEvent.target.error);
+        };
+      }
+
+      cursor.continue(); // Move to the next record
+    } else {
+      console.log("No more entries to check");
+    }
+  };
+
+  cursorRequest.onerror = (event: any) => {
+    console.error("Error opening cursor:", event.target.error);
+  };
+
+  transaction.oncomplete = () => {
+    db.close();
+  };
+};
+
 export {
   getAllDataFromDB,
   addData,
   updateMultipleRecords,
   openDatabase,
   deleteMultipleRecords,
+  deleteViaKeyFromIndexdb,
+  updateViaKeyInIndexdb,
 };

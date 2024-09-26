@@ -101,6 +101,8 @@ const getAllChats = async ({ filterData, userId }) => {
               chat_deleted_for: 1,
               last_message: 1,
               updatedAt: 1,
+              blocked: 1,
+              blocked_by: 1
             },
           },
         ],

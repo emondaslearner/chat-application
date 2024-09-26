@@ -4,6 +4,7 @@ const deleteMessage = require("./deleteMessage");
 const getChatMessages = require("./getChatMessages");
 const getAllMessage = require("./getAllMyMessages");
 const seenMessage = require("./seenMessages");
+const getLastMessage = require("./getLastMessages");
 
 module.exports = {
   sentMessage,
@@ -12,4 +13,5 @@ module.exports = {
   getChatMessages,
   getAllMessage,
   seenMessage,
+  getLastMessage,
 };

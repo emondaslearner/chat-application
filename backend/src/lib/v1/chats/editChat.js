@@ -18,12 +18,11 @@ const editChat = async ({ userId, friendId, unreadMessage }) => {
       "name bio profile_picture updatedAt createdAt status"
     );
 
-  data.unread_message_count = unreadMessage;
-  data.save();
-
-  console.log("updated data", data);
-
-  global.io.to(userId).emit("addMessageChatData", data);
+  if (data) {
+    data.unread_message_count = unreadMessage;
+    data.save();
+    global.io.to(userId).emit("addMessageChatData", data);
+  }
 
   return;
 };
