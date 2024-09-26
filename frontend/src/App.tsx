@@ -56,7 +56,8 @@ function App() {
   }, []);
 
   return (
-    <div className="max-w-[1800px] mx-auto relative">
+    <div className="w-full h-full dark:bg-dark_">
+      <div className="max-w-[1800px] mx-auto relative">
       <BrowserRouter>
         <NextUIProvider>
           <QueryClientProvider client={queryClient}>
@@ -69,6 +70,7 @@ function App() {
         </NextUIProvider>
       </BrowserRouter>
       <ToastContainer limit={2} />
+    </div>
     </div>
   );
 }
